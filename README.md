@@ -1,4 +1,4 @@
-# PITE-Projekt
+# Python In the Enterpirse - Project
 
 Authors:
 Jakub Majewski,
