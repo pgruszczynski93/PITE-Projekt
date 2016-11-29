@@ -1,0 +1,39 @@
+23-29.11.2016
+
+1. Założenie repozytorium na portalu GitHub.
+2. Ustalenie funkcjonalności programu.
+3. Stworzenie "user stories".
+4. Wstępny zarys projektu oraz przedstawienie go prowadzącemu.
+
+30.11 - 06.12.2016
+1. Stworzenie szkieletu aplikacji.
+2. Stworzenie interfejsu użytkownika.
+3. Implementacja wybranych funkcjonalności programu w celu prezentacji jego możliwości.
+
+07-13.12.2016
+1. Dalsza implementacja wybranych funkcjonalności oraz rozwój i pielęgnacja istniejącej aplikacji.
+2. Wstępne testowanie.
+
+14-18.12.2016
+1. Zakończenie implementacji podstawowych funkcjonalności. 
+2. Zbieranie pomysłów jak dalej rozwijać projekt. 
+3. Przygotowanie pierwszej wersji projektu do oddania. 
+4. Wrzucenie działającej połowy projektu na repozytorium GitHub.
+
+19.12.2016
+1. Oddanie pierwszej połowy projektu.
+
+20-27.12.2016
+1. Testowanie aplikacji. 
+2. Możliwe prace rozwojowe oraz wprowadzenie nowych funkcjonalności.
+
+28.12.2016 - 03.01.2017
+1. Pisanie dalszej części testów jednostkowych oraz rozwój aplikacji.
+
+04-11.01.2017
+1. Zakończenie etapu testów. 
+2. Finalne poprawki kodu i aplikacji mające na celu przygotowanie jej do oddania.
+3. Wrzucenie całości kodu oraz testów na repozytorium znajdujące się na GitHub.
+
+12-15.01.2017
+1. Oddanie finalnej wersji projektu
