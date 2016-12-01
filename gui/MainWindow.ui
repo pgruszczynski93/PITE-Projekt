@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>897</width>
+    <height>612</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PITE - PRoject</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>41</width>
+      <height>591</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="leftLayout"/>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>0</y>
+      <width>160</width>
+      <height>591</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="rightLayout"/>
+   </widget>
+   <widget class="QLabel" name="imageLabel">
+    <property name="geometry">
+     <rect>
+      <x>46</x>
+      <y>2</y>
+      <width>691</width>
+      <height>581</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>897</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuPlik">
+    <property name="title">
+     <string>Plik</string>
+    </property>
+    <addaction name="actionNowy"/>
+    <addaction name="actionOtw_rz"/>
+    <addaction name="actionZapisz"/>
+    <addaction name="actionZapisz_jako"/>
+    <addaction name="actionZako_cz"/>
+   </widget>
+   <widget class="QMenu" name="menuFiltry">
+    <property name="title">
+     <string>Filtr</string>
+    </property>
+    <widget class="QMenu" name="menuSzum">
+     <property name="title">
+      <string>Szum</string>
+     </property>
+     <addaction name="actionUsuwanie_szumu_i_ziarna"/>
+     <addaction name="actionZaszumianie"/>
+    </widget>
+    <widget class="QMenu" name="menuInne">
+     <property name="title">
+      <string>Inne</string>
+     </property>
+     <addaction name="actionG_rnoprzepustowy_2"/>
+     <addaction name="actionDolnoprzepustowy_2"/>
+     <addaction name="actionProgowanie"/>
+    </widget>
+    <addaction name="actionWyostrzanie"/>
+    <addaction name="actionRozmywanie"/>
+    <addaction name="actionWykrywanie_kraw_dzi"/>
+    <addaction name="menuSzum"/>
+    <addaction name="menuInne"/>
+   </widget>
+   <widget class="QMenu" name="menuTransformacja">
+    <property name="title">
+     <string>Transformacja</string>
+    </property>
+    <addaction name="actionZaznaczanie"/>
+    <addaction name="actionObr_t"/>
+    <addaction name="actionSkalowanie"/>
+    <addaction name="actionKadrowanie"/>
+   </widget>
+   <widget class="QMenu" name="menuDopasowania">
+    <property name="title">
+     <string>Dopasowania</string>
+    </property>
+    <widget class="QMenu" name="menuHistogram">
+     <property name="title">
+      <string>Histogram</string>
+     </property>
+     <addaction name="actionPodgl_d"/>
+     <addaction name="actionNormalizacja"/>
+    </widget>
+    <addaction name="actionJasno"/>
+    <addaction name="actionKontrast"/>
+    <addaction name="actionNasycenie"/>
+    <addaction name="actionGamma"/>
+    <addaction name="actionOdwr_kolory"/>
+    <addaction name="menuHistogram"/>
+    <addaction name="actionKolor"/>
+    <addaction name="actionWype_nianie"/>
+   </widget>
+   <widget class="QMenu" name="menuWstawianie">
+    <property name="title">
+     <string>Wstawianie</string>
+    </property>
+    <addaction name="actionTekst"/>
+   </widget>
+   <addaction name="menuPlik"/>
+   <addaction name="menuFiltry"/>
+   <addaction name="menuTransformacja"/>
+   <addaction name="menuDopasowania"/>
+   <addaction name="menuWstawianie"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOtw_rz">
+   <property name="text">
+    <string>Otwórz...</string>
+   </property>
+  </action>
+  <action name="actionZako_cz">
+   <property name="text">
+    <string>Zakończ</string>
+   </property>
+  </action>
+  <action name="actionNowy">
+   <property name="text">
+    <string>Nowy</string>
+   </property>
+  </action>
+  <action name="actionG_rnoprzepustowy">
+   <property name="text">
+    <string>Górnoprzepustowy</string>
+   </property>
+  </action>
+  <action name="actionDolnoprzepustowy">
+   <property name="text">
+    <string>Dolnoprzepustowy</string>
+   </property>
+  </action>
+  <action name="actionWyostrzanie">
+   <property name="text">
+    <string>Wyostrzanie</string>
+   </property>
+  </action>
+  <action name="actionRozmywanie">
+   <property name="text">
+    <string>Rozmywanie</string>
+   </property>
+  </action>
+  <action name="actionUsuwanie_szumu_i_ziarna">
+   <property name="text">
+    <string>Usuwanie szumu i ziarna</string>
+   </property>
+  </action>
+  <action name="actionZaszumianie">
+   <property name="text">
+    <string>Zaszumianie</string>
+   </property>
+  </action>
+  <action name="actionG_rnoprzepustowy_2">
+   <property name="text">
+    <string>Górnoprzepustowy</string>
+   </property>
+  </action>
+  <action name="actionDolnoprzepustowy_2">
+   <property name="text">
+    <string>Dolnoprzepustowy</string>
+   </property>
+  </action>
+  <action name="actionWykrywanie_kraw_dzi">
+   <property name="text">
+    <string>Wykrywanie krawędzi</string>
+   </property>
+  </action>
+  <action name="actionZaznaczanie">
+   <property name="text">
+    <string>Zaznaczanie</string>
+   </property>
+  </action>
+  <action name="actionObr_t">
+   <property name="text">
+    <string>Obrót</string>
+   </property>
+  </action>
+  <action name="actionSkalowanie">
+   <property name="text">
+    <string>Skalowanie</string>
+   </property>
+  </action>
+  <action name="actionKadrowanie">
+   <property name="text">
+    <string>Kadrowanie</string>
+   </property>
+  </action>
+  <action name="actionJasno">
+   <property name="text">
+    <string>Jasność</string>
+   </property>
+  </action>
+  <action name="actionKontrast">
+   <property name="text">
+    <string>Kontrast</string>
+   </property>
+  </action>
+  <action name="actionNasycenie">
+   <property name="text">
+    <string>Nasycenie</string>
+   </property>
+  </action>
+  <action name="actionGamma">
+   <property name="text">
+    <string>Gamma</string>
+   </property>
+  </action>
+  <action name="actionOdwr_kolory">
+   <property name="text">
+    <string>Odwróć kolory</string>
+   </property>
+  </action>
+  <action name="actionProgowanie">
+   <property name="text">
+    <string>Progowanie</string>
+   </property>
+  </action>
+  <action name="actionPodgl_d">
+   <property name="text">
+    <string>Podgląd</string>
+   </property>
+  </action>
+  <action name="actionNormalizacja">
+   <property name="text">
+    <string>Normalizacja</string>
+   </property>
+  </action>
+  <action name="actionTekst">
+   <property name="text">
+    <string>Tekst</string>
+   </property>
+  </action>
+  <action name="actionKolor">
+   <property name="text">
+    <string>Kolor (Pipeta)</string>
+   </property>
+  </action>
+  <action name="actionWype_nianie">
+   <property name="text">
+    <string>Wypełnianie</string>
+   </property>
+  </action>
+  <action name="actionZapisz">
+   <property name="text">
+    <string>Zapisz</string>
+   </property>
+  </action>
+  <action name="actionZapisz_jako">
+   <property name="text">
+    <string>Zapisz jako...</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
