@@ -1,4 +1,5 @@
 from PyQt4 import QtCore, QtGui
+from ImageWidget import *
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -19,22 +20,48 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(1024, 645)
         self.centralwidget = QtGui.QWidget(MainWindow)
+        self.centralwidget.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
+
+        # gridLayout_4
+        self.gridLayout = QtGui.QGridLayout(self.centralwidget)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        # zdjecie w ramce
         self.frame = QtGui.QFrame(self.centralwidget)
         self.frame.setGeometry(QtCore.QRect(50, 0, 800, 600))
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName(_fromUtf8("frame"))
+
+         #gridLayout_2
+        self.gridLayout_2 = QtGui.QGridLayout(self.frame)
+        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
+
         self.scrollArea = QtGui.QScrollArea(self.frame)
         self.scrollArea.setGeometry(QtCore.QRect(0, 0, 800, 600))
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
+
         self.scrollAreaWidgetContents = QtGui.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 800, 600))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
-        self.org_image = QtGui.QWidget(self.scrollAreaWidgetContents)
-        self.org_image.setGeometry(QtCore.QRect(0, 0, 800, 600))
+
+        #gridLayout_5
+        self.gridLayout_3 = QtGui.QGridLayout(self.scrollAreaWidgetContents)
+        self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
+
+        self.org_image = ImageWidget(self.scrollAreaWidgetContents)
+        # self.org_image = QtGui.QWidget(self.scrollAreaWidgetContents)
+        # self.org_image.setGeometry(QtCore.QRect(0, 0, 800, 600))
         self.org_image.setObjectName(_fromUtf8("org_image"))
+        # self.addWidget(self.original_image, 0, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.org_image,0,0,1,1)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+
+        self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
+
+
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         # self.frame_2 = QtGui.QFrame(self.centralwidget)
         # self.frame_2.setGeometry(QtCore.QRect(510, 0, 450, 600))
@@ -193,7 +220,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "PITE - PRoject", None))
+        MainWindow.setWindowTitle(_translate("MainWindow", "PITE - Project", None))
         self.menuPlik.setTitle(_translate("MainWindow", "Plik", None))
         self.menuFiltry.setTitle(_translate("MainWindow", "Filtr", None))
         self.menuSzum.setTitle(_translate("MainWindow", "Szum", None))
@@ -236,9 +263,12 @@ class Ui_MainWindow(object):
         filepath = QtGui.QFileDialog.getOpenFileName(None, 'Otworz', '', 'All Files (*.*);;jpeg (*.jpeg);;jpg (*.jpg);;png (*.png)')
 
         if filepath:
-            # self.open(filename) - ma otworzyc zdjecie w panelu
-            msg = QtGui.QMessageBox.question(None, 'Sciezka', str(filepath),QtGui.QMessageBox.Ok)
+            self.open_image(filepath)
 
+    def open_image(self, filepath):
+        msg = QtGui.QMessageBox.question(None, 'Sciezka', str(filepath),QtGui.QMessageBox.Ok)
+        # self.org_image.Qimg =    
+        #wrzucić odpalanie zdjecia do widgetu
 
     def close_application(self):
     	app.quit()
