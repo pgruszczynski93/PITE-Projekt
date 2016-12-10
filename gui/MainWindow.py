@@ -1,5 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from ImageWidget import *
+from ImagePreProcessor import *
+from PIL import ImageQt
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -15,7 +17,12 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_MainWindow(object):
+class Ui_MainWindow(QtGui.QMainWindow):
+
+    def __init__(self):
+        super(Ui_MainWindow, self).__init__()
+        self.imgPreProc = ImagePreProcessor()
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(1024, 645)
@@ -266,9 +273,24 @@ class Ui_MainWindow(object):
             self.open_image(filepath)
 
     def open_image(self, filepath):
-        msg = QtGui.QMessageBox.question(None, 'Sciezka', str(filepath),QtGui.QMessageBox.Ok)
-        # self.org_image.Qimg =    
-        #wrzucić odpalanie zdjecia do widgetu
+        # msg = QtGui.QMessageBox.question(None, 'Sciezka', str(filepath),QtGui.QMessageBox.Ok)
+        self.imgPreProc.loadImage(str(filepath))
+        self.org_image.Qimg = ImageQt.ImageQt(self.imgPreProc.image.convert("RGB") if self.imgPreProc.image.mode == "L" else self.imgPreProc.image)
+        self.org_image.repaint()
+        # self.paint_negative()
+        self.refresh_all()
+
+    def repaint_image(self):
+        self.org_image.Qimg = ImageQt.ImageQt(self.imgPreProc.image.convert("RGB") if self.imgPreProc.image.mode == "L" else self.imgPreProc.image) 
+        self.org_image.repaint()
+        #  albo dać tu zdjecie zmodyfikowane w panelu 0
+
+    def paint_negative(self):
+    	self.imgPreProc.negative()
+    	self.refresh_all()
+
+    def refresh_all(self):
+        self.repaint_image()
 
     def close_application(self):
     	app.quit()
