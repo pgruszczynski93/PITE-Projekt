@@ -2,6 +2,7 @@ from PyQt4 import QtCore, QtGui
 from ImageWidget import *
 from ImagePreProcessor import *
 from PIL import ImageQt
+import sys
 
 try:
 	_fromUtf8 = QtCore.QString.fromUtf8
@@ -23,7 +24,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		super(Ui_MainWindow, self).__init__()
 		self.imgPreProc = ImagePreProcessor()
 
+
 	def setupUi(self, MainWindow):
+
 		MainWindow.setObjectName(_fromUtf8("MainWindow"))
 		MainWindow.resize(1024, 645)
 		self.centralwidget = QtGui.QWidget(MainWindow)
@@ -184,7 +187,27 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionInverseColors = QtGui.QAction(MainWindow)
 		self.actionInverseColors.setObjectName(_fromUtf8("actionInverseColors"))
 		self.actionInverseColors.setShortcut('Alt+I')
-		self.actionInverseColors.triggered.connect(self.negative)
+		self.actionInverseColors.triggered.connect(self.auto_negative)
+
+		self.actionMirrorEffect = QtGui.QAction(MainWindow)
+		self.actionMirrorEffect.setObjectName(_fromUtf8("actionMirrorEffect"))
+		self.actionMirrorEffect.setShortcut('Alt+L')
+		self.actionMirrorEffect.triggered.connect(self.auto_mirror)
+
+		self.actionFlip = QtGui.QAction(MainWindow)
+		self.actionFlip.setObjectName(_fromUtf8("actionFlip"))
+		self.actionFlip.setShortcut('Alt+F')
+		self.actionFlip.triggered.connect(self.auto_flip)
+
+		self.actionPosterize = QtGui.QAction(MainWindow)
+		self.actionPosterize.setObjectName(_fromUtf8("actionPosterize"))
+		self.actionPosterize.setShortcut('Alt+P')
+		self.actionPosterize.triggered.connect(self.auto_posterize)
+
+		self.actionSolarize = QtGui.QAction(MainWindow)
+		self.actionSolarize.setObjectName(_fromUtf8("actionSolarize"))
+		self.actionSolarize.setShortcut('Alt+S')
+		self.actionSolarize.triggered.connect(self.auto_solarize)
 
 		self.actionProgowanie = QtGui.QAction(MainWindow)
 		self.actionProgowanie.setObjectName(_fromUtf8("actionProgowanie"))
@@ -237,6 +260,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.menuDopasowania.addAction(self.actionGamma)
 		self.menuDopasowania.addAction(self.actionInverseColors)
 		self.menuDopasowania.addAction(self.actionGrayScale)
+		self.menuDopasowania.addAction(self.actionFlip)
+		self.menuDopasowania.addAction(self.actionMirrorEffect)
+		self.menuDopasowania.addAction(self.actionPosterize)
+		self.menuDopasowania.addAction(self.actionSolarize)
 		self.menuDopasowania.addAction(self.menuHistogram.menuAction())
 		self.menuDopasowania.addAction(self.actionColorize)
 		self.menuDopasowania.addAction(self.actionKolor)
@@ -281,10 +308,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionKontrast.setText(_translate("MainWindow", "Kontrast", None))
 		self.actionAutoContrast.setText(_translate("MainWindow","Auto Kontrast", None))
 		self.actionNasycenie.setText(_translate("MainWindow", "Nasycenie", None))
+		self.actionFlip.setText(_translate("MainWindow", "Przerzuć", None))
 		self.actionGamma.setText(_translate("MainWindow", "Gamma", None))
 		self.actionInverseColors.setText(_translate("MainWindow", "Odwróć kolory", None))
 		self.actionGrayScale.setText(_translate("MainWidndow","Skala Szarości", None))
+		self.actionMirrorEffect.setText(_translate("MainWindow","Lustro",None))
 		self.actionColorize.setText(_translate("MainWidndow","Koloryzacja", None))
+		self.actionPosterize.setText(_translate("MainWidndow","Posteryzacja", None))
+		self.actionSolarize.setText(_translate("MainWidndow","Solaryzacja", None))
 		self.actionProgowanie.setText(_translate("MainWindow", "Progowanie", None))
 		self.actionPodgl_d.setText(_translate("MainWindow", "Podgląd", None))
 		self.actionNormalizacja.setText(_translate("MainWindow", "Normalizacja", None))
@@ -312,7 +343,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.org_image.repaint()
 		#  albo dać tu zdjecie zmodyfikowane w panelu 0
 
-	def negative(self):
+	def auto_negative(self):
 		self.imgPreProc.negative()
 		self.org_image.repaint()
 		self.refresh_all()
@@ -329,6 +360,26 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 	def auto_colorize(self):
 		self.imgPreProc.auto_colorize()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_mirror(self):
+		self.imgPreProc.auto_mirror()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_flip(self):
+		self.imgPreProc.auto_flip()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_posterize(self):
+		self.imgPreProc.auto_posterize()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_solarize(self):
+		self.imgPreProc.auto_solarize()
 		self.org_image.repaint()
 		self.refresh_all()
 
