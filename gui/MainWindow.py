@@ -153,8 +153,15 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionZaznaczanie.setObjectName(_fromUtf8("actionZaznaczanie"))
 		self.actionObr_t = QtGui.QAction(MainWindow)
 		self.actionObr_t.setObjectName(_fromUtf8("actionObr_t"))
+
 		self.actionSkalowanie = QtGui.QAction(MainWindow)
 		self.actionSkalowanie.setObjectName(_fromUtf8("actionSkalowanie"))
+
+		self.actionFitScale= QtGui.QAction(MainWindow)
+		self.actionFitScale.setObjectName(_fromUtf8("actionFitScale"))
+		self.actionFitScale.setShortcut('Ctrl+Alt+F')
+		self.actionFitScale.triggered.connect(self.auto_fitscale)
+
 		self.actionKadrowanie = QtGui.QAction(MainWindow)
 		self.actionKadrowanie.setObjectName(_fromUtf8("actionKadrowanie"))
 		self.actionJasno = QtGui.QAction(MainWindow)
@@ -209,12 +216,26 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionSolarize.setShortcut('Alt+S')
 		self.actionSolarize.triggered.connect(self.auto_solarize)
 
+		self.actionDeleteBorder = QtGui.QAction(MainWindow)
+		self.actionDeleteBorder.setObjectName(_fromUtf8("actionDeleteBorder"))
+		self.actionDeleteBorder.setShortcut('Alt+B')
+		self.actionDeleteBorder.triggered.connect(self.auto_delete_border)
+
 		self.actionProgowanie = QtGui.QAction(MainWindow)
 		self.actionProgowanie.setObjectName(_fromUtf8("actionProgowanie"))
 		self.actionPodgl_d = QtGui.QAction(MainWindow)
 		self.actionPodgl_d.setObjectName(_fromUtf8("actionPodgl_d"))
-		self.actionNormalizacja = QtGui.QAction(MainWindow)
-		self.actionNormalizacja.setObjectName(_fromUtf8("actionNormalizacja"))
+
+		self.actionEqualizeHistogram = QtGui.QAction(MainWindow)
+		self.actionEqualizeHistogram.setObjectName(_fromUtf8("actionEqualizeHistogram"))
+		self.actionEqualizeHistogram.setShortcut('Ctrl+Alt+H')
+		self.actionEqualizeHistogram.triggered.connect(self.auto_equalize_histogram)
+
+		self.actionAddFrame = QtGui.QAction(MainWindow)
+		self.actionAddFrame.setObjectName(_fromUtf8("actionAddFrame"))
+		self.actionAddFrame.setShortcut('Alt+F')
+		self.actionAddFrame.triggered.connect(self.auto_add_color_border)
+
 		self.actionTekst = QtGui.QAction(MainWindow)
 		self.actionTekst.setObjectName(_fromUtf8("actionTekst"))
 		self.actionKolor = QtGui.QAction(MainWindow)
@@ -250,9 +271,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.menuTransformacja.addAction(self.actionZaznaczanie)
 		self.menuTransformacja.addAction(self.actionObr_t)
 		self.menuTransformacja.addAction(self.actionSkalowanie)
+		self.menuTransformacja.addAction(self.actionFitScale)
 		self.menuTransformacja.addAction(self.actionKadrowanie)
+		self.menuTransformacja.addAction(self.actionDeleteBorder)
+		self.menuTransformacja.addAction(self.actionAddFrame)
 		self.menuHistogram.addAction(self.actionPodgl_d)
-		self.menuHistogram.addAction(self.actionNormalizacja)
+		self.menuHistogram.addAction(self.actionEqualizeHistogram)
 		self.menuDopasowania.addAction(self.actionJasno)
 		self.menuDopasowania.addAction(self.actionKontrast)
 		self.menuDopasowania.addAction(self.actionAutoContrast)
@@ -303,6 +327,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionZaznaczanie.setText(_translate("MainWindow", "Zaznaczanie", None))
 		self.actionObr_t.setText(_translate("MainWindow", "Obrót", None))
 		self.actionSkalowanie.setText(_translate("MainWindow", "Skalowanie", None))
+		self.actionFitScale.setText(_translate("MainWindow", "Skaluj i dopasuj", None))
 		self.actionKadrowanie.setText(_translate("MainWindow", "Kadrowanie", None))
 		self.actionJasno.setText(_translate("MainWindow", "Jasność", None))
 		self.actionKontrast.setText(_translate("MainWindow", "Kontrast", None))
@@ -315,10 +340,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionMirrorEffect.setText(_translate("MainWindow","Lustro",None))
 		self.actionColorize.setText(_translate("MainWidndow","Koloryzacja", None))
 		self.actionPosterize.setText(_translate("MainWidndow","Posteryzacja", None))
+		self.actionDeleteBorder.setText(_translate("MainWidndow","Usuń brzeg zdjęcia", None))
 		self.actionSolarize.setText(_translate("MainWidndow","Solaryzacja", None))
 		self.actionProgowanie.setText(_translate("MainWindow", "Progowanie", None))
+		self.actionAddFrame.setText(_translate("MainWindow", "Dodaj kolorową ramkę", None))
 		self.actionPodgl_d.setText(_translate("MainWindow", "Podgląd", None))
-		self.actionNormalizacja.setText(_translate("MainWindow", "Normalizacja", None))
+		self.actionEqualizeHistogram.setText(_translate("MainWindow", "Wyrównanie (Normalizacja)", None))
 		self.actionTekst.setText(_translate("MainWindow", "Tekst", None))
 		self.actionKolor.setText(_translate("MainWindow", "Kolor (Pipeta)", None))
 		self.actionWype_nianie.setText(_translate("MainWindow", "Wypełnianie", None))
@@ -380,6 +407,26 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 	def auto_solarize(self):
 		self.imgPreProc.auto_solarize()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_delete_border(self):
+		self.imgPreProc.auto_delete_border()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_equalize_histogram(self):
+		self.imgPreProc.auto_equalize_histogram()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_add_color_border(self):
+		self.imgPreProc.auto_add_color_border()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_fitscale(self):
+		self.imgPreProc.auto_fitscale()
 		self.org_image.repaint()
 		self.refresh_all()
 
