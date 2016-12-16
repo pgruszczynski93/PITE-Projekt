@@ -21,6 +21,7 @@ class ImagePreProcessor(object):
 		self.crop_opsborder_mod_value = 0
 		self.frame_color_width = 0
 		self.resize_mod_dim = ()
+		self.rotate_mod_angle = 0
 
 	def loadImage(self, imgFile, isGray=1):
 		self.image = Image.open(imgFile)
@@ -85,7 +86,7 @@ class ImagePreProcessor(object):
 			self.loadImageFromPIX(self.image)
 
 	def auto_solarize(self):
-		self.modal_window = Modal("Próg solaryzacji ")
+		self.modal_window = Modal("Próg solaryzacji: ")
 		self.modal_window.init_modal(0,128,0,128,1,"Solaryzacja")
 		if self.modal_window.exec_() == False:
 			self.solarization_mod_value = self.modal_window.button_confirm_exit()
@@ -94,7 +95,7 @@ class ImagePreProcessor(object):
 			self.loadImageFromPIX(self.image)
 
 	def auto_delete_border(self):
-		self.modal_window = Modal("Piksele do usunięcia ")
+		self.modal_window = Modal("Piksele do usunięcia: ")
 		self.modal_window.init_modal(0,200,0,200,1,"Usuwanie ramki zdjęcia")
 		if self.modal_window.exec_() == False:
 			self.crop_opsborder_mod_value = self.modal_window.button_confirm_exit()
@@ -109,7 +110,7 @@ class ImagePreProcessor(object):
 		self.loadImageFromPIX(self.image)
 
 	def auto_add_color_border(self):
-		self.modal_window = Modal("Grubość ramki ")
+		self.modal_window = Modal("Grubość ramki: ")
 		self.modal_window.init_modal(0,200,0,200,1,"Kolorowa ramka zdjęcia")
 		if self.modal_window.exec_() == False:
 			self.frame_color_width = self.modal_window.button_confirm_exit()
@@ -128,6 +129,32 @@ class ImagePreProcessor(object):
 			self.image = resized_img
 			# print(self.resize_mod_dim[0],self.resize_mod_dim[1])
 			self.loadImageFromPIX(self.image)
+
+	def auto_rotate(self):
+		self.modal_window = Modal("Kąt obrotu: ")
+		self.modal_window.init_modal(0,360,0,360,1,"Rotacja")
+		if self.modal_window.exec_() == False:
+			self.rotate_mod_angle = self.modal_window.button_confirm_exit()
+			self.loadImageFromPIX(self.image.rotate(self.rotate_mod_angle,0,1))
+
+
+	def auto_resize(self):
+		self.modal_window = Modal()
+		self.modal_window.init_resize_modal("Zmiana rozmiaru")
+		if self.modal_window.exec_() == False:
+			# jct wstawic zmienna trzymajace wymiary po zmianie rozmiaru
+			self.resize_mod_dim = self.modal_window.button_resize_confirm_exit()
+			self.loadImageFromPIX(self.image.resize((int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1]))))
+
+	def	auto_new(self):
+		self.modal_window = Modal()
+		self.modal_window.init_resize_modal("Wymiary nowego pliku")
+		if self.modal_window.exec_() == False:
+			# jct wstawic zmienna trzymajace wymiary po zmianie rozmiaru
+			self.resize_mod_dim = self.modal_window.button_resize_confirm_exit()
+			self.image = Image.new("RGB",(int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1])),(255,255,255))
+			self.loadImageFromPIX(self.image)
+
 
 	def save_photo_normal(self):
 		# domyslny zapis zdjecia pod skrótem ctrl+s
