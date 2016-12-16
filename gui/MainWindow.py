@@ -128,8 +128,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 		self.actionNew = QtGui.QAction(MainWindow)
 		self.actionNew.setObjectName(_fromUtf8("actionNew"))
-		self.actionNew.setObjectName("actionNew")   
 		self.actionNew.setShortcut('Ctrl+N')
+		self.actionNew.triggered.connect(self.auto_new)
 
 		self.actionG_rnoprzepustowy = QtGui.QAction(MainWindow)
 		self.actionG_rnoprzepustowy.setObjectName(_fromUtf8("actionG_rnoprzepustowy"))
@@ -151,8 +151,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionWykrywanie_kraw_dzi.setObjectName(_fromUtf8("actionWykrywanie_kraw_dzi"))
 		self.actionZaznaczanie = QtGui.QAction(MainWindow)
 		self.actionZaznaczanie.setObjectName(_fromUtf8("actionZaznaczanie"))
-		self.actionObr_t = QtGui.QAction(MainWindow)
-		self.actionObr_t.setObjectName(_fromUtf8("actionObr_t"))
+
+		self.actionRotate = QtGui.QAction(MainWindow)
+		self.actionRotate.setObjectName(_fromUtf8("actionRotate"))
+		self.actionRotate.setShortcut('Alt+R')
+		self.actionRotate.triggered.connect(self.auto_rotate)
 
 		self.actionSkalowanie = QtGui.QAction(MainWindow)
 		self.actionSkalowanie.setObjectName(_fromUtf8("actionSkalowanie"))
@@ -161,6 +164,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionFitScale.setObjectName(_fromUtf8("actionFitScale"))
 		self.actionFitScale.setShortcut('Ctrl+Alt+F')
 		self.actionFitScale.triggered.connect(self.auto_fitscale)
+
+		self.actionResize= QtGui.QAction(MainWindow)
+		self.actionResize.setObjectName(_fromUtf8("actionFitScale"))
+		self.actionResize.setShortcut('Ctrl+Alt+I')
+		self.actionResize.triggered.connect(self.auto_resize)
 
 		self.actionKadrowanie = QtGui.QAction(MainWindow)
 		self.actionKadrowanie.setObjectName(_fromUtf8("actionKadrowanie"))
@@ -174,7 +182,6 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionAutoContrast.setObjectName(_fromUtf8("actionAutoContrast"))
 		self.actionAutoContrast.setShortcut('Shift+Ctrl+Alt+L')
 		self.actionAutoContrast.triggered.connect(self.auto_contrast)
-
 
 		self.actionNasycenie = QtGui.QAction(MainWindow)
 		self.actionNasycenie.setObjectName(_fromUtf8("actionNasycenie"))
@@ -269,9 +276,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.menuFiltry.addAction(self.menuSzum.menuAction())
 		self.menuFiltry.addAction(self.menuInne.menuAction())
 		self.menuTransformacja.addAction(self.actionZaznaczanie)
-		self.menuTransformacja.addAction(self.actionObr_t)
+		self.menuTransformacja.addAction(self.actionRotate)
 		self.menuTransformacja.addAction(self.actionSkalowanie)
 		self.menuTransformacja.addAction(self.actionFitScale)
+		self.menuTransformacja.addAction(self.actionResize)
 		self.menuTransformacja.addAction(self.actionKadrowanie)
 		self.menuTransformacja.addAction(self.actionDeleteBorder)
 		self.menuTransformacja.addAction(self.actionAddFrame)
@@ -325,9 +333,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionDolnoprzepustowy_2.setText(_translate("MainWindow", "Dolnoprzepustowy", None))
 		self.actionWykrywanie_kraw_dzi.setText(_translate("MainWindow", "Wykrywanie krawędzi", None))
 		self.actionZaznaczanie.setText(_translate("MainWindow", "Zaznaczanie", None))
-		self.actionObr_t.setText(_translate("MainWindow", "Obrót", None))
+		self.actionRotate.setText(_translate("MainWindow", "Obrót", None))
 		self.actionSkalowanie.setText(_translate("MainWindow", "Skalowanie", None))
 		self.actionFitScale.setText(_translate("MainWindow", "Skaluj i dopasuj", None))
+		self.actionResize.setText(_translate("MainWindow", "Zmiana rozmiaru", None))
 		self.actionKadrowanie.setText(_translate("MainWindow", "Kadrowanie", None))
 		self.actionJasno.setText(_translate("MainWindow", "Jasność", None))
 		self.actionKontrast.setText(_translate("MainWindow", "Kontrast", None))
@@ -427,6 +436,21 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 	def auto_fitscale(self):
 		self.imgPreProc.auto_fitscale()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_rotate(self):
+		self.imgPreProc.auto_rotate()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_resize(self):
+		self.imgPreProc.auto_resize()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_new(self):
+		self.imgPreProc.auto_new()
 		self.org_image.repaint()
 		self.refresh_all()
 
