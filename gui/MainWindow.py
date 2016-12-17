@@ -18,12 +18,18 @@ except AttributeError:
 	def _translate(context, text, disambig):
 		return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_MainWindow(QtGui.QMainWindow):
+class Ui_MainWindow(QtGui.QWidget):
 
 	def __init__(self):
 		super(Ui_MainWindow, self).__init__()
 		self.imgPreProc = ImagePreProcessor()
 
+	def mousePressEvent(self, QMouseEvent):
+		print (QMouseEvent.pos())
+
+	def mouseReleaseEvent(self, QMouseEvent):
+		cursor =QtGui.QCursor()
+		print (cursor.pos()       ) 
 
 	def setupUi(self, MainWindow):
 
@@ -172,8 +178,16 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 		self.actionKadrowanie = QtGui.QAction(MainWindow)
 		self.actionKadrowanie.setObjectName(_fromUtf8("actionKadrowanie"))
-		self.actionJasno = QtGui.QAction(MainWindow)
-		self.actionJasno.setObjectName(_fromUtf8("actionJasno"))
+
+		self.actionBrightness = QtGui.QAction(MainWindow)
+		self.actionBrightness.setObjectName(_fromUtf8("actionBrightness"))
+		self.actionBrightness.setShortcut('Alt+B')
+		self.actionBrightness.triggered.connect(self.auto_brightness)
+
+		self.actionColorBalance = QtGui.QAction(MainWindow)
+		self.actionColorBalance.setObjectName(_fromUtf8("actionColorBalance"))
+		self.actionColorBalance.setShortcut('Alt+C')
+		self.actionColorBalance.triggered.connect(self.auto_colorbalance)
 
 		self.actionKontrast = QtGui.QAction(MainWindow)
 		self.actionKontrast.setObjectName(_fromUtf8("actionKontrast"))
@@ -225,7 +239,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 		self.actionDeleteBorder = QtGui.QAction(MainWindow)
 		self.actionDeleteBorder.setObjectName(_fromUtf8("actionDeleteBorder"))
-		self.actionDeleteBorder.setShortcut('Alt+B')
+		self.actionDeleteBorder.setShortcut('Ctrl+Alt+B')
 		self.actionDeleteBorder.triggered.connect(self.auto_delete_border)
 
 		self.actionProgowanie = QtGui.QAction(MainWindow)
@@ -243,8 +257,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionAddFrame.setShortcut('Alt+F')
 		self.actionAddFrame.triggered.connect(self.auto_add_color_border)
 
-		self.actionTekst = QtGui.QAction(MainWindow)
-		self.actionTekst.setObjectName(_fromUtf8("actionTekst"))
+		self.actionText = QtGui.QAction(MainWindow)
+		self.actionText.setObjectName(_fromUtf8("actionText"))
+		self.actionText.setShortcut('Alt+T')
+		self.actionText.triggered.connect(self.auto_add_text)
+
 		self.actionKolor = QtGui.QAction(MainWindow)
 		self.actionKolor.setObjectName(_fromUtf8("actionKolor"))
 		self.actionWype_nianie = QtGui.QAction(MainWindow)
@@ -285,13 +302,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.menuTransformacja.addAction(self.actionAddFrame)
 		self.menuHistogram.addAction(self.actionPodgl_d)
 		self.menuHistogram.addAction(self.actionEqualizeHistogram)
-		self.menuDopasowania.addAction(self.actionJasno)
+		self.menuDopasowania.addAction(self.actionBrightness)
 		self.menuDopasowania.addAction(self.actionKontrast)
 		self.menuDopasowania.addAction(self.actionAutoContrast)
 		self.menuDopasowania.addAction(self.actionNasycenie)
 		self.menuDopasowania.addAction(self.actionGamma)
 		self.menuDopasowania.addAction(self.actionInverseColors)
 		self.menuDopasowania.addAction(self.actionGrayScale)
+		self.menuDopasowania.addAction(self.actionColorBalance)
 		self.menuDopasowania.addAction(self.actionFlip)
 		self.menuDopasowania.addAction(self.actionMirrorEffect)
 		self.menuDopasowania.addAction(self.actionPosterize)
@@ -300,7 +318,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.menuDopasowania.addAction(self.actionColorize)
 		self.menuDopasowania.addAction(self.actionKolor)
 		self.menuDopasowania.addAction(self.actionWype_nianie)
-		self.menuWstawianie.addAction(self.actionTekst)
+		self.menuWstawianie.addAction(self.actionText)
 		self.menubar.addAction(self.menuPlik.menuAction())
 		self.menubar.addAction(self.menuFiltry.menuAction())
 		self.menubar.addAction(self.menuTransformacja.menuAction())
@@ -338,11 +356,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionFitScale.setText(_translate("MainWindow", "Skaluj i dopasuj", None))
 		self.actionResize.setText(_translate("MainWindow", "Zmiana rozmiaru", None))
 		self.actionKadrowanie.setText(_translate("MainWindow", "Kadrowanie", None))
-		self.actionJasno.setText(_translate("MainWindow", "Jasność", None))
+		self.actionBrightness.setText(_translate("MainWindow", "Jasność", None))
 		self.actionKontrast.setText(_translate("MainWindow", "Kontrast", None))
 		self.actionAutoContrast.setText(_translate("MainWindow","Auto Kontrast", None))
 		self.actionNasycenie.setText(_translate("MainWindow", "Nasycenie", None))
 		self.actionFlip.setText(_translate("MainWindow", "Przerzuć", None))
+		self.actionColorBalance.setText(_translate("MainWindow","Balans kolorów", None))
 		self.actionGamma.setText(_translate("MainWindow", "Gamma", None))
 		self.actionInverseColors.setText(_translate("MainWindow", "Odwróć kolory", None))
 		self.actionGrayScale.setText(_translate("MainWidndow","Skala Szarości", None))
@@ -355,7 +374,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.actionAddFrame.setText(_translate("MainWindow", "Dodaj kolorową ramkę", None))
 		self.actionPodgl_d.setText(_translate("MainWindow", "Podgląd", None))
 		self.actionEqualizeHistogram.setText(_translate("MainWindow", "Wyrównanie (Normalizacja)", None))
-		self.actionTekst.setText(_translate("MainWindow", "Tekst", None))
+		self.actionText.setText(_translate("MainWindow", "Tekst", None))
 		self.actionKolor.setText(_translate("MainWindow", "Kolor (Pipeta)", None))
 		self.actionWype_nianie.setText(_translate("MainWindow", "Wypełnianie", None))
 		self.actionSave.setText(_translate("MainWindow", "Zapisz", None))
@@ -449,8 +468,23 @@ class Ui_MainWindow(QtGui.QMainWindow):
 		self.org_image.repaint()
 		self.refresh_all()
 
+	def auto_brightness(self):
+		self.imgPreProc.auto_brightness()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_colorbalance(self):
+		self.imgPreProc.auto_colorbalance()
+		self.org_image.repaint()
+		self.refresh_all()
+
 	def auto_new(self):
 		self.imgPreProc.auto_new()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def auto_add_text(self):
+		self.imgPreProc.auto_add_text()
 		self.org_image.repaint()
 		self.refresh_all()
 
@@ -481,13 +515,39 @@ class Ui_MainWindow(QtGui.QMainWindow):
 			# self.open(filename) - ma zapisac
 			msg = QtGui.QMessageBox.question(None, 'Ścieżka zapisu', "Nie wskazano miejsca zapisu",QtGui.QMessageBox.Ok)
 
+	def mouse_get_but_pos_stop(self,event):
+		if event.buttons() == QtCore.Qt.LeftButton:
+				pos = event.pos()
+				self.imgPreProc.set_mouse_pos((pos.x(), pos.y()))
+				print('x: %d, y: %d' % (self.imgPreProc.get_mouse_pos()[0], self.imgPreProc.get_mouse_pos()[1]))
 
+		elif event.buttons() == QtCore.Qt.RightButton:
+				pos = event.pos()
+				# zrobić coś po rightclicku 
+				# self.imgPreProc.set_mouse_pos((pos.x(), pos.y()))
+				# print('x: %d, y: %d' % (self.imgPreProc.get_mouse_pos()[0], self.imgPreProc.get_mouse_pos()[1]))
 
+	def eventFilter(self, source, event):
+		# dorobić coś na ruch muszy
+		if event.type() == QtCore.QEvent.MouseMove:
+			if event.buttons() == QtCore.Qt.LeftButton:
+				pos = event.pos()
+				# print('rx: %d, ry: %d' % (pos.x(), pos.y()))
+			elif event.buttons() == QtCore.Qt.RightButton:
+				pos = event.pos()
+				# print('rx: %d, ry: %d' % (pos.x(), pos.y()))
+		if event.type() == QEvent.MouseButtonPress:
+			self.mouse_get_but_pos_stop(event)
+		return QtGui.QMainWindow.eventFilter(self, source, event)
+
+	
+	
 if __name__ == "__main__":
 	import sys
 	app = QtGui.QApplication(sys.argv)
 	MainWindow = QtGui.QMainWindow()
 	ui = Ui_MainWindow()
 	ui.setupUi(MainWindow)
+	app.installEventFilter(ui)
 	MainWindow.show()
 	sys.exit(app.exec_())
