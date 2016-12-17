@@ -1,6 +1,6 @@
 import sys
 from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt4.QtCore import *	
 
 #  mozna zmienic na QWidget
 class Modal(QDialog):
@@ -24,11 +24,17 @@ class Modal(QDialog):
 		self.width_label = QLabel("Szerokość ", parent)
 		self.width_tf = QLineEdit()
 		self.height_tf = QLineEdit()
+		self.text_tf = QLineEdit()
+		self.text_label = QLabel("", parent)
 		self.height_label = QLabel("Wysokość ", parent)
 
 	def init_color_picker(self):
 		self.colorpicker_color = QColorDialog.getColor(Qt.white,self, "Wybierz odcień bieli" if self.colorpicker_state else "Wybierz odcień czerni").getRgb()
 		self.colorpicker_state = not self.colorpicker_state 
+		return self.colorpicker_color
+
+	def init_color_picker_mode(self, title):
+		self.colorpicker_color = QColorDialog.getColor(Qt.white,self, title).getRgb()
 		return self.colorpicker_color
 
 	def init_modal(self, min_label, max_label, min_slider, max_slider, ticks_slider, title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
@@ -82,6 +88,21 @@ class Modal(QDialog):
 		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
 		self.setWindowTitle(title)
 
+	def init_text_modal(self, title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
+		self.label_layout.addWidget(self.text_label)
+		self.label_layout.addWidget(self.text_tf)
+		self.layout.addLayout(self.label_layout)
+
+		self.button_confirm.released.connect(self.button_text_confirm_exit)
+		self.button_cancel.released.connect(self.button_cancel_exit)
+		self.add_widgets_to_buttons()
+
+		self.layout.addLayout(self.buttons_layout)
+		self.setLayout(self.layout)
+		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
+		self.setWindowTitle(title)
+
+
 	def setup_buttons(self):
 		self.button_confirm.released.connect(self.button_confirm_exit)
 		self.button_cancel.released.connect(self.button_cancel_exit)
@@ -117,3 +138,8 @@ class Modal(QDialog):
 
 	def button_cancel_exit(self):
 		self.close()
+
+	def button_text_confirm_exit(self):
+		# print("modak "+str(self.slider_value))
+		self.close()
+		return self.text_tf.text()
