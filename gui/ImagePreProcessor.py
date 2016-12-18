@@ -1,6 +1,7 @@
 from PIL import ImageFile
 from PIL import Image
 from PIL import ImageEnhance
+from PIL import ImageFilter
 import PIL.ImageOps
 import PIL.ImageDraw
 import PIL.ImageFont
@@ -34,6 +35,12 @@ class ImagePreProcessor(object):
 		self.input_text = ""
 		self.drawer = None
 		self.font = None
+		self.gaussian_radius = 0
+		self.modalfilter_size = 0
+		self.minfilter_size = 0
+		self.maxfilter_size = 0
+		self.medianfilter_size = 0
+		self.rankfilter_size = 0
 
 	def set_mouse_pos(self, pos):
 		self.mouse_pos = (pos[0], pos[1])
@@ -204,6 +211,11 @@ class ImagePreProcessor(object):
 			# print(self.brightness_mod_value)
 			self.loadImageFromPIX(self.image)
 
+	def auto_filter(self, selected_filter):
+		filtered_img = self.image.filter(selected_filter)
+		self.image = filtered_img
+		self.loadImageFromPIX(self.image)
+
 	def auto_add_text(self):
 		# poprawić dodawanie tekstu - zdjecie ma byc w trybie rgba
 		self.modal_window = Modal()
@@ -219,6 +231,72 @@ class ImagePreProcessor(object):
 			self.drawer.text((self.mouse_pos[0],self.mouse_pos[1]), self.input_text, font=self.font, fill= text_color)
 			tmp_out = Image.alpha_composite(self.image, txt)
 			self.image = tmp_out
+			self.loadImageFromPIX(self.image)
+
+	def auto_gaussianblur(self):
+		self.modal_window = Modal("Promień rozmycia: ")
+		self.modal_window.init_modal(0,10,0,10,1,"Rozmycie Gaussa")
+		self.modal_window.set_slider(0,10,self.gaussian_radius,10)
+		if self.modal_window.exec_() == False:
+			self.gaussian_radius  = self.modal_window.button_confirm_exit()
+			gaussianblurred_img =self.image.filter(ImageFilter.GaussianBlur(self.gaussian_radius))
+			self.image = gaussianblurred_img
+			self.loadImageFromPIX(self.image)
+
+	def auto_unsharpmask(self):
+		pass
+
+	def auto_kernel(self):
+		pass
+
+	def auto_rankfilter(self):
+		self.modal_window = Modal("Rozmiar rozmycia: ")
+		self.modal_window.init_modal(1,15,1,15,2,"Filtr rankingowy")
+		self.modal_window.set_slider(1,15,self.rankfilter_size,2)
+		if self.modal_window.exec_() == False:
+			self.rankfilter_size  = self.modal_window.button_confirm_exit()
+			rank_img = self.image.filter(ImageFilter.RankFilter(self.rankfilter_size,int(self.rankfilter_size*self.rankfilter_size/2)))
+			self.image = rank_img
+			self.loadImageFromPIX(self.image)
+
+	def auto_medianfilter(self):
+		self.modal_window = Modal("Rozmiar rozmycia: ")
+		self.modal_window.init_modal(1,15,1,15,2,"Filtr medianowy")
+		self.modal_window.set_slider(1,15,self.medianfilter_size,2)
+		if self.modal_window.exec_() == False:
+			self.medianfilter_size  = self.modal_window.button_confirm_exit()
+			median_img = self.image.filter(ImageFilter.MedianFilter(self.medianfilter_size))
+			self.image = median_img
+			self.loadImageFromPIX(self.image)
+		
+	def auto_minfilter(self):
+		self.modal_window = Modal("Rozmiar rozmycia: ")
+		self.modal_window.init_modal(1,15,1,15,2,"Filtr minimalny")
+		self.modal_window.set_slider(1,15,self.minfilter_size,2)
+		if self.modal_window.exec_() == False:
+			self.minfilter_size  = self.modal_window.button_confirm_exit()
+			minfilter_img = self.image.filter(ImageFilter.MinFilter(self.minfilter_size))
+			self.image = minfilter_img
+			self.loadImageFromPIX(self.image)
+
+	def auto_maxfilter(self):
+		self.modal_window = Modal("Rozmiar rozmycia: ")
+		self.modal_window.init_modal(1,15,1,15,2,"Filtr maksymalny")
+		self.modal_window.set_slider(1,15,self.maxfilter_size,2)
+		if self.modal_window.exec_() == False:
+			self.maxfilter_size  = self.modal_window.button_confirm_exit()
+			maxfilter_img = self.image.filter(ImageFilter.MaxFilter(self.maxfilter_size))
+			self.image = maxfilter_img
+			self.loadImageFromPIX(self.image)
+
+	def auto_modefilter(self):
+		self.modal_window = Modal("Rozmiar rozmycia: ")
+		self.modal_window.init_modal(0,10,0,10,1,"Filtr modalny")
+		self.modal_window.set_slider(0,10,self.modalfilter_size,10)
+		if self.modal_window.exec_() == False:
+			self.modalfilter_size  = self.modal_window.button_confirm_exit()
+			modalfilter_img =self.image.filter(ImageFilter.ModeFilter(self.modalfilter_size))
+			self.image = modalfilter_img
 			self.loadImageFromPIX(self.image)
 
 	def save_photo_normal(self):
