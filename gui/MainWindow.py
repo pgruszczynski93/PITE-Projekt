@@ -105,6 +105,8 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuSzum = QtGui.QMenu(self.menuFilters)
 		self.menuSzum.setObjectName(_fromUtf8("menuSzum"))
 		self.menuBluring = QtGui.QMenu(self.menuFilters)
+		self.menuSharpening = QtGui.QMenu(self.menuFilters)
+		self.menuSharpening.setObjectName(_fromUtf8("menuSharpening"))
 		self.menuBluring.setObjectName(_fromUtf8("menuBluring"))
 		self.menuSmoothing = QtGui.QMenu(self.menuFilters)
 		self.menuSmoothing.setObjectName(_fromUtf8("menuSmoothing"))
@@ -375,7 +377,8 @@ class Ui_MainWindow(QtGui.QWidget):
 #########################3
 #########################3
 #########################3
-		self.menuFilters.addAction(self.actionSharpen)
+		self.menuSharpening.addAction(self.actionSharpen)
+		self.menuFilters.addAction(self.menuSharpening.menuAction())
 		# self.menuFilters.addAction(self.actionSharpen)
 		self.menuFilters.addAction(self.menuBluring.menuAction())
 		# self.menuFilters.addAction(self.actionBluring)
@@ -391,19 +394,17 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuSmoothing.addAction(self.actionSmoothMore)
 		self.menuBluring.addAction(self.actionBluring)
 		self.menuBluring.addAction(self.actionGaussianBlur)
-		self.menuBluring.addAction(self.actionUnsharpMask)
-		self.menuBluring.addAction(self.actionKernel)
+		self.menuSharpening.addAction(self.actionUnsharpMask)
 		self.menuBluring.addAction(self.actionRankFilter)
 		self.menuBluring.addAction(self.actionMedianFilter)
 		self.menuBluring.addAction(self.actionMinFilter)
 		self.menuBluring.addAction(self.actionMaxFilter)
 		self.menuBluring.addAction(self.actionModeFilter)
-
-
 		# self.menuEdgeDetection.addAction(self.actionEdgeDetection)
 		self.menuFilters.addAction(self.menuSzum.menuAction())
 		self.menuFilters.addAction(self.menuInne.menuAction())
-		self.menuFilters.addAction(self.menuInne.menuAction())
+		self.menuFilters.addAction(self.actionKernel)
+		
 		# self.menuFilters.addAction(self.menuEdgeDetection.menuAction())
 
 #########################3
@@ -469,6 +470,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuEdgeDetection.setTitle(_translate("MainWindow", "Filtry krawędziowe", None))
 		self.menuSmoothing.setTitle(_translate("MainWindow", "Wygładzanie", None))
 		self.menuBluring.setTitle(_translate("MainWindow", "Rozmycie", None))
+		self.menuSharpening.setTitle(_translate("MainWindow", "Wyostrzanie", None))
 		self.actionZaznaczanie.setText(_translate("MainWindow", "Zaznaczanie", None))
 		self.actionRotate.setText(_translate("MainWindow", "Obrót", None))
 		self.actionSkalowanie.setText(_translate("MainWindow", "Skalowanie", None))
@@ -499,7 +501,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionSmoothMore.setText(_translate("MainWidndow","Mocniejsze wygładzanie", None))
 		self.actionGaussianBlur.setText(_translate("MainWidndow","Rozmycie Gaussa", None))
 		self.actionUnsharpMask.setText(_translate("MainWidndow","Maska wyostrzająca", None))
-		self.actionKernel.setText(_translate("MainWidndow","Filtr splotowy", None))
+		self.actionKernel.setText(_translate("MainWidndow","Własny filtr splotowy", None))
 		self.actionRankFilter.setText(_translate("MainWidndow","Filtr rankingowy", None))
 		self.actionMedianFilter.setText(_translate("MainWidndow","Filtr medianowy", None))
 		self.actionMinFilter.setText(_translate("MainWidndow","Filtr minimum", None))
