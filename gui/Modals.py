@@ -27,6 +27,13 @@ class Modal(QDialog):
 		self.text_tf = QLineEdit()
 		self.text_label = QLabel("", parent)
 		self.height_label = QLabel("Wysokość ", parent)
+		self.gridlayout = QGridLayout()
+
+		# potrzebne do unsharp masking - przemyslec inne rozwiazanie
+		self.texts = ["Promień: ","Procent (%): ","Próg: "]
+		self.labels = [QLabel(self.texts[0], None), QLabel(self.texts[1], None), QLabel(self.texts[2], None)]
+		self.sliders = [QSlider(Qt.Horizontal), QSlider(Qt.Horizontal), QSlider(Qt.Horizontal)]
+		self.val_labels = [(QLabel("0", None), QLabel("10",None)),(QLabel("0", None), QLabel("200",None)),(QLabel("0", None), QLabel("10",None))]
 
 	def init_color_picker(self):
 		self.colorpicker_color = QColorDialog.getColor(Qt.white,self, "Wybierz odcień bieli" if self.colorpicker_state else "Wybierz odcień czerni").getRgb()
@@ -102,6 +109,71 @@ class Modal(QDialog):
 		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
 		self.setWindowTitle(title)
 
+	def init_unsharp_mask(self,title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
+
+		i = 0
+		for j in range(0,6,2):
+			self.gridlayout.addWidget(self.val_labels[i][0], j+1,0)
+			self.gridlayout.addWidget(self.labels[i], j,1)
+			self.gridlayout.addWidget(self.val_labels[i][1], j+1,2)
+			self.gridlayout.addWidget(self.sliders[i], j+1 ,1)
+			self.labels[i].setAlignment(Qt.AlignCenter| Qt.AlignHCenter)
+			self.val_labels[i][0].setAlignment(Qt.AlignCenter| Qt.AlignHCenter)
+			self.val_labels[i][1].setAlignment(Qt.AlignCenter| Qt.AlignHCenter)
+			
+			i+=1
+
+		self.sliders[0].setMinimum(0)
+		self.sliders[0].setMaximum(10)
+		self.sliders[0].setValue(0)
+		self.sliders[0].setTickInterval(1)
+		self.sliders[1].setMinimum(0)
+		self.sliders[1].setMaximum(200)
+		self.sliders[1].setValue(0)
+		self.sliders[1].setTickInterval(0)
+		self.sliders[2].setMinimum(0)
+		self.sliders[2].setMaximum(10)
+		self.sliders[2].setValue(0)
+		self.sliders[2].setTickInterval(1)
+
+		# for k in range(3): - nie wiem czemu jak robie to identycznie w petli to nie dziala ;P inaczej lambda tylko dl aost wyrazenia
+		# for k in range(3):
+		self.sliders[0].valueChanged.connect(lambda: self.change_label_value(self.labels[0],self.texts[0],self.sliders[0].value()))
+		self.sliders[1].valueChanged.connect(lambda: self.change_label_value(self.labels[1],self.texts[1],self.sliders[1].value()))
+		self.sliders[2].valueChanged.connect(lambda: self.change_label_value(self.labels[2],self.texts[2],self.sliders[2].value()))
+
+		self.gridlayout.addWidget(self.button_confirm,6,0)
+		self.gridlayout.addWidget(self.button_cancel,6,2)
+
+		self.button_confirm.released.connect(lambda: self.button_unsharpmasking_confirm())
+		self.button_cancel.released.connect(self.button_cancel_exit)
+
+		self.layout.addLayout(self.gridlayout)
+		self.setLayout(self.layout)
+		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
+		self.setWindowTitle(title)
+
+	def change_label_value(self,label,text, value):
+		label.setText(text+str(value))
+
+	def set_unsharp_sliders(self, values):
+		for i, value in enumerate(values):
+			self.sliders[i].setValue(value)
+		# sliders.setMinimum(s_min)
+		# sliders.setMaximum(s_max)
+		# sliders.setValue(s_current)
+		# sliders.setTickInterval(s_tick)
+
+	def get_sliders_values(*values):
+		pass
+
+	def button_unsharpmasking_confirm(self):
+		self.close()
+		return (self.sliders[0].value(),self.sliders[1].value(),self.sliders[2].value())
+
+		#todoo layter
+	def fill_grid_layout(self, size, *args):
+		pass
 
 	def setup_buttons(self):
 		self.button_confirm.released.connect(self.button_confirm_exit)

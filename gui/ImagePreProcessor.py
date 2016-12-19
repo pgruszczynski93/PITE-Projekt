@@ -41,6 +41,7 @@ class ImagePreProcessor(object):
 		self.maxfilter_size = 0
 		self.medianfilter_size = 0
 		self.rankfilter_size = 0
+		self.unsharp_mod_values = ()
 
 	def set_mouse_pos(self, pos):
 		self.mouse_pos = (pos[0], pos[1])
@@ -244,7 +245,16 @@ class ImagePreProcessor(object):
 			self.loadImageFromPIX(self.image)
 
 	def auto_unsharpmask(self):
-		pass
+		self.modal_window = Modal()
+		self.modal_window.init_unsharp_mask("Maska wyostrzająca")
+		self.modal_window.set_unsharp_sliders(self.unsharp_mod_values)
+		if self.modal_window.exec_() == False:
+			self.unsharp_mod_values  = self.modal_window.button_unsharpmasking_confirm()
+			# print(self.unsharp_mod_values)
+			unsharp_img =self.image.filter(ImageFilter.UnsharpMask(self.unsharp_mod_values[0],self.unsharp_mod_values[1],self.unsharp_mod_values[2]))
+			self.image = unsharp_img
+			self.loadImageFromPIX(self.image)
+
 
 	def auto_kernel(self):
 		pass
