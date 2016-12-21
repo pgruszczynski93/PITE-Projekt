@@ -42,6 +42,7 @@ class ImagePreProcessor(object):
 		self.medianfilter_size = 0
 		self.rankfilter_size = 0
 		self.unsharp_mod_values = ()
+		self.kernel_vals = ()
 
 	def set_mouse_pos(self, pos):
 		self.mouse_pos = (pos[0], pos[1])
@@ -257,7 +258,15 @@ class ImagePreProcessor(object):
 
 
 	def auto_kernel(self):
-		pass
+		self.modal_window = Modal()
+		self.modal_window.init_combobox_ownmask("Zdefiniuj maskę")
+		if self.modal_window.exec_() == False:
+			self.kernel_vals  = self.modal_window.button_ownmask_confirm()
+			kernel_img =self.image.filter(ImageFilter.Kernel(self.kernel_vals[0], self.kernel_vals[1]))
+			# kernel_img =self.image.filter(ImageFilter.Kernel(self.kernel_vals[0], [0,-1,0,-1,5,-1,0,-1,0]))
+			print(self.kernel_vals[0], self.kernel_vals[1], type(self.kernel_vals[1][1]))
+			self.image = kernel_img
+			self.loadImageFromPIX(self.image)
 
 	def auto_rankfilter(self):
 		self.modal_window = Modal("Rozmiar rozmycia: ")

@@ -34,11 +34,64 @@ class Modal(QDialog):
 		self.labels = [QLabel(self.texts[0], None), QLabel(self.texts[1], None), QLabel(self.texts[2], None)]
 		self.sliders = [QSlider(Qt.Horizontal), QSlider(Qt.Horizontal), QSlider(Qt.Horizontal)]
 		self.val_labels = [(QLabel("0", None), QLabel("10",None)),(QLabel("0", None), QLabel("200",None)),(QLabel("0", None), QLabel("10",None))]
+		self.own_mask = []
+		self.own_mask_values = []
+		self.own_mask_layout = QGridLayout()
+		self.item_list = QComboBox()
+		self.user_kernel_size = 0;
 
 	def init_color_picker(self):
 		self.colorpicker_color = QColorDialog.getColor(Qt.white,self, "Wybierz odcień bieli" if self.colorpicker_state else "Wybierz odcień czerni").getRgb()
 		self.colorpicker_state = not self.colorpicker_state 
 		return self.colorpicker_color
+
+	def init_combobox_ownmask(self,title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
+		self.item_list.addItem("Rozmiar maski")
+		self.item_list.addItem("Maska 3x3")
+		self.item_list.addItem("Maska 5x5")
+		self.layout.addWidget(self.item_list)
+
+		# self.init_own_mask_modal(size,title)
+		# !!!!!!!!!!!!!!!!!!!!!!!!POPRAWIC GENEROWNAIE TEGO OKNA W ZALEZNOSCI OD WYBORU!!!!!!!!!!!!!!!!!}
+		self.user_kernel_size = (3 if self.item_list.currentText() == "Maska 3x3" else 5 if self.item_list.currentText() == "Maska 5x5" else 0)
+		self.user_kernel_size = 3 #tymczasowo!!!!!!!!!!!!!!!
+		self.item_list.currentIndexChanged[str].connect(lambda: self.init_own_mask_modal(3,title))
+		# print("sasa %d"%size)
+		# !!!!!!!!!!!!!!!!!!!!!!!!POPRAWIC GENEROWNAIE TEGO OKNA W ZALEZNOSCI OD WYBORU!!!!!!!!!!!!!!!!!}
+		# !!!!!!!!!!!!!!!!!!!!!!!!POPRAWIC GENEROWNAIE TEGO OKNA W ZALEZNOSCI OD WYBORU!!!!!!!!!!!!!!!!!}
+		# !!!!!!!!!!!!!!!!!!!!!!!!POPRAWIC GENEROWNAIE TEGO OKNA W ZALEZNOSCI OD WYBORU!!!!!!!!!!!!!!!!!}
+
+		self.setLayout(self.layout)
+		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
+		self.setWindowTitle(title)
+
+	def init_own_mask_modal(self, size,  title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
+		if size:
+			for i in range(size*size) :
+				self.own_mask.append(QLineEdit())
+
+			# for i, value in enumerate(values):
+				# self.sliders[i].setValue(value)
+			for i in range(size):
+				for j in range(size):
+					self.own_mask_layout.addWidget(self.own_mask[i*size+j],i,j)
+					self.own_mask[i*size+j].setValidator(QIntValidator())
+					# print(i*size+j)
+
+			self.layout.addLayout(self.own_mask_layout)
+
+			self.button_confirm.released.connect(self.button_ownmask_confirm)
+			self.button_cancel.released.connect(self.button_cancel_exit)
+			self.add_widgets_to_buttons()
+
+			self.layout.addLayout(self.buttons_layout)
+			self.setLayout(self.layout)
+			self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
+			self.setWindowTitle(title)
+
+	def button_ownmask_confirm(self):
+		self.close()
+		return ((self.user_kernel_size,self.user_kernel_size), [int(textfield.text()) for textfield in self.own_mask])
 
 	def init_color_picker_mode(self, title):
 		self.colorpicker_color = QColorDialog.getColor(Qt.white,self, title).getRgb()
