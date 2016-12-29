@@ -322,7 +322,7 @@ class ImagePreProcessor(object):
 	def pre_treshold(self):
 		self.modal_window = Modal("Próg: ")
 		self.modal_window.init_modal(0,255,0,255,1,"Progowanie")
-		self.modal_window.set_slider(0,255,self.rotate_mod_angle,1)
+		self.modal_window.set_slider(0,255,self.treshold_value,1)
 		if self.modal_window.exec_() == False:
 			self.treshold_value = self.modal_window.button_confirm_exit()
 			self.image = self.treshold(self.treshold_value)
