@@ -43,6 +43,7 @@ class ImagePreProcessor(object):
 		self.rankfilter_size = 0
 		self.unsharp_mod_values = ()
 		self.kernel_vals = ()
+		self.treshold_value = 0
 
 	def set_mouse_pos(self, pos):
 		self.mouse_pos = (pos[0], pos[1])
@@ -317,6 +318,29 @@ class ImagePreProcessor(object):
 			modalfilter_img =self.image.filter(ImageFilter.ModeFilter(self.modalfilter_size))
 			self.image = modalfilter_img
 			self.loadImageFromPIX(self.image)
+
+	def pre_treshold(self):
+		self.modal_window = Modal("Próg: ")
+		self.modal_window.init_modal(0,255,0,255,1,"Progowanie")
+		self.modal_window.set_slider(0,255,self.rotate_mod_angle,1)
+		if self.modal_window.exec_() == False:
+			self.treshold_value = self.modal_window.button_confirm_exit()
+			self.image = self.treshold(self.treshold_value)
+			self.loadImageFromPIX(self.image)
+
+	def treshold(self, value):
+		copy = self.image.copy()
+		tup_value = (value,value,value)
+		white = (255,255,255)
+		black = (0,0,0)
+		for w in range(self.width):
+			for h in range(self.height):
+				if(self.image.getpixel((w,h))>tup_value):
+					copy.putpixel((w,h),white)
+				else:
+					copy.putpixel((w,h),black)
+		return copy
+		
 
 	def save_photo_normal(self):
 		# domyslny zapis zdjecia pod skrótem ctrl+s
