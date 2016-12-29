@@ -327,8 +327,9 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionDeleteBorder.setShortcut('Ctrl+Alt+B')
 		self.actionDeleteBorder.triggered.connect(self.auto_delete_border)
 
-		self.actionProgowanie = QtGui.QAction(MainWindow)
-		self.actionProgowanie.setObjectName(_fromUtf8("actionProgowanie"))
+		self.actionTreshold = QtGui.QAction(MainWindow)
+		self.actionTreshold.setObjectName(_fromUtf8("actionTreshold"))
+		self.actionTreshold.triggered.connect(self.treshold)
 		self.actionPodgl_d = QtGui.QAction(MainWindow)
 		self.actionPodgl_d.setObjectName(_fromUtf8("actionPodgl_d"))
 
@@ -372,7 +373,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuSzum.addAction(self.actionZaszumianie)
 		self.menuInne.addAction(self.actionG_rnoprzepustowy_2)
 		self.menuInne.addAction(self.actionDolnoprzepustowy_2)
-		self.menuInne.addAction(self.actionProgowanie)
+		self.menuInne.addAction(self.actionTreshold)
 
 #########################3
 #########################3
@@ -510,7 +511,7 @@ class Ui_MainWindow(QtGui.QWidget):
 
 		self.menuEdgeDetection.addAction(self.actionFindEdges)
 		self.actionSolarize.setText(_translate("MainWidndow","Solaryzacja", None))
-		self.actionProgowanie.setText(_translate("MainWindow", "Progowanie", None))
+		self.actionTreshold.setText(_translate("MainWindow", "Progowanie", None))
 		self.actionAddFrame.setText(_translate("MainWindow", "Dodaj kolorową ramkę", None))
 		self.actionPodgl_d.setText(_translate("MainWindow", "Podgląd", None))
 		self.actionEqualizeHistogram.setText(_translate("MainWindow", "Wyrównanie (Normalizacja)", None))
@@ -676,6 +677,11 @@ class Ui_MainWindow(QtGui.QWidget):
 
 	def auto_gaussianblur(self):
 		self.imgPreProc.auto_gaussianblur()
+		self.org_image.repaint()
+		self.refresh_all()
+
+	def treshold(self):
+		self.imgPreProc.pre_treshold()
 		self.org_image.repaint()
 		self.refresh_all()
 
