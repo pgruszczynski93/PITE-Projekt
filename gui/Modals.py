@@ -37,6 +37,8 @@ class Modal(QDialog):
 		self.width_tf = QLineEdit()
 		self.height_tf = QLineEdit()
 		self.text_tf = QLineEdit()
+		self.size_tf = QLineEdit()
+		self.marker_color = QColor(0,0,0)
 		self.text_label = QLabel("", parent)
 		self.height_label = QLabel("Wysokość ", parent)
 		self.gridlayout = QGridLayout()
@@ -50,6 +52,8 @@ class Modal(QDialog):
 		self.own_mask_values = []
 		self.own_mask_layout = QGridLayout()
 		self.item_list = QComboBox()
+		self.item_list2 = QComboBox()
+		self.item_list3 = QComboBox()
 		self.user_kernel_size = 0;
 
 # Image do QImage
@@ -76,6 +80,9 @@ class Modal(QDialog):
 		self.colorpicker_color = QColorDialog.getColor(Qt.white,self, "Wybierz odcień bieli" if self.colorpicker_state else "Wybierz odcień czerni").getRgb()
 		self.colorpicker_state = not self.colorpicker_state 
 		return self.colorpicker_color
+	
+	def init_marker_color_picker(self):
+		self.marker_color = QColor(QColorDialog.getColor(Qt.black,self, "Wybierz odcień markera"))
 
 	def init_combobox_ownmask(self,title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
 		self.item_list.addItem("Rozmiar maski")
@@ -217,6 +224,75 @@ class Modal(QDialog):
 		self.setLayout(self.layout)
 		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
 		self.setWindowTitle(title)
+		
+	def init_markers_modal(self, title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=400):
+
+		self.width_tf.setValidator(QIntValidator())
+		self.height_tf.setValidator(QIntValidator())
+
+		layout1 = QHBoxLayout();
+		layout2 = QHBoxLayout();
+		layout3 = QHBoxLayout();
+		layout4 = QHBoxLayout();
+		layout5 = QHBoxLayout();
+		layout6 = QHBoxLayout();
+		layout7 = QHBoxLayout();
+		layout8 = QHBoxLayout();
+		layout9 = QHBoxLayout();
+		layout10 = QHBoxLayout();
+
+		layout1.addWidget(QLabel("Pozycja:",None))
+
+		layout2.addWidget(self.width_label)
+		layout2.addWidget(self.width_tf)
+		layout2.addWidget(self.height_label)
+		layout2.addWidget(self.height_tf)
+
+		layout3.addWidget(QLabel("Kształt:",None))
+
+		self.item_list2.addItem("Kształt markera")
+		self.item_list2.addItem("Kwadrat")
+		self.item_list2.addItem("Koło")
+		self.item_list2.addItem("Krzyż")
+		layout4.addWidget(self.item_list2)
+
+		layout5.addWidget(QLabel("Rozmiar:",None))
+
+		layout6.addWidget(QLabel("Pix",None))
+		layout6.addWidget(self.size_tf)
+
+		layout7.addWidget(QLabel("Kolor:",None))
+
+		button = QPushButton("Wybierz odcień")
+		button.clicked.connect(self.init_marker_color_picker)
+		layout8.addWidget(button)		
+
+		layout9.addWidget(QLabel("Rodzaj wypełnienia:",None))
+
+		self.item_list3.addItem("Wypełnienie")
+		self.item_list3.addItem("Zewnętrzne")
+		self.item_list3.addItem("Wewnętrzne")
+		layout10.addWidget(self.item_list3)
+
+		self.layout.addLayout(layout1)
+		self.layout.addLayout(layout2)
+		self.layout.addLayout(layout3)
+		self.layout.addLayout(layout4)
+		self.layout.addLayout(layout5)
+		self.layout.addLayout(layout6)
+		self.layout.addLayout(layout7)
+		self.layout.addLayout(layout8)
+		self.layout.addLayout(layout9)
+		self.layout.addLayout(layout10)
+
+		self.button_confirm.released.connect(self.button_resize_confirm_exit)
+		self.button_cancel.released.connect(self.button_cancel_exit)
+		self.add_widgets_to_buttons()
+
+		self.layout.addLayout(self.buttons_layout)
+		self.setLayout(self.layout)
+		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
+		self.setWindowTitle(title)
 
 	def init_unsharp_mask(self,title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
 
@@ -324,4 +400,17 @@ class Modal(QDialog):
 		# print("modak "+str(self.slider_value))
 		self.close()
 		return self.text_tf.text()
+	
+	def button_marker_confirm_exit(self):
+		self.close()
+		return (self.width_tf.text(),self.height_tf.text(), self.size_tf.text(), self.item_list2.currentIndex(), \
+		self.item_list3.currentIndex(), QColor.red(self.marker_color), QColor.green(self.marker_color), QColor.blue(self.marker_color))
+	
+	def msg_box(self, text):
+		msgBox = QMessageBox()
+		msgBox.setWindowTitle("Błąd")
+		msgBox.setText(text)
+
+		msgBox.setStandardButtons(QMessageBox.Ok)
+		msgBox.exec_()
 
