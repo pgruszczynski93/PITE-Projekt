@@ -1,7 +1,3 @@
-from PIL import ImageFile
-from PIL import Image
-from PIL import ImageEnhance
-from PIL import ImageFilter
 import PIL.ImageOps
 import PIL.ImageDraw
 import PIL.ImageFont
@@ -10,11 +6,16 @@ import numpy
 import datetime
 import matplotlib
 import random
+from PIL import ImageFile
+from PIL import Image
+from PIL import ImageEnhance
+from PIL import ImageFilter
+
 from Modals import *
+from Histogram import *
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 # from datetime import datetime
-
 class ImagePreProcessor(object):
 
 	def __init__(self):
@@ -426,6 +427,22 @@ class ImagePreProcessor(object):
 			in_data = numpy.uint8(in_data)
 			self.image = Image.fromarray(in_data)
 			self.loadImageFromPIX(self.image)
+
+	# #################
+	def sample_color(self):
+		if self.mouse_pos[0] <= self.width and self.mouse_pos[1] <= self.height:
+			pix = self.image.getpixel((self.mouse_pos[0],self.mouse_pos[1]))
+			self.modal_window = Modal()
+			self.modal_window.init_color_sampler(pix, "Wartość koloru (RGB)")
+			self.modal_window.exec_()
+
+	def show_histogram(self):
+		hist = Histogram(self.image)
+		hist.create_histogram()
+		hist.draw_histogram()
+		self.modal_window = Modal()
+		self.modal_window.init_histogram_drawer(hist.get_hist_img(), "Histogram");
+		self.modal_window.exec_()
 
 	def save_photo_normal(self):
 		# domyslny zapis zdjecia pod skrótem ctrl+s

@@ -1,12 +1,24 @@
 import sys
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *	
+from ImageWidget import *
 
 #  mozna zmienic na QWidget
 class Modal(QDialog):
 	def __init__(self, window_opt="", parent = None):
 		super(Modal, self).__init__(parent)
 		self.setAttribute(Qt.WA_DeleteOnClose, False)
+		# do przerobienia po refaktoryzacji
+		# sprawdzić jak stworzyc kontenery ktore czyszcza sie po wyjsciu
+		self.sliders = []
+		self.labels2 = [] 
+		self.layouts = []
+		self.buttons = []
+		self.textfields = []
+		self.histogram = None
+		self.histogram_label = QLabel()
+		# 
+
 		self.slider = QSlider(Qt.Horizontal)
 		self.slider_value = 0
 		self.min_label = QLabel("0", parent)
@@ -40,6 +52,26 @@ class Modal(QDialog):
 		self.item_list = QComboBox()
 		self.user_kernel_size = 0;
 
+# Image do QImage
+	def pil2pixmap(self,im):
+		if im.mode == "RGB":
+			pass
+		elif im.mode == "L":
+			im = im.convert("RGBA")
+		data = im.convert("RGBA").tobytes("raw", "RGBA")
+		qim = QtGui.QImage(data, im.size[0], im.size[1], QtGui.QImage.Format_ARGB32)
+		pixmap = QtGui.QPixmap.fromImage(qim)
+		return pixmap
+
+	def init_histogram_drawer(self,histogram,title, frame_xlu=50, frame_ylu=50, frame_xrd=260, frame_yrd=100):
+		self.histogram = histogram
+		self.histogram_label.setPixmap(self.pil2pixmap(self.histogram))
+
+		self.layout.addWidget(self.histogram_label)
+		self.setLayout(self.layout)
+		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
+		self.setWindowTitle(title)
+
 	def init_color_picker(self):
 		self.colorpicker_color = QColorDialog.getColor(Qt.white,self, "Wybierz odcień bieli" if self.colorpicker_state else "Wybierz odcień czerni").getRgb()
 		self.colorpicker_state = not self.colorpicker_state 
@@ -64,6 +96,30 @@ class Modal(QDialog):
 		self.setLayout(self.layout)
 		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
 		self.setWindowTitle(title)
+
+	def init_color_sampler(self, pixel, title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
+		
+		self.create_labels(4, "Wartość koloru: ", "R:", "G:","B: ")
+		self.set_labels_2(pixel, "R: "+str(pixel[0]), "G: "+str(pixel[1]), "B: "+str(pixel[2]))
+
+		self.button_confirm.released.connect(self.button_cancel_exit)
+		self.button_cancel.released.connect(self.button_cancel_exit)
+		self.add_widgets_to_buttons()
+		self.layout.addLayout(self.buttons_layout)
+		self.setLayout(self.layout)
+		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
+		self.setWindowTitle(title)
+
+	def create_labels(self, count, *titles):
+		for i in range(4):
+			self.labels2.append(QLabel(titles[i],None))
+			self.layout.addWidget(self.labels2[i])
+
+#  PAMIETAC O LABELS_2 przy finalnej kalsie
+	def set_labels_2(self, values, *texts):
+		for i, text in enumerate(texts):
+				self.labels2[i+1].setText(text)
+
 
 	def init_own_mask_modal(self, size,  title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
 		if size:
@@ -268,3 +324,4 @@ class Modal(QDialog):
 		# print("modak "+str(self.slider_value))
 		self.close()
 		return self.text_tf.text()
+
