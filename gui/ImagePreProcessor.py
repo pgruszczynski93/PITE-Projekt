@@ -51,6 +51,7 @@ class ImagePreProcessor(object):
 		self.gamma_mod_value = 0
 		self.color_mod_value = 0
 		self.noise_mod_value = 0
+		self.marker_mod_values = None
 
 	def set_mouse_pos(self, pos):
 		self.mouse_pos = (pos[0], pos[1])
@@ -423,6 +424,88 @@ class ImagePreProcessor(object):
 							in_data[y,x,0] = 1.0
 							in_data[y,x,1] = 1.0
 							in_data[y,x,2] = 1.0
+			in_data = in_data*255.9999
+			in_data = numpy.uint8(in_data)
+			self.image = Image.fromarray(in_data)
+			self.loadImageFromPIX(self.image)
+			
+	def put_marker(self):
+		self.modal_window = Modal()
+		self.modal_window.init_markers_modal("Wstawianie markera")
+		if self.modal_window.exec_() == False:
+			self.marker_mod_values = self.modal_window.button_marker_confirm_exit()
+			pos_width = int(self.marker_mod_values[0])
+			pos_height = int(self.marker_mod_values[1])
+			size = int(self.marker_mod_values[2])
+			shape = int(self.marker_mod_values[3])
+			kind = int(self.marker_mod_values[4])
+			red = int(self.marker_mod_values[5])
+			green = int(self.marker_mod_values[6])
+			blue = int(self.marker_mod_values[7])
+
+			in_data = numpy.asarray(self.image, dtype=numpy.uint8)
+			in_data = in_data/255.
+						
+			if (pos_width - size < 0) or \
+			(pos_width + size > self.width) or \
+			(pos_height - size) < 0 or \
+			(pos_height + size > self.height):
+				self.modal_window.msg_box("Niewłaściwa pozycja markera bądź jego rozmiar.")
+			else:
+				if shape == 1:
+					if kind == 1:
+						for y in range(self.height):
+							for x in range(self.width):
+								if (abs(pos_width - x) < size) and \
+								(abs(pos_height - y) < size):
+									in_data[y,x,0] = red/255.
+									in_data[y,x,1] = green/255.
+									in_data[y,x,2] = blue/255.
+					elif kind == 2:
+						for y in range(self.height):
+							for x in range(self.width):
+								if (abs(pos_width - x) > size) or \
+								(abs(pos_height - y) > size):
+									in_data[y,x,0] = red/255.
+									in_data[y,x,1] = green/255.
+									in_data[y,x,2] = blue/255.
+				elif shape == 2:
+					if kind == 1:
+						for y in range(self.height):
+							for x in range(self.width):
+								if ((((x-pos_width)*(x-pos_width)) + ((y-pos_height)*(y-pos_height))) < (size*size)):
+									in_data[y,x,0] = red/255.
+									in_data[y,x,1] = green/255.
+									in_data[y,x,2] = blue/255.
+					elif kind == 2:
+						for y in range(self.height):
+							for x in range(self.width):
+								if ((((x-pos_width)*(x-pos_width)) + ((y-pos_height)*(y-pos_height))) > (size*size)):
+									in_data[y,x,0] = red/255.
+									in_data[y,x,1] = green/255.
+									in_data[y,x,2] = blue/255.
+				elif shape == 3:
+					if kind == 1:
+						for y in range(self.height):
+							for x in range(self.width):
+								if ((abs(pos_width - x) < (size/3)) and \
+								(abs(pos_height - y) < size)) or\
+								((abs(pos_width - x) < size) and \
+								(abs(pos_height - y) < (size/3))):
+									in_data[y,x,0] = red/255.
+									in_data[y,x,1] = green/255.
+									in_data[y,x,2] = blue/255.
+					elif kind == 2:
+						for y in range(self.height):
+							for x in range(self.width):
+								if ((abs(pos_width - x) > (size/3)) or \
+								(abs(pos_height - y) > size)) and\
+								((abs(pos_width - x) > size) or \
+								(abs(pos_height - y) > (size/3))):
+									in_data[y,x,0] = red/255.
+									in_data[y,x,1] = green/255.
+									in_data[y,x,2] = blue/255.
+
 			in_data = in_data*255.9999
 			in_data = numpy.uint8(in_data)
 			self.image = Image.fromarray(in_data)
