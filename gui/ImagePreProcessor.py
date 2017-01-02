@@ -8,6 +8,8 @@ import PIL.ImageFont
 import math
 import numpy
 import datetime
+import matplotlib
+import random
 from Modals import *
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -44,6 +46,10 @@ class ImagePreProcessor(object):
 		self.unsharp_mod_values = ()
 		self.kernel_vals = ()
 		self.treshold_value = 0
+		self.saturation_mod_value = 0
+		self.gamma_mod_value = 0
+		self.color_mod_value = 0
+		self.noise_mod_value = 0
 
 	def set_mouse_pos(self, pos):
 		self.mouse_pos = (pos[0], pos[1])
@@ -69,7 +75,7 @@ class ImagePreProcessor(object):
 		# false bo inaczej nie dziala XDD
 		self.modal_window = Modal("Kontrast: ")
 		self.modal_window.init_modal(0,50,0,50,1,"Zmiana kontrastu")
-		self.modal_window.set_slider(0,8,self.contrast_mod_value,1)
+		self.modal_window.set_slider(0,50,self.contrast_mod_value,1)
 		if self.modal_window.exec_() == False:
 			self.contrast_mod_value = self.modal_window.button_confirm_exit()
 			# print("prepre " + str(self.contrast_mod_value))
@@ -341,6 +347,85 @@ class ImagePreProcessor(object):
 					copy.putpixel((w,h),black)
 		return copy
 		
+
+	# ############################
+
+	def saturation(self):
+		self.modal_window = Modal("Stopień nasycenia (%): ")
+		self.modal_window.init_modal(0,200,0,200,1,"Nasycenie")
+		self.modal_window.set_slider(0,200,self.saturation_mod_value,1)
+		if self.modal_window.exec_() == False:
+			self.saturation_mod_value = self.modal_window.button_confirm_exit()
+			in_data = numpy.asarray(self.image, dtype=numpy.uint8)
+			in_data = in_data/255.
+			hsv = matplotlib.colors.rgb_to_hsv(in_data)
+			hsv[:,:,1] = hsv[:,:,1] - 1.0 + (self.saturation_mod_value/100.)
+			for y in range(self.height):
+				for x in range(self.width):
+					if hsv[y,x,1] < 0:
+						hsv[y,x,1] = 0.0
+					elif hsv[y,x,1] > 1:
+						hsv[y,x,1] = 1.0
+			rgb = matplotlib.colors.hsv_to_rgb(hsv)
+			rgb = rgb*255.9999
+			rgb = numpy.uint8(rgb)
+			self.image = Image.fromarray(rgb)
+			self.loadImageFromPIX(self.image)
+ 
+	def gamma_correction(self):
+		self.modal_window = Modal("Wartość wspołczynnika: ")
+		self.modal_window.init_modal(0.01,7.99,0.01,7.99,1,"Korekcja Gamma")
+		self.modal_window.set_slider(1,799,self.gamma_mod_value,1)
+		if self.modal_window.exec_() == False:
+			self.gamma_mod_value = 1.0/(self.modal_window.button_confirm_exit()/100.0)
+			in_data = numpy.asarray(self.image, dtype=numpy.uint8)
+			in_data = in_data/255.
+			in_data = in_data ** self.gamma_mod_value
+			in_data = in_data*255.9999
+			in_data = numpy.uint8(in_data)
+			self.image = Image.fromarray(in_data)
+			self.loadImageFromPIX(self.image)
+ 
+	def color_change(self):
+		self.modal_window = Modal("Zmiana koloru (%): ")
+		self.modal_window.init_modal(0,360,0,360,1,"Koło barw")
+		self.modal_window.set_slider(0,360,self.color_mod_value,1)
+		if self.modal_window.exec_() == False:
+			self.color_mod_value = self.modal_window.button_confirm_exit()
+			in_data = numpy.asarray(self.image, dtype=numpy.uint8)
+			in_data = in_data/255.
+			hsv = matplotlib.colors.rgb_to_hsv(in_data)
+			hsv[:,:,0] = hsv[:,:,0] + (self.color_mod_value/360.)
+			hsv[:,:,0] = ((hsv[:,:,0]*100) % 100) /100. 
+			rgb = matplotlib.colors.hsv_to_rgb(hsv)
+			rgb = rgb*255.9999
+			rgb = numpy.uint8(rgb)
+			self.image = Image.fromarray(rgb)
+			self.loadImageFromPIX(self.image)
+ 
+	def noise_generator(self):
+		self.modal_window = Modal("Zaszumienie (%): ")
+		self.modal_window.init_modal(0,100,0,100,1,"Pieprz i sol")
+		self.modal_window.set_slider(0,100,self.noise_mod_value,1)
+		if self.modal_window.exec_() == False:
+			self.noise_mod_value = self.modal_window.button_confirm_exit()
+			in_data = numpy.asarray(self.image, dtype=numpy.uint8)
+			in_data = in_data/255.
+			for y in range(self.height):
+				for x in range(self.width):
+					if random.randint(0, 100) < self.noise_mod_value:
+						if random.randint(0,1) == 0:
+							in_data[y,x,0] = 0.0
+							in_data[y,x,1] = 0.0
+							in_data[y,x,2] = 0.0
+						else:
+							in_data[y,x,0] = 1.0
+							in_data[y,x,1] = 1.0
+							in_data[y,x,2] = 1.0
+			in_data = in_data*255.9999
+			in_data = numpy.uint8(in_data)
+			self.image = Image.fromarray(in_data)
+			self.loadImageFromPIX(self.image)
 
 	def save_photo_normal(self):
 		# domyslny zapis zdjecia pod skrótem ctrl+s
