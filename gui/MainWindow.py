@@ -31,14 +31,17 @@ class Ui_MainWindow(QtGui.QWidget):
 		ImageFilter.FIND_EDGES,ImageFilter.SMOOTH,ImageFilter.SMOOTH_MORE, ImageFilter.SHARPEN]
 
 		self.in_clipping_mode = False
-		# self.border_rect = None
-		self.border_rect = QRect(50, 50, 400, 400)
-		# self.clip_rect = None
-		self.clip_rect = QRect(50, 50, 400, 400)
+		self.clipping_not_done = True
+		self.border_rect = None
+		# self.border_rect = QRect(8, 8, 429, 642)
+		self.clip_rect = None
+		# self.clip_rect = QRect(8, 8, 429, 642)
 		self.dragging = None
 		self.drag_offset = QPoint()
 		self.handle_offsets = (QPoint(8, 8), QPoint(-1, 8), 
 								QPoint(8, -1), QPoint(-1, -1))
+
+		self.clipping_pos = [0,0,0,0]
 
 	def setupUi(self, MainWindow):
 
@@ -84,6 +87,26 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
 
 		self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+
+		# self.frame_2 = QtGui.QFrame(self.centralwidget)
+		# self.frame_2.setGeometry(QtCore.QRect(50, 0, 800, 600))
+		# self.frame_2.setFrameShape(QtGui.QFrame.StyledPanel)
+		# self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
+		# self.frame_2.setObjectName(_fromUtf8("frame_2"))
+
+		# self.scrollArea_2 = QtGui.QScrollArea(self.frame_2)
+		# self.scrollArea_2.setGeometry(QtCore.QRect(0, 0, 800, 600))
+		# self.scrollArea_2.setWidgetResizable(True)
+		# self.scrollArea_2.setObjectName(_fromUtf8("scrollArea_2"))
+		
+		# self.scrollAreaWidgetContents_2 = QtGui.QWidget()
+		# self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 800, 600))
+		# self.scrollAreaWidgetContents_2.setObjectName(_fromUtf8("scrollAreaWidgetContents_2"))
+		# self.scrollAreaWidgetContents_2.setAutoFillBackground(True)
+		# self.copy_image = QtGui.QWidget(self.scrollAreaWidgetContents_2)
+		# self.copy_image.setGeometry(QtCore.QRect(0, 0, 450, 600))
+		# self.copy_image.setObjectName(_fromUtf8("copy_image"))
+		# self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
 
 		MainWindow.setCentralWidget(self.centralwidget)
 		self.menubar = QtGui.QMenuBar(MainWindow)
@@ -500,7 +523,10 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionSaveAs.setText(_translate("MainWindow", "Zapisz jako...", None))
 
 # 	nowa wersja obsługi klikniec
-		self.scrollAreaWidgetContents.mousePressEvent=self.mouse_get_but_pos_stop
+		self.scrollAreaWidgetContents.mouseReleaseEvent=self.mouse_get_but_pos_stop
+		self.scrollAreaWidgetContents.mousePressEvent=self.mouse_press_clipping
+		self.scrollAreaWidgetContents.mouseMoveEvent=self.resize_clipping_frame
+		self.scrollAreaWidgetContents.paintEvent=self.paint_clipping_frame
 
 # własne metody
 
@@ -515,6 +541,8 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.org_image.Qimg = ImageQt.ImageQt(self.imgPreProc.image.convert("RGB") if self.imgPreProc.image.mode == "L" else self.imgPreProc.image)
 		self.org_image.repaint()
 		self.refresh_all()
+
+		self.clipping_mode()
 
 	def repaint_image(self):
 		self.org_image.Qimg = ImageQt.ImageQt(self.imgPreProc.image.convert("RGB") if self.imgPreProc.image.mode == "L" else self.imgPreProc.image) 
@@ -558,39 +586,19 @@ class Ui_MainWindow(QtGui.QWidget):
 
 # jesli zdjecie jest pionowe to zamienia wspolrzedne x y 
 	def mouse_get_but_pos_stop(self,event):
-		if event.buttons() == QtCore.Qt.LeftButton:
-				pos = event.pos()
-				if pos.x() <= self.imgPreProc.get_sizes()[0] and pos.y() <= self.imgPreProc.get_sizes()[1]:
-					self.imgPreProc.set_mouse_pos((pos.x(), pos.y()))
-					print('x: %d, y: %d' % (self.imgPreProc.get_mouse_pos()[0], self.imgPreProc.get_mouse_pos()[1]))
-
-		elif event.buttons() == QtCore.Qt.RightButton:
-				pos = event.pos()
-				# zrobić coś po rightclicku 
-				# self.imgPreProc.set_mouse_pos((pos.x(), pos.y()))
-				# print('x: %d, y: %d' % (self.imgPreProc.get_mouse_pos()[0], self.imgPreProc.get_mouse_pos()[1]))
-
-	# def eventFilter(self, source, event):
-	# 	# dorobić coś na ruch muszy
-	# 	if event.type() == QtCore.QEvent.MouseMove:
-	# 		if event.buttons() == QtCore.Qt.LeftButton:
-	# 			pos = event.pos()
-	# 			# print('rx: %d, ry: %d' % (pos.x(), pos.y()))
-	# 		elif event.buttons() == QtCore.Qt.RightButton:
-	# 			pos = event.pos()
-	# 			# print('rx: %d, ry: %d' % (pos.x(), pos.y()))
-	# 	if event.type() == QEvent.MouseButtonPress:
-	# 		self.mouse_get_but_pos_stop(event)
-	# 	return QtGui.QMainWindow.eventFilter(self, source, event)
+		# if event.buttons() == QtCore.Qt.LeftButton:
+		# print("4")
+		pos = event.pos()
+		if pos.x() <= self.imgPreProc.get_sizes()[0] and pos.y() <= self.imgPreProc.get_sizes()[1]:
+			self.imgPreProc.set_mouse_pos((pos.x(), pos.y()))
+			print('x: %d, y: %d' % (self.imgPreProc.get_mouse_pos()[0], self.imgPreProc.get_mouse_pos()[1]))
 
 	def paint_clipping_frame(self,event):
-		print("TUTAJ")
 		if self.in_clipping_mode:
-			print("TUTAJ222")
-
-			painter = QPainter()
-			painter.begin(self)
-			painter.fillRect(event.rect(), QBrush(Qt.white))
+			# print("1")
+			painter = QPainter(self.scrollAreaWidgetContents)
+			# painter.begin(self.scrollAreaWidgetContents)
+			# painter.fillRect(event.rect(), QBrush(Qt.white))
 			painter.setRenderHint(QPainter.Antialiasing)
 			painter.setPen(QPen(QBrush(Qt.red), 1, Qt.DashLine))
 			painter.drawRect(self.border_rect)
@@ -601,23 +609,57 @@ class Ui_MainWindow(QtGui.QWidget):
 			
 			painter.setClipRect(self.clip_rect)
 			painter.setBrush(QBrush(Qt.blue))
-			painter.end()
+			# painter.end()
 
-	# def paintEvent(self,event):
-	# 	painter = QPainter()
-	# 	painter.begin(self)
-	# 	painter.fillRect(event.rect(), QBrush(Qt.white))
-	# 	painter.setRenderHint(QPainter.Antialiasing)
-	# 	painter.setPen(QPen(QBrush(Qt.red), 1, Qt.DashLine))
-	# 	painter.drawRect(self.border_rect)
-	# 	painter.setPen(QPen(Qt.black))
-	# 	painter.drawRect(self.clip_rect)
-	# 	for i in range(4):
-	# 		painter.drawRect(self.corner(i))
-		
-	# 	painter.setClipRect(self.clip_rect)
-	# 	painter.setBrush(QBrush(Qt.blue))
-	# 	painter.end()
+	def resize_clipping_frame(self, event):
+		# if event.type == QEvent.MouseMove:
+			# print("2")
+
+			if self.dragging is None:
+				self.clipping_pos = [0,0,self.imgPreProc.get_width(),self.imgPreProc.get_height()]
+				return
+			  
+			left = self.border_rect.left()
+			right = self.border_rect.right()
+			top = self.border_rect.top()
+			bottom = self.border_rect.bottom()
+		  
+			point = event.pos() + self.drag_offset + self.handle_offsets[self.dragging]
+			point.setX(max(left, min(point.x(), right)))
+			point.setY(max(top, min(point.y(), bottom)))
+
+			print("Mysza %d %d %d"%(self.dragging, event.pos().x(), event.pos().y()))
+		  
+			if self.dragging == 0:
+				self.clip_rect.setTopLeft(point)
+				self.clipping_pos[0] = event.pos().x() 
+				self.clipping_pos[1] = event.pos().y()
+
+			elif self.dragging == 1:
+				self.clip_rect.setTopRight(point)
+			elif self.dragging == 2:
+				self.clip_rect.setBottomLeft(point)
+			elif self.dragging == 3:
+				self.clip_rect.setBottomRight(point)
+				self.clipping_pos[2] = event.pos().x() 
+				self.clipping_pos[3] = event.pos().y()
+		  
+			self.scrollAreaWidgetContents.update()
+
+	def mouse_press_clipping(self, event):
+		# print("bef 3")
+		# if event.type == QEvent.MouseButtonPress:
+			# print("3")
+
+			for i in range(4):
+				rect = self.corner(i)
+				if rect.contains(event.pos()):
+					self.dragging = i
+					self.drag_offset = rect.topLeft() - event.pos()
+					
+					break
+				else:
+					self.dragging = None
 
 	def corner(self, number):
 		if number == 0:
@@ -635,10 +677,30 @@ class Ui_MainWindow(QtGui.QWidget):
 		width = self.imgPreProc.get_sizes()[0] 
 		height = self.imgPreProc.get_sizes()[1] 
 		if (width > 0 and height > 0):
-			self.in_clipping_mode = True
-			self.border_rect = QRect(50,0,width,height)
-			self.clip_rect = QRect(50,0,width,height)
+			self.in_clipping_mode = not self.in_clipping_mode
+			self.border_rect = QRect(8,8,width+2,height+2)
+			self.clip_rect = QRect(8,8,width+2,height+2)
+			self.scrollAreaWidgetContents.update()
 
+			if self.clipping_not_done == False:
+
+				reply = QtGui.QMessageBox.question(self, "Kadrowanie", 
+								"Wykonać kadrowanie?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+
+				if reply == QtGui.QMessageBox.Yes:
+					self.imgPreProc.auto_clipping(self.clipping_pos)
+					self.org_image.repaint()
+					self.refresh_all()
+					self.in_clipping_mode = False
+					self.clipping_pos = [0,0,self.imgPreProc.get_width(),self.imgPreProc.get_height()]
+				else:
+					self.in_clipping_mode = False
+
+			self.clipping_not_done = not self.clipping_not_done
+			# if self.clipping_not_done == False:
+			# self.imgPreProc.auto_clipping(self.clipping_pos)
+			# self.org_image.repaint()
+			# self.refresh_all()
 		else:
 			msg = QtGui.QMessageBox.question(None, 'Kadrowanie', 'Błąd kadrowania - najpierw wczytaj zdjęcie.' ,QtGui.QMessageBox.Ok)
 	

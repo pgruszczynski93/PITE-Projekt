@@ -59,10 +59,19 @@ class ImagePreProcessor(object):
 	def get_mouse_pos(self):
 		return self.mouse_pos
 
+	def get_width(self):
+		return self.width
+
+	def get_height(self):
+		return self.height
+
 	def loadImage(self, imgFile, isGray=1):
 		self.image = Image.open(imgFile)
 		self.width, self.height = self.image.size
 		self.pixels = self.image.load()
+
+	def set_sizes(self, new_image):
+		self.width, self.height = new_image.size
 
 	def get_sizes(self):
 		return (self.width, self.height)
@@ -144,6 +153,7 @@ class ImagePreProcessor(object):
 			self.crop_opsborder_mod_value = self.modal_window.button_confirm_exit()
 			crop_img = PIL.ImageOps.crop(self.image, self.crop_opsborder_mod_value)
 			self.image = crop_img
+			self.set_sizes(crop_img)
 			self.loadImageFromPIX(self.image)
 
 	def auto_equalize_histogram(self):
@@ -160,6 +170,7 @@ class ImagePreProcessor(object):
 			frame_color = self.modal_window.init_color_picker()
 			framed_img = PIL.ImageOps.expand(self.image, self.frame_color_width, frame_color)
 			self.image = framed_img
+			self.set_sizes(framed_img)
 			self.loadImageFromPIX(self.image)
 
 	def auto_fitscale(self):
@@ -171,6 +182,7 @@ class ImagePreProcessor(object):
 			resized_img = PIL.ImageOps.fit(self.image, (int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1])))
 			self.image = resized_img
 			# print(self.resize_mod_dim[0],self.resize_mod_dim[1])
+			self.set_sizes(resized_img)
 			self.loadImageFromPIX(self.image)
 
 	def auto_rotate(self):
@@ -179,6 +191,7 @@ class ImagePreProcessor(object):
 		self.modal_window.set_slider(0,360,self.rotate_mod_angle,1)
 		if self.modal_window.exec_() == False:
 			self.rotate_mod_angle = self.modal_window.button_confirm_exit()
+			self.set_sizes(self.image.rotate(self.rotate_mod_angle,0,1))
 			self.loadImageFromPIX(self.image.rotate(self.rotate_mod_angle,0,1))
 
 
@@ -188,6 +201,7 @@ class ImagePreProcessor(object):
 		if self.modal_window.exec_() == False:
 			# jct wstawic zmienna trzymajace wymiary po zmianie rozmiaru
 			self.resize_mod_dim = self.modal_window.button_resize_confirm_exit()
+			self.set_sizes(self.image.resize((int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1]))))
 			self.loadImageFromPIX(self.image.resize((int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1]))))
 
 	def	auto_new(self):
@@ -197,6 +211,7 @@ class ImagePreProcessor(object):
 			# jct wstawic zmienna trzymajace wymiary po zmianie rozmiaru
 			self.resize_mod_dim = self.modal_window.button_resize_confirm_exit()
 			self.image = Image.new("RGBA",(int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1])),(255,255,255,255))
+			self.set_sizes(self.image)
 			self.loadImageFromPIX(self.image)
 
 
@@ -531,6 +546,15 @@ class ImagePreProcessor(object):
 			self.loadImageFromPIX(self.image)
 
 	# ########################################
+
+	def auto_clipping(self, clip_pos):
+
+		print(tuple(clip_pos))
+		cropped_img = self.image.crop(tuple(clip_pos))
+		self.set_sizes(cropped_img)
+		self.image = cropped_img
+		self.loadImageFromPIX(self.image)
+
 	def save_photo_normal(self):
 		# domyslny zapis zdjecia pod skrótem ctrl+s
 		if self.image:
