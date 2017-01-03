@@ -52,9 +52,9 @@ class Modal(QDialog):
 		self.own_mask_values = []
 		self.own_mask_layout = QGridLayout()
 		self.item_list = QComboBox()
+		self.user_kernel_size = 0;
 		self.item_list2 = QComboBox()
 		self.item_list3 = QComboBox()
-		self.user_kernel_size = 0;
 
 # Image do QImage
 	def pil2pixmap(self,im):
@@ -80,7 +80,7 @@ class Modal(QDialog):
 		self.colorpicker_color = QColorDialog.getColor(Qt.white,self, "Wybierz odcień bieli" if self.colorpicker_state else "Wybierz odcień czerni").getRgb()
 		self.colorpicker_state = not self.colorpicker_state 
 		return self.colorpicker_color
-	
+
 	def init_marker_color_picker(self):
 		self.marker_color = QColor(QColorDialog.getColor(Qt.black,self, "Wybierz odcień markera"))
 
@@ -224,7 +224,7 @@ class Modal(QDialog):
 		self.setLayout(self.layout)
 		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
 		self.setWindowTitle(title)
-		
+
 	def init_markers_modal(self, title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=400):
 
 		self.width_tf.setValidator(QIntValidator())
@@ -293,6 +293,7 @@ class Modal(QDialog):
 		self.setLayout(self.layout)
 		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
 		self.setWindowTitle(title)
+
 
 	def init_unsharp_mask(self,title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
 
@@ -400,12 +401,12 @@ class Modal(QDialog):
 		# print("modak "+str(self.slider_value))
 		self.close()
 		return self.text_tf.text()
-	
+
 	def button_marker_confirm_exit(self):
 		self.close()
 		return (self.width_tf.text(),self.height_tf.text(), self.size_tf.text(), self.item_list2.currentIndex(), \
 		self.item_list3.currentIndex(), QColor.red(self.marker_color), QColor.green(self.marker_color), QColor.blue(self.marker_color))
-	
+
 	def msg_box(self, text):
 		msgBox = QMessageBox()
 		msgBox.setWindowTitle("Błąd")
@@ -413,4 +414,3 @@ class Modal(QDialog):
 
 		msgBox.setStandardButtons(QMessageBox.Ok)
 		msgBox.exec_()
-

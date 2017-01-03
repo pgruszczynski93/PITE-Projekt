@@ -30,6 +30,16 @@ class Ui_MainWindow(QtGui.QWidget):
 		ImageFilter.EDGE_ENHANCE,ImageFilter.EDGE_ENHANCE_MORE,ImageFilter.EMBOSS,
 		ImageFilter.FIND_EDGES,ImageFilter.SMOOTH,ImageFilter.SMOOTH_MORE, ImageFilter.SHARPEN]
 
+		self.in_clipping_mode = False
+		# self.border_rect = None
+		self.border_rect = QRect(50, 50, 400, 400)
+		# self.clip_rect = None
+		self.clip_rect = QRect(50, 50, 400, 400)
+		self.dragging = None
+		self.drag_offset = QPoint()
+		self.handle_offsets = (QPoint(8, 8), QPoint(-1, 8), 
+								QPoint(8, -1), QPoint(-1, -1))
+
 	def setupUi(self, MainWindow):
 
 		MainWindow.setObjectName(_fromUtf8("MainWindow"))
@@ -224,8 +234,10 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionResize.setShortcut('Ctrl+Alt+I')
 		self.actionResize.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_resize))
 
-		self.actionKadrowanie = QtGui.QAction(MainWindow)
-		self.actionKadrowanie.setObjectName(_fromUtf8("actionKadrowanie"))
+		self.actionClipping = QtGui.QAction(MainWindow)
+		self.actionClipping.setObjectName(_fromUtf8("actionClipping"))
+		self.actionClipping.setShortcut('C')
+		self.actionClipping.triggered.connect(self.clipping_mode)
 
 		self.actionBrightness = QtGui.QAction(MainWindow)
 		self.actionBrightness.setObjectName(_fromUtf8("actionBrightness"))
@@ -321,6 +333,11 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionText.setShortcut('Alt+T')
 		self.actionText.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_add_text))
 
+		self.actionMarker = QtGui.QAction(MainWindow)
+		self.actionMarker.setObjectName(_fromUtf8("actionMarker"))
+		self.actionMarker.setShortcut('Alt+M')
+		self.actionMarker.triggered.connect(lambda: self.process_image(self.imgPreProc.put_marker))
+
 		self.actionSampleColor = QtGui.QAction(MainWindow)
 		self.actionSampleColor.setObjectName(_fromUtf8("actionSampleColor"))
 		self.actionSampleColor.setShortcut('Alt+Q')
@@ -380,7 +397,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuTransformacja.addAction(self.actionRotate)
 		self.menuTransformacja.addAction(self.actionFitScale)
 		self.menuTransformacja.addAction(self.actionResize)
-		self.menuTransformacja.addAction(self.actionKadrowanie)
+		self.menuTransformacja.addAction(self.actionClipping)
 		self.menuTransformacja.addAction(self.actionDeleteBorder)
 		self.menuTransformacja.addAction(self.actionAddFrame)
 		self.menuHistogram.addAction(self.actionShowHistogram)
@@ -402,6 +419,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuDopasowania.addAction(self.actionSampleColor)
 		self.menuDopasowania.addAction(self.actionWype_nianie)
 		self.menuWstawianie.addAction(self.actionText)
+		self.menuWstawianie.addAction(self.actionMarker)
 		self.menubar.addAction(self.menuPlik.menuAction())
 		self.menubar.addAction(self.menuFilters.menuAction())
 		self.menubar.addAction(self.menuTransformacja.menuAction())
@@ -436,7 +454,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionRotate.setText(_translate("MainWindow", "Obrót", None))
 		self.actionFitScale.setText(_translate("MainWindow", "Skaluj i dopasuj", None))
 		self.actionResize.setText(_translate("MainWindow", "Zmiana rozmiaru", None))
-		self.actionKadrowanie.setText(_translate("MainWindow", "Kadrowanie", None))
+		self.actionClipping.setText(_translate("MainWindow", "Kadrowanie", None))
 		self.actionBrightness.setText(_translate("MainWindow", "Jasność", None))
 		self.actionColorWheel.setText(_translate("MainWindow", "Zmiana koloru (HSV)", None))
 		self.actionAutoContrast.setText(_translate("MainWindow","Kontrast", None))
@@ -456,6 +474,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionEdgeEnhanceMore.setText(_translate("MainWidndow","Mocniejsze wzmocnienie krawędzi", None))
 		self.actionFindEdges.setText(_translate("MainWidndow","Wykrywanie krawędzi", None))
 		self.actionEmboss.setText(_translate("MainWidndow","Płaskorzeźba", None))
+		self.actionMarker.setText(_translate("MainWidndow","Wstaw marker", None))
 		
 		self.actionSmooth.setText(_translate("MainWidndow","Wygładzanie", None))
 		self.actionSmoothMore.setText(_translate("MainWidndow","Mocniejsze wygładzanie", None))
@@ -479,6 +498,9 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionWype_nianie.setText(_translate("MainWindow", "Wypełnianie", None))
 		self.actionSave.setText(_translate("MainWindow", "Zapisz", None))
 		self.actionSaveAs.setText(_translate("MainWindow", "Zapisz jako...", None))
+
+# 	nowa wersja obsługi klikniec
+		self.scrollAreaWidgetContents.mousePressEvent=self.mouse_get_but_pos_stop
 
 # własne metody
 
@@ -534,11 +556,13 @@ class Ui_MainWindow(QtGui.QWidget):
 			# self.open(filename) - ma zapisac
 			msg = QtGui.QMessageBox.question(None, 'Ścieżka zapisu', "Nie wskazano miejsca zapisu",QtGui.QMessageBox.Ok)
 
+# jesli zdjecie jest pionowe to zamienia wspolrzedne x y 
 	def mouse_get_but_pos_stop(self,event):
 		if event.buttons() == QtCore.Qt.LeftButton:
 				pos = event.pos()
-				self.imgPreProc.set_mouse_pos((pos.x(), pos.y()))
-				print('x: %d, y: %d' % (self.imgPreProc.get_mouse_pos()[0], self.imgPreProc.get_mouse_pos()[1]))
+				if pos.x() <= self.imgPreProc.get_sizes()[0] and pos.y() <= self.imgPreProc.get_sizes()[1]:
+					self.imgPreProc.set_mouse_pos((pos.x(), pos.y()))
+					print('x: %d, y: %d' % (self.imgPreProc.get_mouse_pos()[0], self.imgPreProc.get_mouse_pos()[1]))
 
 		elif event.buttons() == QtCore.Qt.RightButton:
 				pos = event.pos()
@@ -546,27 +570,87 @@ class Ui_MainWindow(QtGui.QWidget):
 				# self.imgPreProc.set_mouse_pos((pos.x(), pos.y()))
 				# print('x: %d, y: %d' % (self.imgPreProc.get_mouse_pos()[0], self.imgPreProc.get_mouse_pos()[1]))
 
-	def eventFilter(self, source, event):
-		# dorobić coś na ruch muszy
-		if event.type() == QtCore.QEvent.MouseMove:
-			if event.buttons() == QtCore.Qt.LeftButton:
-				pos = event.pos()
-				# print('rx: %d, ry: %d' % (pos.x(), pos.y()))
-			elif event.buttons() == QtCore.Qt.RightButton:
-				pos = event.pos()
-				# print('rx: %d, ry: %d' % (pos.x(), pos.y()))
-		if event.type() == QEvent.MouseButtonPress:
-			self.mouse_get_but_pos_stop(event)
-		return QtGui.QMainWindow.eventFilter(self, source, event)
+	# def eventFilter(self, source, event):
+	# 	# dorobić coś na ruch muszy
+	# 	if event.type() == QtCore.QEvent.MouseMove:
+	# 		if event.buttons() == QtCore.Qt.LeftButton:
+	# 			pos = event.pos()
+	# 			# print('rx: %d, ry: %d' % (pos.x(), pos.y()))
+	# 		elif event.buttons() == QtCore.Qt.RightButton:
+	# 			pos = event.pos()
+	# 			# print('rx: %d, ry: %d' % (pos.x(), pos.y()))
+	# 	if event.type() == QEvent.MouseButtonPress:
+	# 		self.mouse_get_but_pos_stop(event)
+	# 	return QtGui.QMainWindow.eventFilter(self, source, event)
 
+	def paint_clipping_frame(self,event):
+		print("TUTAJ")
+		if self.in_clipping_mode:
+			print("TUTAJ222")
+
+			painter = QPainter()
+			painter.begin(self)
+			painter.fillRect(event.rect(), QBrush(Qt.white))
+			painter.setRenderHint(QPainter.Antialiasing)
+			painter.setPen(QPen(QBrush(Qt.red), 1, Qt.DashLine))
+			painter.drawRect(self.border_rect)
+			painter.setPen(QPen(Qt.black))
+			painter.drawRect(self.clip_rect)
+			for i in range(4):
+				painter.drawRect(self.corner(i))
+			
+			painter.setClipRect(self.clip_rect)
+			painter.setBrush(QBrush(Qt.blue))
+			painter.end()
+
+	# def paintEvent(self,event):
+	# 	painter = QPainter()
+	# 	painter.begin(self)
+	# 	painter.fillRect(event.rect(), QBrush(Qt.white))
+	# 	painter.setRenderHint(QPainter.Antialiasing)
+	# 	painter.setPen(QPen(QBrush(Qt.red), 1, Qt.DashLine))
+	# 	painter.drawRect(self.border_rect)
+	# 	painter.setPen(QPen(Qt.black))
+	# 	painter.drawRect(self.clip_rect)
+	# 	for i in range(4):
+	# 		painter.drawRect(self.corner(i))
+		
+	# 	painter.setClipRect(self.clip_rect)
+	# 	painter.setBrush(QBrush(Qt.blue))
+	# 	painter.end()
+
+	def corner(self, number):
+		if number == 0:
+			return QRect(self.clip_rect.topLeft() - self.handle_offsets[0], QSize(8, 8))
+		elif number == 1:
+			return QRect(self.clip_rect.topRight() - self.handle_offsets[1], QSize(8, 8))
+		elif number == 2:
+			return QRect(self.clip_rect.bottomLeft() - self.handle_offsets[2], QSize(8, 8))
+		elif number == 3:
+			return QRect(self.clip_rect.bottomRight() - self.handle_offsets[3], QSize(8, 8))
+
+	def clipping_mode(self):
+		# self.in_clipping_mode = not self.in_clipping_mode
+		# print(self.in_clipping_mode)
+		width = self.imgPreProc.get_sizes()[0] 
+		height = self.imgPreProc.get_sizes()[1] 
+		if (width > 0 and height > 0):
+			self.in_clipping_mode = True
+			self.border_rect = QRect(50,0,width,height)
+			self.clip_rect = QRect(50,0,width,height)
+
+		else:
+			msg = QtGui.QMessageBox.question(None, 'Kadrowanie', 'Błąd kadrowania - najpierw wczytaj zdjęcie.' ,QtGui.QMessageBox.Ok)
 	
-	
-if __name__ == "__main__":
-	import sys
+
+def main():
 	app = QtGui.QApplication(sys.argv)
 	MainWindow = QtGui.QMainWindow()
 	ui = Ui_MainWindow()
 	ui.setupUi(MainWindow)
-	app.installEventFilter(ui)
+	# app.installEventFilter(ui)
 	MainWindow.show()
 	sys.exit(app.exec_())
+
+if __name__ == "__main__":
+	main()

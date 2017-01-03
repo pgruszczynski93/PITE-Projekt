@@ -64,6 +64,9 @@ class ImagePreProcessor(object):
 		self.width, self.height = self.image.size
 		self.pixels = self.image.load()
 
+	def get_sizes(self):
+		return (self.width, self.height)
+
 	def loadImageFromPIX(self, image):
 		self.image = image
 
@@ -428,7 +431,23 @@ class ImagePreProcessor(object):
 			in_data = numpy.uint8(in_data)
 			self.image = Image.fromarray(in_data)
 			self.loadImageFromPIX(self.image)
-			
+
+	# #################
+	def sample_color(self):
+		if self.mouse_pos[0] <= self.width and self.mouse_pos[1] <= self.height:
+			pix = self.image.getpixel((self.mouse_pos[0],self.mouse_pos[1]))
+			self.modal_window = Modal()
+			self.modal_window.init_color_sampler(pix, "Wartość koloru (RGB)")
+			self.modal_window.exec_()
+
+	def show_histogram(self):
+		hist = Histogram(self.image)
+		hist.create_histogram()
+		hist.draw_histogram()
+		self.modal_window = Modal()
+		self.modal_window.init_histogram_drawer(hist.get_hist_img(), "Histogram");
+		self.modal_window.exec_()
+
 	def put_marker(self):
 		self.modal_window = Modal()
 		self.modal_window.init_markers_modal("Wstawianie markera")
@@ -511,22 +530,7 @@ class ImagePreProcessor(object):
 			self.image = Image.fromarray(in_data)
 			self.loadImageFromPIX(self.image)
 
-	# #################
-	def sample_color(self):
-		if self.mouse_pos[0] <= self.width and self.mouse_pos[1] <= self.height:
-			pix = self.image.getpixel((self.mouse_pos[0],self.mouse_pos[1]))
-			self.modal_window = Modal()
-			self.modal_window.init_color_sampler(pix, "Wartość koloru (RGB)")
-			self.modal_window.exec_()
-
-	def show_histogram(self):
-		hist = Histogram(self.image)
-		hist.create_histogram()
-		hist.draw_histogram()
-		self.modal_window = Modal()
-		self.modal_window.init_histogram_drawer(hist.get_hist_img(), "Histogram");
-		self.modal_window.exec_()
-
+	# ########################################
 	def save_photo_normal(self):
 		# domyslny zapis zdjecia pod skrótem ctrl+s
 		if self.image:

@@ -10,7 +10,7 @@ class Histogram(object):
 		self.hist_width = 256
 		self.show_stoplines = True    
 		self.count_stoplines = 5
-		self.multipler_value = 4
+		# self.multipler_value = 1.2
 		self.x_marker = self.hist_width/self.count_stoplines
 
 		self.background_color = (51,51,51)  
@@ -26,7 +26,7 @@ class Histogram(object):
 		self.hist = self.image.histogram()
 		self.hist_max = max(self.hist)
 		self.x_scale = float(self.hist_width)/len(self.hist)
-		self.y_scale = float((self.hist_height)*self.multipler_value)/self.hist_max
+		self.y_scale = float(self.hist_height)/self.hist_max
 
 	def create_histogram(self):
 		self.hist_img = Image.new("RGBA",(self.hist_width, self.hist_height),self.background_color)
