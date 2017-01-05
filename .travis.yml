@@ -5,6 +5,7 @@ before_install:
     - pip install pytest pytest-cov
     - pip install coveralls
     - pip install pillow
+    - pip install matplotlib
 script:
     - cd gui
     - coverage run tests.py
