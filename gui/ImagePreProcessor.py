@@ -27,7 +27,7 @@ class ImagePreProcessor(object):
 		self.solarization_mod_value = 0
 		self.crop_opsborder_mod_value = 0
 		self.frame_color_width = 0
-		self.resize_mod_dim = ()
+		self.resize_mod_dim = (300, 200)
 		self.rotate_mod_angle = 0
 		self.brightness_mod_value = 100
 		self.width = 0
@@ -38,20 +38,21 @@ class ImagePreProcessor(object):
 		self.input_text = ""
 		self.drawer = None
 		self.font = None
+		self.hist = None
 		self.gaussian_radius = 0
-		self.modalfilter_size = 0
-		self.minfilter_size = 0
-		self.maxfilter_size = 0
-		self.medianfilter_size = 0
-		self.rankfilter_size = 0
-		self.unsharp_mod_values = ()
+		self.modalfilter_size = 3
+		self.minfilter_size = 3
+		self.maxfilter_size = 3
+		self.medianfilter_size = 3
+		self.rankfilter_size = 3
+		self.unsharp_mod_values = (10, 20, 30)
 		self.kernel_vals = ()
-		self.treshold_value = 0
+		self.treshold_value = 20
 		self.saturation_mod_value = 0
 		self.gamma_mod_value = 0
 		self.color_mod_value = 0
 		self.noise_mod_value = 0
-		self.marker_mod_values = None
+		self.marker_mod_values = (100, 100, 10, 1, 1, 255, 255, 255)
 
 	def set_width(self, width):
 		self.width = width
@@ -72,7 +73,6 @@ class ImagePreProcessor(object):
 		return self.height
 
 	def loadImage(self, imgFile, isGray=1):
-		print(imgFile)
 		self.image = Image.open(imgFile)
 		self.width, self.height = self.image.size
 		self.pixels = self.image.load()
@@ -100,6 +100,10 @@ class ImagePreProcessor(object):
 		self.image = inverted_image
 		self.loadImageFromPIX(self.image)
 
+	def auto_contrast_exec(self):
+		self.image = PIL.ImageOps.autocontrast(self.image,int(self.contrast_mod_value))
+		self.loadImageFromPIX(self.image)
+
 	def auto_contrast(self):
 		self.modal_window = Modal("Zmiana kontrastu","Kontrast: ")
 		self.modal_window.append_objects_to_list("button",2,2)
@@ -108,20 +112,23 @@ class ImagePreProcessor(object):
 		if self.modal_window.exec_():
 		# print(if self.modal_window.exec_():
 			self.contrast_mod_value = self.modal_window.button_confirm_exit()
-		self.image = PIL.ImageOps.autocontrast(self.image,int(self.contrast_mod_value))
-		self.loadImageFromPIX(self.image)
+		self.auto_contrast_exec()
+		
 
 	def auto_grayscale(self):
 		grayscale_img = PIL.ImageOps.grayscale(self.image)
 		self.image = grayscale_img
 		self.loadImageFromPIX(self.image)
 
+	def auto_colorize_exec(self, black, white):
+		self.image = PIL.ImageOps.colorize(self.image, black, white)
+		self.loadImageFromPIX(self.image)
+
 	def auto_colorize(self):
 		self.modal_window = Modal()
 		black = self.modal_window.init_color_picker()
 		white = self.modal_window.init_color_picker()
-		self.image = PIL.ImageOps.colorize(self.image, black, white)
-		self.loadImageFromPIX(self.image)
+		self.auto_colorize_exec(black, white)
 
 	def auto_mirror(self):
 		self.image = PIL.ImageOps.mirror(self.image)
@@ -131,6 +138,10 @@ class ImagePreProcessor(object):
 		self.image = PIL.ImageOps.flip(self.image)
 		self.loadImageFromPIX(self.image)
 
+	def auto_posterize_exec(self):
+		self.image = PIL.ImageOps.posterize(self.image, self.posterize_mod_value)
+		self.loadImageFromPIX(self.image)
+
 	def auto_posterize(self):
 		self.modal_window = Modal("Posteryzacja","Bity kanałów: ")
 		self.modal_window.init_modal([1,8],[1,8,1])
@@ -138,7 +149,11 @@ class ImagePreProcessor(object):
 		
 		if self.modal_window.exec_():
 			self.posterize_mod_value = self.modal_window.button_confirm_exit()
-		self.image = PIL.ImageOps.posterize(self.image, self.posterize_mod_value)
+		self.auto_posterize_exec()
+		
+
+	def auto_solarize_exec(self):
+		self.image = PIL.ImageOps.solarize(self.image, self.solarization_mod_value)
 		self.loadImageFromPIX(self.image)
 
 	def auto_solarize(self):
@@ -147,20 +162,28 @@ class ImagePreProcessor(object):
 		self.modal_window.set_slider(self.modal_window.get_slider(),0,128,self.solarization_mod_value,1)
 		if self.modal_window.exec_():
 			self.solarization_mod_value = self.modal_window.button_confirm_exit()
-		self.image = PIL.ImageOps.solarize(self.image, self.solarization_mod_value)
+		self.auto_solarize_exec()
+
+	def auto_delete_border_exec(self):
+		self.image = PIL.ImageOps.crop(self.image, self.crop_opsborder_mod_value)
+		self.set_sizes(self.image)
 		self.loadImageFromPIX(self.image)
+		
 
 	def auto_delete_border(self):
 		self.modal_window = Modal("Usuwanie ramki zdjęcia","Piksele do usunięcia: ")
 		self.modal_window.init_modal(self.modal_window.get_slider(),[0,200],[0,200,1])
 		if self.modal_window.exec_():
 			self.crop_opsborder_mod_value = self.modal_window.button_confirm_exit()
-		self.image = PIL.ImageOps.crop(self.image, self.crop_opsborder_mod_value)
-		self.set_sizes(self.image)
-		self.loadImageFromPIX(self.image)
+		self.auto_delete_border_exec()
 
 	def auto_equalize_histogram(self):
 		self.image = PIL.ImageOps.equalize(self.image)
+		self.loadImageFromPIX(self.image)
+
+	def auto_add_color_border_exec(self, frame_color):
+		self.image = PIL.ImageOps.expand(self.image, self.frame_color_width, frame_color)
+		self.set_sizes(self.image)
 		self.loadImageFromPIX(self.image)
 
 	def auto_add_color_border(self):
@@ -169,7 +192,11 @@ class ImagePreProcessor(object):
 		if self.modal_window.exec_():
 			self.frame_color_width = self.modal_window.button_confirm_exit()
 		frame_color = self.modal_window.init_color_picker()
-		self.image = PIL.ImageOps.expand(self.image, self.frame_color_width, frame_color)
+		self.auto_add_color_border_exec(frame_color)
+		
+
+	def auto_fitscale_exec(self):
+		self.image = PIL.ImageOps.fit(self.image, (int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1])))
 		self.set_sizes(self.image)
 		self.loadImageFromPIX(self.image)
 
@@ -178,9 +205,11 @@ class ImagePreProcessor(object):
 		self.modal_window.init_resize_modal(["Wysokość (pix)", "Szerokość (pix)"])
 		if self.modal_window.exec_():
 			self.resize_mod_dim = self.modal_window.button_nonsignal_confirm_exit()
-		self.image = PIL.ImageOps.fit(self.image, (int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1])))
-		self.set_sizes(self.image)
-		self.loadImageFromPIX(self.image)
+		self.auto_fitscale_exec()
+
+	def auto_rotate_exec(self):
+		self.set_sizes(self.image.rotate(self.rotate_mod_angle,0,1))
+		self.loadImageFromPIX(self.image.rotate(self.rotate_mod_angle,0,1))
 
 	def auto_rotate(self):
 		self.modal_window = Modal("Rotacja","Kąt obrotu: ")
@@ -188,26 +217,34 @@ class ImagePreProcessor(object):
 		self.modal_window.set_slider(self.modal_window.get_slider(),0,360,self.rotate_mod_angle,1)
 		if self.modal_window.exec_():
 			self.rotate_mod_angle = self.modal_window.button_confirm_exit()
-		self.set_sizes(self.image.rotate(self.rotate_mod_angle,0,1))
-		self.loadImageFromPIX(self.image.rotate(self.rotate_mod_angle,0,1))
+		self.auto_rotate_exec()
+
+	def auto_resize_exec(self):
+		self.set_sizes(self.image.resize((int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1]))))
+		self.loadImageFromPIX(self.image.resize((int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1]))))
 
 	def auto_resize(self):
 		self.modal_window = Modal("Zmiana rozmiaru")
 		self.modal_window.init_resize_modal(["Wysokość (pix)", "Szerokość (pix)"])
 		if self.modal_window.exec_():
 			self.resize_mod_dim = self.modal_window.button_nonsignal_confirm_exit()
-		self.set_sizes(self.image.resize((int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1]))))
-		self.loadImageFromPIX(self.image.resize((int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1]))))
+		self.auto_resize_exec()
+
+	def auto_new_exec(self):
+		self.image = Image.new("RGBA",(int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1])),(255,255,255,255))
+		self.set_sizes(self.image)
+		self.loadImageFromPIX(self.image)
 
 	def	auto_new(self):
 		self.modal_window = Modal("Wymiary nowego pliku")
 		self.modal_window.init_resize_modal(["Wysokość (pix)", "Szerokość (pix)"])
 		if self.modal_window.exec_():
 			self.resize_mod_dim = self.modal_window.button_nonsignal_confirm_exit()
-		print(self.resize_mod_dim[0],self.resize_mod_dim[1])
-
-		self.image = Image.new("RGBA",(int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1])),(255,255,255,255))
-		self.set_sizes(self.image)
+		self.auto_new_exec()
+		
+	def auto_brightness_exec(self):
+		self.enhancer = ImageEnhance.Brightness(self.image)			
+		self.image = self.enhancer.enhance(self.brightness_mod_value/100)
 		self.loadImageFromPIX(self.image)
 
 	def auto_brightness(self):
@@ -215,11 +252,10 @@ class ImagePreProcessor(object):
 		self.modal_window.init_modal([0,200],[0,200,1])
 		self.modal_window.set_slider(self.modal_window.get_slider(),0,200,self.brightness_mod_value,1)
 		if self.modal_window.exec_():
-			self.enhancer = ImageEnhance.Brightness(self.image)
 			self.brightness_mod_value = self.modal_window.button_confirm_exit()
-			self.image = self.enhancer.enhance(self.brightness_mod_value/100)
-		self.loadImageFromPIX(self.image)
-
+		self.auto_brightness_exec()
+		
+	#mialo byc usuniete
 	def auto_colorbalance(self):
 		self.modal_window = Modal("Balans kolorów","Stopień balansu (%): ")
 		self.modal_window.init_modal([0,200],[0,200,1])
@@ -234,6 +270,14 @@ class ImagePreProcessor(object):
 		self.image = self.image.filter(selected_filter)
 		self.loadImageFromPIX(self.image)
 
+	def auto_add_text_exec(self):
+		self.font = PIL.ImageFont.truetype("arial.ttf", 15)
+		self.drawer = PIL.ImageDraw.Draw(txt)
+		self.drawer.text((self.mouse_pos[0],self.mouse_pos[1]), self.input_text, font=self.font, fill= text_color)
+		tmp_out = Image.alpha_composite(self.image, txt)
+		self.image = tmp_out
+		self.loadImageFromPIX(self.image)
+
 	def auto_add_text(self):
 		self.modal_window = Modal("Wprowadź tekst do wstawienia ")
 		self.modal_window.init_text_modal()
@@ -242,12 +286,11 @@ class ImagePreProcessor(object):
 
 			self.input_text = self.modal_window.button_text_confirm_exit()
 		text_color = self.modal_window.init_color_picker("Kolor tekstu")
-		self.font = PIL.ImageFont.truetype("arial.ttf", 15)
-		# print(self.input_text)
-		self.drawer = PIL.ImageDraw.Draw(txt)
-		self.drawer.text((self.mouse_pos[0],self.mouse_pos[1]), self.input_text, font=self.font, fill= text_color)
-		tmp_out = Image.alpha_composite(self.image, txt)
-		self.image = tmp_out
+		self.auto_add_text_exec()
+		
+
+	def auto_gaussianblur_exec(self):
+		self.image = self.image.filter(ImageFilter.GaussianBlur(self.gaussian_radius))
 		self.loadImageFromPIX(self.image)
 
 	def auto_gaussianblur(self):
@@ -256,7 +299,11 @@ class ImagePreProcessor(object):
 		self.modal_window.set_slider(self.modal_window.get_slider(), 0,10,self.gaussian_radius,10)
 		if self.modal_window.exec_():
 			self.gaussian_radius  = self.modal_window.button_confirm_exit()
-		self.image = self.image.filter(ImageFilter.GaussianBlur(self.gaussian_radius))
+		self.auto_gaussianblur_exec()
+
+	def auto_unsharpmask_exec(self):
+		unsharp_img =self.image.filter(ImageFilter.UnsharpMask(self.unsharp_mod_values[0],self.unsharp_mod_values[1],self.unsharp_mod_values[2]))
+		self.image = unsharp_img
 		self.loadImageFromPIX(self.image)
 
 	def auto_unsharpmask(self):
@@ -265,9 +312,7 @@ class ImagePreProcessor(object):
 		self.modal_window.set_unsharp_sliders(self.unsharp_mod_values)
 		if self.modal_window.exec_():
 			self.unsharp_mod_values  = self.modal_window.button_unsharpmasking_confirm()
-		unsharp_img =self.image.filter(ImageFilter.UnsharpMask(self.unsharp_mod_values[0],self.unsharp_mod_values[1],self.unsharp_mod_values[2]))
-		self.image = unsharp_img
-		self.loadImageFromPIX(self.image)
+		self.auto_unsharpmask_exec()
 
 	def auto_kernel(self):
 		self.modal_window = Modal()
@@ -280,25 +325,36 @@ class ImagePreProcessor(object):
 		self.image = kernel_img
 		self.loadImageFromPIX(self.image)
 
+	def auto_rankfilter_exec(self):
+		rank_img = self.image.filter(ImageFilter.RankFilter(self.rankfilter_size,int(self.rankfilter_size*self.rankfilter_size/2)))
+		self.image = rank_img
+		self.loadImageFromPIX(self.image)
+
 	def auto_rankfilter(self):
 		self.modal_window = Modal("Filtr rankingowy","Rozmiar rozmycia: ")
 		self.modal_window.init_modal([1,15],[1,15,2])
 		self.modal_window.set_slider(self.modal_window.get_slider(), 1,15,self.rankfilter_size,2)
 		if self.modal_window.exec_():
 			self.rankfilter_size  = self.modal_window.button_confirm_exit()
-		rank_img = self.image.filter(ImageFilter.RankFilter(self.rankfilter_size,int(self.rankfilter_size*self.rankfilter_size/2)))
-		self.image = rank_img
-		self.loadImageFromPIX(self.image)
+		self.auto_rankfilter_exec()
 
 # TUTAJ PORPAWIC +++++++++++++++++++++++++++++++++++++++++++++++++
+	def auto_medianfilter_exec(self):
+		median_img = self.image.filter(ImageFilter.MedianFilter(self.medianfilter_size))
+		self.image = median_img
+		self.loadImageFromPIX(self.image)
+
 	def auto_medianfilter(self):
 		self.modal_window = Modal("Filtr medianowy","Rozmiar rozmycia: ")
 		self.modal_window.init_modal([1,15],[1,15,2])
 		self.modal_window.set_slider(self.modal_window.get_slider(),1,15,self.medianfilter_size,2)
 		if self.modal_window.exec_():
 			self.medianfilter_size  = self.modal_window.button_confirm_exit()
-		median_img = self.image.filter(ImageFilter.MedianFilter(self.medianfilter_size))
-		self.image = median_img
+		self.auto_medianfilter_exec()
+
+	def auto_minfilter_exec(self):
+		minfilter_img = self.image.filter(ImageFilter.MinFilter(self.minfilter_size))
+		self.image = minfilter_img
 		self.loadImageFromPIX(self.image)
 		
 	def auto_minfilter(self):
@@ -307,8 +363,11 @@ class ImagePreProcessor(object):
 		self.modal_window.set_slider(self.modal_window.get_slider(),1,15,self.minfilter_size,2)
 		if self.modal_window.exec_():
 			self.minfilter_size  = self.modal_window.button_confirm_exit()
-		minfilter_img = self.image.filter(ImageFilter.MinFilter(self.minfilter_size))
-		self.image = minfilter_img
+		self.auto_minfilter_exec()
+		
+	def auto_maxfilter_exec(self):
+		maxfilter_img = self.image.filter(ImageFilter.MaxFilter(self.maxfilter_size))
+		self.image = maxfilter_img
 		self.loadImageFromPIX(self.image)
 
 	def auto_maxfilter(self):
@@ -317,8 +376,11 @@ class ImagePreProcessor(object):
 		self.modal_window.set_slider(self.modal_window.get_slider(),1,15,self.maxfilter_size,2)
 		if self.modal_window.exec_():
 			self.maxfilter_size  = self.modal_window.button_confirm_exit()
-		maxfilter_img = self.image.filter(ImageFilter.MaxFilter(self.maxfilter_size))
-		self.image = maxfilter_img
+		self.auto_maxfilter_exec()
+		
+	def auto_modefilter_exec(self):
+		modalfilter_img =self.image.filter(ImageFilter.ModeFilter(self.modalfilter_size))
+		self.image = modalfilter_img
 		self.loadImageFromPIX(self.image)
 
 	def auto_modefilter(self):
@@ -327,9 +389,7 @@ class ImagePreProcessor(object):
 		self.modal_window.set_slider(self.modal_window.get_slider(),0,10,self.modalfilter_size,10)
 		if self.modal_window.exec_():
 			self.modalfilter_size  = self.modal_window.button_confirm_exit()
-		modalfilter_img =self.image.filter(ImageFilter.ModeFilter(self.modalfilter_size))
-		self.image = modalfilter_img
-		self.loadImageFromPIX(self.image)
+		self.auto_modefilter_exec()
 
 	def pre_treshold(self):
 		self.modal_window = Modal("Progowanie", "Próg: ")
@@ -337,8 +397,8 @@ class ImagePreProcessor(object):
 		self.modal_window.set_slider(self.modal_window.get_slider(),0,255,self.treshold_value,1)
 		if self.modal_window.exec_():
 			self.treshold_value = self.modal_window.button_confirm_exit()
-		self.image = self.treshold(self.treshold_value)
-		self.loadImageFromPIX(self.image)
+		self.treshold(self.treshold_value)
+		
 
 	def treshold(self, value):
 		copy = self.image.copy()
@@ -347,18 +407,17 @@ class ImagePreProcessor(object):
 		black = (0,0,0)
 		for w in range(self.width):
 			for h in range(self.height):
-				if(self.image.getpixel((w,h))>tup_value):
+				color = self.image.getpixel((w,h))
+				red, green, blue = color
+				red_lim, green_lim, blue_lim = tup_value
+				if((red>red_lim) and (green>green_lim) and (blue>blue_lim)):
 					copy.putpixel((w,h),white)
 				else:
 					copy.putpixel((w,h),black)
-		return copy
+		self.image = copy
+		self.loadImageFromPIX(self.image)
 
-	def saturation(self):
-		self.modal_window = Modal("Nasycenie","Stopień nasycenia (%): ")
-		self.modal_window.init_modal([0,200],[0,200,1])
-		self.modal_window.set_slider(self.modal_window.get_slider(),0,200,self.saturation_mod_value,1)
-		if self.modal_window.exec_():
-			self.saturation_mod_value = self.modal_window.button_confirm_exit()
+	def saturation_exec(self):
 		in_data = numpy.asarray(self.image, dtype=numpy.uint8)
 		in_data = in_data/255.
 		hsv = matplotlib.colors.rgb_to_hsv(in_data)
@@ -374,13 +433,17 @@ class ImagePreProcessor(object):
 		rgb = numpy.uint8(rgb)
 		self.image = Image.fromarray(rgb)
 		self.loadImageFromPIX(self.image)
- 
-	def gamma_correction(self):
-		self.modal_window = Modal("Korekcja Gamma", "Wartość wspołczynnika: ")
-		self.modal_window.init_modal([0.01,7.99],[0.01,7.99,1])
-		self.modal_window.set_slider(self.modal_window.get_slider(),1,799,self.gamma_mod_value,1)
+
+	def saturation(self):
+		self.modal_window = Modal("Nasycenie","Stopień nasycenia (%): ")
+		self.modal_window.init_modal([0,200],[0,200,1])
+		self.modal_window.set_slider(self.modal_window.get_slider(),0,200,self.saturation_mod_value,1)
 		if self.modal_window.exec_():
-			self.gamma_mod_value = 1.0/(self.modal_window.button_confirm_exit()/100.0)
+			self.saturation_mod_value = self.modal_window.button_confirm_exit()
+		self.saturation_exec()
+		
+ 
+	def gamma_correction_exec(self):
 		in_data = numpy.asarray(self.image, dtype=numpy.uint8)
 		in_data = in_data/255.
 		in_data = in_data ** self.gamma_mod_value
@@ -388,13 +451,17 @@ class ImagePreProcessor(object):
 		in_data = numpy.uint8(in_data)
 		self.image = Image.fromarray(in_data)
 		self.loadImageFromPIX(self.image)
- 
-	def color_change(self):
-		self.modal_window = Modal("Koło barw", "Zmiana koloru (%): ")
-		self.modal_window.init_modal([0,360],[0,360,1])
-		self.modal_window.set_slider(self.modal_window.get_slider(),0,360,self.color_mod_value,1)
+
+	def gamma_correction(self):
+		self.modal_window = Modal("Korekcja Gamma", "Wartość wspołczynnika: ")
+		self.modal_window.init_modal([0.01,7.99],[0.01,7.99,1])
+		self.modal_window.set_slider(self.modal_window.get_slider(),1,799,self.gamma_mod_value,1)
 		if self.modal_window.exec_():
-			self.color_mod_value = self.modal_window.button_confirm_exit()
+			self.gamma_mod_value = 1.0/(self.modal_window.button_confirm_exit()/100.0)
+		self.gamma_correction_exec()
+		
+ 
+	def color_change_exec(self):
 		in_data = numpy.asarray(self.image, dtype=numpy.uint8)
 		in_data = in_data/255.
 		hsv = matplotlib.colors.rgb_to_hsv(in_data)
@@ -405,13 +472,16 @@ class ImagePreProcessor(object):
 		rgb = numpy.uint8(rgb)
 		self.image = Image.fromarray(rgb)
 		self.loadImageFromPIX(self.image)
- 
-	def noise_generator(self):
-		self.modal_window = Modal("Pieprz i sol", "Zaszumienie (%): ")
-		self.modal_window.init_modal([0,100],[0,100,1])
-		self.modal_window.set_slider(self.modal_window.get_slider(),0,100,self.noise_mod_value,1)
+
+	def color_change(self):
+		self.modal_window = Modal("Koło barw", "Zmiana koloru (%): ")
+		self.modal_window.init_modal([0,360],[0,360,1])
+		self.modal_window.set_slider(self.modal_window.get_slider(),0,360,self.color_mod_value,1)
 		if self.modal_window.exec_():
-			self.noise_mod_value = self.modal_window.button_confirm_exit()
+			self.color_mod_value = self.modal_window.button_confirm_exit()
+		self.color_change_exec()
+
+	def noise_generator_exec(self):
 		in_data = numpy.asarray(self.image, dtype=numpy.uint8)
 		in_data = in_data/255.
 		for y in range(self.height):
@@ -429,6 +499,15 @@ class ImagePreProcessor(object):
 		in_data = numpy.uint8(in_data)
 		self.image = Image.fromarray(in_data)
 		self.loadImageFromPIX(self.image)
+ 
+	def noise_generator(self):
+		self.modal_window = Modal("Pieprz i sol", "Zaszumienie (%): ")
+		self.modal_window.init_modal([0,100],[0,100,1])
+		self.modal_window.set_slider(self.modal_window.get_slider(),0,100,self.noise_mod_value,1)
+		if self.modal_window.exec_():
+			self.noise_mod_value = self.modal_window.button_confirm_exit()
+		self.noise_generator_exec()
+		
 
 	def sample_color(self):
 		if self.mouse_pos[0] <= self.width and self.mouse_pos[1] <= self.height:
@@ -437,19 +516,18 @@ class ImagePreProcessor(object):
 			self.modal_window.init_color_sampler(pix)
 			self.modal_window.exec_()
 
+	def get_hist(self):
+		self.hist = Histogram(self.image)
+		self.hist.create_histogram()
+		self.hist.draw_histogram()
+
 	def show_histogram(self):
-		hist = Histogram(self.image)
-		hist.create_histogram()
-		hist.draw_histogram()
+		self.get_hist()
 		self.modal_window = Modal("Histogram")
-		self.modal_window.init_histogram_drawer(hist.get_hist_img());
+		self.modal_window.init_histogram_drawer(self.hist.get_hist_img());
 		self.modal_window.exec_()
 
-	def put_marker(self):
-		self.modal_window = Modal()
-		self.modal_window.init_markers_modal("Wstawianie markera")
-		if self.modal_window.exec_():
-			self.marker_mod_values = self.modal_window.button_marker_confirm_exit()
+	def put_marker_exec(self):
 		pos_width = int(self.marker_mod_values[0])
 		pos_height = int(self.marker_mod_values[1])
 		size = int(self.marker_mod_values[2])
@@ -526,6 +604,14 @@ class ImagePreProcessor(object):
 			in_data = numpy.uint8(in_data)
 			self.image = Image.fromarray(in_data)
 			self.loadImageFromPIX(self.image)
+
+	def put_marker(self):
+		self.modal_window = Modal()
+		self.modal_window.init_markers_modal("Wstawianie markera")
+		if self.modal_window.exec_():
+			self.marker_mod_values = self.modal_window.button_marker_confirm_exit()
+		self.put_marker_exec()
+		
 
 	def auto_clipping(self, clip_pos):
 		print(tuple(clip_pos))
