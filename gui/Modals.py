@@ -5,41 +5,51 @@ from ImageWidget import *
 
 #  mozna zmienic na QWidget
 class Modal(QDialog):
-	def __init__(self, window_opt="", parent = None):
+	def __init__(self, title="", window_opt="", frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100, parent=None):
 		super(Modal, self).__init__(parent)
 		self.setAttribute(Qt.WA_DeleteOnClose, False)
-		# do przerobienia po refaktoryzacji
-		# sprawdzić jak stworzyc kontenery ktore czyszcza sie po wyjsciu
-		self.sliders = []
-		self.labels2 = [] 
-		self.layouts = []
-		self.buttons = []
-		self.textfields = []
-		self.histogram = None
-		self.histogram_label = QLabel()
-		# 
-
-		self.slider = QSlider(Qt.Horizontal)
-		self.slider_value = 0
-		self.min_label = QLabel("0", parent)
-		self.current_value_label = QLabel("", parent)
-		self.max_label = QLabel("50", parent)
-		self.button_confirm = QPushButton("Zatwierdź")
-		self.button_cancel = QPushButton("Anuluj")
-		self.layout = QVBoxLayout()
-		self.label_layout = QHBoxLayout()
-		self.label_layout_2 = QHBoxLayout()
-		self.buttons_layout = QHBoxLayout()
-		self.colorpicker_color = None
-		self.colorpicker_state = False
-		self.window_opt = window_opt
-		self.width_label = QLabel("Szerokość ", parent)
+		# REFACTOR
+		# ################################
+		self.main_slider = QSlider(Qt.Horizontal)
+		self.main_slider_value = 0
 		self.width_tf = QLineEdit()
 		self.height_tf = QLineEdit()
+
+		self.sliders = []
+		self.labels2 = [] 
+		self.buttons = []
+		self.textfields = []
+		self.descr_texts = []
+
+		self.histogram = None
+		self.histogram_label = QLabel()
+		self.current_value_label = QLabel("", parent)
+		self.main_layout = QVBoxLayout()
+		self.main_gridlayout = QGridLayout()
+		self.main_horlayout = QHBoxLayout()
+		self.main_buttonhorlayout = QHBoxLayout()
+
+		self.object_names_types = {"button":QPushButton(),"label":QLabel(),"textfield":QLineEdit(),"slider":QSlider(Qt.Horizontal)}
+		self.window_opt = window_opt
+		self.colorpicker_color = None
+		self.colorpicker_state = False
+		self.modal_return_value = None
+		self.non_signal_value = None
+
+		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
+		self.setWindowTitle(title)
+		# ################################ 
+
+		self.label_layout = QHBoxLayout()
+		self.label_layout_2 = QHBoxLayout()
+		# self.buttons_layout = QHBoxLayout()
+		# self.width_label = QLabel("Szerokość ", parent)
+
 		self.text_tf = QLineEdit()
+		self.text_label = QLabel("", parent)
+
 		self.size_tf = QLineEdit()
 		self.marker_color = QColor(0,0,0)
-		self.text_label = QLabel("", parent)
 		self.height_label = QLabel("Wysokość ", parent)
 		self.gridlayout = QGridLayout()
 
@@ -56,7 +66,6 @@ class Modal(QDialog):
 		self.item_list2 = QComboBox()
 		self.item_list3 = QComboBox()
 
-# Image do QImage
 	def pil2pixmap(self,im):
 		if im.mode == "RGB":
 			pass
@@ -67,19 +76,179 @@ class Modal(QDialog):
 		pixmap = QtGui.QPixmap.fromImage(qim)
 		return pixmap
 
-	def init_histogram_drawer(self,histogram,title, frame_xlu=50, frame_ylu=50, frame_xrd=260, frame_yrd=100):
+# INITS
+# #####################################################
+
+	def init_modal(self, label_vals, slider_opts):
+		self.set_labels_with_list(self.labels2,label_vals)
+		self.set_current_label_val(self.window_opt+str(self.main_slider_value))
+		self.set_main_gridlayout(self.labels2,self.main_slider)
+		self.set_slider(self.main_slider, slider_opts[0], slider_opts[1], self.main_slider_value, slider_opts[2])
+		self.append_to_mainlayout(self.main_gridlayout, self.main_layout)
+		self.set_buttons(self.buttons, ["Zatwierdź", "Anuluj"])
+		self.setLayout(self.main_layout)
+
+	def init_histogram_drawer(self,histogram):
 		self.histogram = histogram
 		self.histogram_label.setPixmap(self.pil2pixmap(self.histogram))
+		self.add_widgets_to_layout(self.main_layout, [self.histogram_label])
+		self.setGeometry(QRect(100,100,260,200))
+		self.setLayout(self.main_layout)
 
-		self.layout.addWidget(self.histogram_label)
-		self.setLayout(self.layout)
-		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
-		self.setWindowTitle(title)
-
-	def init_color_picker(self):
-		self.colorpicker_color = QColorDialog.getColor(Qt.white,self, "Wybierz odcień bieli" if self.colorpicker_state else "Wybierz odcień czerni").getRgb()
-		self.colorpicker_state = not self.colorpicker_state 
+	def init_color_picker(self, title = ""):
+		if len(title) == 0:
+			self.colorpicker_color = QColorDialog.getColor(Qt.white,self, "Wybierz odcień bieli" if self.colorpicker_state else "Wybierz odcień czerni").getRgb()
+			self.colorpicker_state = not self.colorpicker_state 
+		else:
+			self.colorpicker_color = QColorDialog.getColor(Qt.white,self, title).getRgb()
 		return self.colorpicker_color
+
+	def init_resize_modal(self, label_texts):
+		textfield_layout = QHBoxLayout()
+		self.width_tf.setValidator(QIntValidator())
+		self.height_tf.setValidator(QIntValidator())
+		self.set_labels_with_list(self.labels2,label_texts)
+		self.add_widgets_to_layout(self.main_horlayout,self.labels2)
+		self.add_widgets_to_layout(textfield_layout,[self.height_tf, self.width_tf])
+		self.append_to_mainlayout(self.main_horlayout,self.main_layout)
+		self.append_to_mainlayout(textfield_layout,self.main_layout)
+		self.set_buttons(self.buttons, ["Zatwierdź", "Anuluj"])
+		self.set_non_signal_value(1)
+		self.setLayout(self.main_layout)
+
+	def init_color_sampler(self, pixel):
+		self.clear_list(self.labels2)
+		self.set_labels_with_list(self.labels2, ["R: "+str(pixel[0]), "G: "+str(pixel[1]), "B: "+str(pixel[2])], "colorpipette")
+		self.set_main_gridlayout(self.labels2,None,"colorpipette")
+		self.append_to_mainlayout(self.main_gridlayout, self.main_layout)
+		self.set_buttons(self.buttons,["OK"])
+		self.setLayout(self.main_layout)
+
+	def init_text_modal(self):
+		self.add_widgets_to_layout(self.main_layout, [self.text_tf])
+		self.set_buttons(self.buttons,["Zatwierdź","Anuluj"])
+		self.set_non_signal_value(2)
+		# ################# TUTAJAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		self.setLayout(self.main_layout)
+
+# SETTERS & GETTERS
+# #####################################################
+	def set_non_signal_value(self,value):
+		self.non_signal_value = value
+
+	def get_non_signal_value(self):
+		return self.non_signal_value
+
+	def append_objects_to_list(self, object_name, objects,default_list):
+		# object_type = self.object_names_types[str(object_name)]
+		# for obj in objects:
+			# default_list.append(object_type)
+		pass
+
+	def set_buttons(self, buttons, labels):
+		for i, label in enumerate(labels):
+			buttons.append(QPushButton(label,None))
+
+		self.setup_buttons(buttons)
+		self.add_widgets_to_layout(self.main_buttonhorlayout, buttons)
+		self.append_to_mainlayout(self.main_buttonhorlayout, self.main_layout)
+
+	def append_to_mainlayout(self, layout_to_insert, main_layout):
+		main_layout.addLayout(layout_to_insert)
+
+	def set_main_gridlayout(self,labels, slider=None, gridtype = None):
+		if gridtype is None:
+			for i,label in enumerate(labels):
+				self.main_gridlayout.addWidget(label,0,i,(Qt.AlignHCenter))
+
+			self.main_gridlayout.addWidget(slider,1,1)
+			slider.valueChanged.connect(self.get_mainslider_value)
+		elif gridtype == "colorpipette":
+			for i,label in enumerate(labels):
+				self.main_gridlayout.addWidget(label,i,0,(Qt.AlignHCenter))
+
+	def clear_list(self, list_to_clear):
+		list_to_clear[:] = []
+
+	def set_current_label_val(self, value):
+		self.current_value_label.setText(value)
+
+	def set_labels_with_list(self, labels, texts, usage = None):
+		for i, text in enumerate(texts):
+			labels.append(QLabel(str(text),None))
+		if usage == None:
+			labels.insert(1,self.current_value_label)
+		elif len(usage) > 0:
+			pass
+
+	def set_slider(self,slider,s_min,s_max,s_current,s_tick):
+		slider.setMinimum(s_min)
+		slider.setMaximum(s_max)
+		slider.setValue(s_current)
+		slider.setTickInterval(s_tick)	
+
+	def set_modal_return_value(self,value):
+		self.modal_return_value = value
+
+	def get_modal_return_value(self):
+		return self.modal_return_value
+
+	def get_slider(self):
+		return self.main_slider
+
+	def setup_buttons(self,buttons):
+		if len(buttons) > 1:
+			buttons[0].clicked.connect(self.button_confirm_exit)
+			buttons[1].clicked.connect(self.button_cancel_exit)
+		elif len(buttons) == 1:
+			buttons[0].clicked.connect(self.button_confirm_exit)
+
+	def add_widgets_to_layout(self,layout, objects):
+		for obj in objects:
+			layout.addWidget(obj)
+
+	def button_confirm_exit(self):
+		# print("modak "+str(self.slider_value))
+		self.done(1)
+		return self.get_modal_return_value()
+
+	def button_nonsignal_confirm_exit(self):
+		self.done(1)
+		self.set_modal_return_value((self.width_tf.text(),self.height_tf.text()))
+		return self.get_modal_return_value()
+
+	def button_cancel_exit(self):
+		self.done(0)
+		self.close()
+
+	def get_mainslider_value(self, text):
+		self.main_slider_value = self.main_slider.value()
+		self.current_value_label.setText(self.window_opt+str(self.main_slider_value))
+		self.set_modal_return_value(self.main_slider_value)
+
+# ZMIENIC WSZYSTKIE METODY BUTTONOW NA JEDEN z GETSETMODALRETURN
+
+	def button_text_confirm_exit(self):
+		# print("modak "+str(self.slider_value))
+		self.close()
+		return self.text_tf.text()
+
+
+	def button_marker_confirm_exit(self):
+		self.close()
+		return (self.width_tf.text(),self.height_tf.text(), self.size_tf.text(), self.item_list2.currentIndex(), \
+		self.item_list3.currentIndex(), QColor.red(self.marker_color), QColor.green(self.marker_color), QColor.blue(self.marker_color))
+
+
+	def button_ownmask_confirm(self):
+		self.close()
+		return ((self.user_kernel_size,self.user_kernel_size), [int(textfield.text()) for textfield in self.own_mask])
+
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
 
 	def init_marker_color_picker(self):
 		self.marker_color = QColor(QColorDialog.getColor(Qt.black,self, "Wybierz odcień markera"))
@@ -88,7 +257,7 @@ class Modal(QDialog):
 		self.item_list.addItem("Rozmiar maski")
 		self.item_list.addItem("Maska 3x3")
 		self.item_list.addItem("Maska 5x5")
-		self.layout.addWidget(self.item_list)
+		self.main_layout.addWidget(self.item_list)
 
 		# self.init_own_mask_modal(size,title)
 		# !!!!!!!!!!!!!!!!!!!!!!!!POPRAWIC GENEROWNAIE TEGO OKNA W ZALEZNOSCI OD WYBORU!!!!!!!!!!!!!!!!!}
@@ -100,33 +269,9 @@ class Modal(QDialog):
 		# !!!!!!!!!!!!!!!!!!!!!!!!POPRAWIC GENEROWNAIE TEGO OKNA W ZALEZNOSCI OD WYBORU!!!!!!!!!!!!!!!!!}
 		# !!!!!!!!!!!!!!!!!!!!!!!!POPRAWIC GENEROWNAIE TEGO OKNA W ZALEZNOSCI OD WYBORU!!!!!!!!!!!!!!!!!}
 
-		self.setLayout(self.layout)
+		self.setLayout(self.main_layout)
 		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
 		self.setWindowTitle(title)
-
-	def init_color_sampler(self, pixel, title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
-		
-		self.create_labels(4, "Wartość koloru: ", "R:", "G:","B: ")
-		self.set_labels_2(pixel, "R: "+str(pixel[0]), "G: "+str(pixel[1]), "B: "+str(pixel[2]))
-
-		self.button_confirm.released.connect(self.button_cancel_exit)
-		self.button_cancel.released.connect(self.button_cancel_exit)
-		self.add_widgets_to_buttons()
-		self.layout.addLayout(self.buttons_layout)
-		self.setLayout(self.layout)
-		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
-		self.setWindowTitle(title)
-
-	def create_labels(self, count, *titles):
-		for i in range(4):
-			self.labels2.append(QLabel(titles[i],None))
-			self.layout.addWidget(self.labels2[i])
-
-#  PAMIETAC O LABELS_2 przy finalnej kalsie
-	def set_labels_2(self, values, *texts):
-		for i, text in enumerate(texts):
-				self.labels2[i+1].setText(text)
-
 
 	def init_own_mask_modal(self, size,  title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
 		if size:
@@ -141,89 +286,16 @@ class Modal(QDialog):
 					self.own_mask[i*size+j].setValidator(QIntValidator())
 					# print(i*size+j)
 
-			self.layout.addLayout(self.own_mask_layout)
+			self.main_layout.addLayout(self.own_mask_layout)
 
 			self.button_confirm.released.connect(self.button_ownmask_confirm)
 			self.button_cancel.released.connect(self.button_cancel_exit)
 			self.add_widgets_to_buttons()
 
-			self.layout.addLayout(self.buttons_layout)
-			self.setLayout(self.layout)
+			self.main_layout.addLayout(self.buttons_layout)
+			self.setLayout(self.main_layout)
 			self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
 			self.setWindowTitle(title)
-
-	def button_ownmask_confirm(self):
-		self.close()
-		return ((self.user_kernel_size,self.user_kernel_size), [int(textfield.text()) for textfield in self.own_mask])
-
-	def init_color_picker_mode(self, title):
-		self.colorpicker_color = QColorDialog.getColor(Qt.white,self, title).getRgb()
-		return self.colorpicker_color
-
-	def init_modal(self, min_label, max_label, min_slider, max_slider, ticks_slider, title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
-		self.set_labels(min_label,max_label, self.window_opt+str(self.slider_value))
-
-		self.label_layout.addWidget(self.min_label)
-
-		self.current_value_label.setAlignment(Qt.AlignCenter| Qt.AlignVCenter)
-		self.slider.valueChanged.connect(self.get_slider_value)
-		self.label_layout.addWidget(self.current_value_label)
-
-		self.label_layout.addWidget(self.max_label)
-		self.max_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-
-		self.layout.addLayout(self.label_layout)
-
-		self.set_slider(min_slider,max_slider, self.slider_value, ticks_slider)
-
-		self.layout.addWidget(self.slider)
-
-		self.setup_buttons()
-		self.add_widgets_to_buttons()
-	
-		self.layout.addLayout(self.buttons_layout)
-
-		self.setLayout(self.layout)
-		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
-		self.setWindowTitle(title)
-
-	def init_resize_modal(self, title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
-
-		self.width_tf.setValidator(QIntValidator())
-		self.height_tf.setValidator(QIntValidator())
-
-		self.label_layout.addWidget(self.width_label)
-		self.label_layout.addWidget(self.width_tf)
-		self.label_layout.addWidget(QLabel("pix",None))
-		self.label_layout_2.addWidget(self.height_label)
-		self.label_layout_2.addWidget(self.height_tf)
-		self.label_layout_2.addWidget(QLabel("pix",None))
-
-		self.layout.addLayout(self.label_layout)
-		self.layout.addLayout(self.label_layout_2)
-
-		self.button_confirm.released.connect(self.button_resize_confirm_exit)
-		self.button_cancel.released.connect(self.button_cancel_exit)
-		self.add_widgets_to_buttons()
-
-		self.layout.addLayout(self.buttons_layout)
-		self.setLayout(self.layout)
-		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
-		self.setWindowTitle(title)
-
-	def init_text_modal(self, title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=100):
-		self.label_layout.addWidget(self.text_label)
-		self.label_layout.addWidget(self.text_tf)
-		self.layout.addLayout(self.label_layout)
-
-		self.button_confirm.released.connect(self.button_text_confirm_exit)
-		self.button_cancel.released.connect(self.button_cancel_exit)
-		self.add_widgets_to_buttons()
-
-		self.layout.addLayout(self.buttons_layout)
-		self.setLayout(self.layout)
-		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
-		self.setWindowTitle(title)
 
 	def init_markers_modal(self, title, frame_xlu=50, frame_ylu=50, frame_xrd=400, frame_yrd=400):
 
@@ -274,23 +346,23 @@ class Modal(QDialog):
 		self.item_list3.addItem("Wewnętrzne")
 		layout10.addWidget(self.item_list3)
 
-		self.layout.addLayout(layout1)
-		self.layout.addLayout(layout2)
-		self.layout.addLayout(layout3)
-		self.layout.addLayout(layout4)
-		self.layout.addLayout(layout5)
-		self.layout.addLayout(layout6)
-		self.layout.addLayout(layout7)
-		self.layout.addLayout(layout8)
-		self.layout.addLayout(layout9)
-		self.layout.addLayout(layout10)
+		self.main_layout.addLayout(layout1)
+		self.main_layout.addLayout(layout2)
+		self.main_layout.addLayout(layout3)
+		self.main_layout.addLayout(layout4)
+		self.main_layout.addLayout(layout5)
+		self.main_layout.addLayout(layout6)
+		self.main_layout.addLayout(layout7)
+		self.main_layout.addLayout(layout8)
+		self.main_layout.addLayout(layout9)
+		self.main_layout.addLayout(layout10)
 
 		self.button_confirm.released.connect(self.button_resize_confirm_exit)
 		self.button_cancel.released.connect(self.button_cancel_exit)
 		self.add_widgets_to_buttons()
 
-		self.layout.addLayout(self.buttons_layout)
-		self.setLayout(self.layout)
+		self.main_layout.addLayout(self.buttons_layout)
+		self.setLayout(self.main_layout)
 		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
 		self.setWindowTitle(title)
 
@@ -334,8 +406,8 @@ class Modal(QDialog):
 		self.button_confirm.released.connect(lambda: self.button_unsharpmasking_confirm())
 		self.button_cancel.released.connect(self.button_cancel_exit)
 
-		self.layout.addLayout(self.gridlayout)
-		self.setLayout(self.layout)
+		self.main_layout.addLayout(self.gridlayout)
+		self.setLayout(self.main_layout)
 		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
 		self.setWindowTitle(title)
 
@@ -350,62 +422,15 @@ class Modal(QDialog):
 		# sliders.setValue(s_current)
 		# sliders.setTickInterval(s_tick)
 
-	def get_sliders_values(*values):
-		pass
-
 	def button_unsharpmasking_confirm(self):
 		self.close()
 		return (self.sliders[0].value(),self.sliders[1].value(),self.sliders[2].value())
-
-		#todoo layter
-	def fill_grid_layout(self, size, *args):
-		pass
-
-	def setup_buttons(self):
-		self.button_confirm.released.connect(self.button_confirm_exit)
-		self.button_cancel.released.connect(self.button_cancel_exit)
-
-	def add_widgets_to_buttons(self):
-		self.buttons_layout.addWidget(self.button_confirm)
-		self.buttons_layout.addWidget(self.button_cancel)
 
 	def set_labels(self, l_min, l_max, l_current):
 		self.min_label.setText(str(l_min));
 		self.max_label.setText(str(l_max))
 		self.current_value_label.setText(str(l_current))
 
-	def set_slider(self,s_min,s_max,s_current,s_tick):
-		self.slider.setMinimum(s_min)
-		self.slider.setMaximum(s_max)
-		self.slider.setValue(s_current)
-		self.slider.setTickInterval(s_tick)
-
-	def get_slider_value(self, text):
-		self.slider_value = self.slider.value()
-		self.current_value_label.setText(self.window_opt+str(self.slider_value))
-
-	def button_confirm_exit(self):
-		# print("modak "+str(self.slider_value))
-		self.close()
-		return self.slider_value
-
-	def button_resize_confirm_exit(self):
-		# print("modak "+str(self.slider_value))
-		self.close()
-		return (self.width_tf.text(),self.height_tf.text())
-
-	def button_cancel_exit(self):
-		self.close()
-
-	def button_text_confirm_exit(self):
-		# print("modak "+str(self.slider_value))
-		self.close()
-		return self.text_tf.text()
-
-	def button_marker_confirm_exit(self):
-		self.close()
-		return (self.width_tf.text(),self.height_tf.text(), self.size_tf.text(), self.item_list2.currentIndex(), \
-		self.item_list3.currentIndex(), QColor.red(self.marker_color), QColor.green(self.marker_color), QColor.blue(self.marker_color))
 
 	def msg_box(self, text):
 		msgBox = QMessageBox()
