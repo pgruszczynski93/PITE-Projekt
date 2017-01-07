@@ -1,18 +1,62 @@
 import unittest
-from ImagePreProcessor import *
 from MainWindow import *
 
 class tests(unittest.TestCase):
   
 	def setUp(self):
 		self.imgProcessor = ImagePreProcessor()
+
+	def test_windows_creation(self):
+		print("Sprawdzenie, czy poprawnie tworzy się okno główne programu i ustawione są właściwe parametry")
+		app = QtGui.QApplication(sys.argv)
+		MainWindow = QtGui.QMainWindow()
+		ui = Ui_MainWindow()
+		ui.setupUi(MainWindow)
+		self.assertEqual(ui.in_clipping_mode, False)
+		self.assertEqual(ui.clipping_not_done, True)
+		self.assertEqual(ui.border_rect, None)
+		self.assertEqual(ui.clip_rect, None)
+		self.assertEqual(ui.dragging, None)
+		self.assertEqual(ui.drag_offset, QPoint())
+		self.assertEqual(ui.handle_offsets, (QPoint(8, 8), QPoint(-1, 8), QPoint(8, -1), QPoint(-1, -1)))
+		self.assertEqual(ui.clipping_pos, [0,0,0,0])
+
+		print("Sprawdzenie właściwego tworzenia się okien modalnych")
+
+		print("Modal")
+		modal_window = Modal("Zmiana kontrastu","Kontrast: ")
+		modal_window.append_objects_to_list("button",2,2)
+		modal_window.init_modal([0,50],[0,50,1])
+		modal_window.set_slider(modal_window.get_slider(), 0,50,self.imgProcessor.contrast_mod_value,1)
+
+		print("Resize Modal")
+		modal_window = Modal("Skalowanie i dopasowanie")
+		modal_window.init_resize_modal(["Wysokość (pix)", "Szerokość (pix)"])
+
+		print("Text Modal")
+		modal_window = Modal("Wprowadź tekst do wstawienia ")
+		modal_window.init_text_modal()
+
+		print("Unsharp Mask")
+		modal_window = Modal()
+		modal_window.init_unsharp_mask("Maska wyostrzająca")
+		modal_window.set_unsharp_sliders(self.imgProcessor.unsharp_mod_values)
+
+		print("Combobox Ownmask")
+		modal_window = Modal()
+		modal_window.init_combobox_ownmask("Zdefiniuj maskę")
+
+		print("Markers Modal")
+		modal_window = Modal()
+		modal_window.init_markers_modal("Wstawianie markera")
+		
     
 	def test_init(self):
-		print("Sprawdzenie, czy obiekt jest instancją klasy ImagePreProcessor")
+		print("Sprawdzenie, czy utworzony obiekt jest instancją klasy ImagePreProcessor")
 		self.assertIsInstance(self.imgProcessor, ImagePreProcessor)
 
 	def test_parameters(self):
-		print("Sprawdzenie, czy domyślne parametry instancji klasy są prawidłowe")
+		print("Sprawdzenie, czy domyślne parametry instancji klasy ImagePreProcessor są prawidłowe")
 		self.assertEqual(self.imgProcessor.image, None)
 		self.assertEqual(self.imgProcessor.pixels, None)
 		self.assertEqual(self.imgProcessor.modal_window, None)
@@ -46,13 +90,6 @@ class tests(unittest.TestCase):
 		self.assertEqual(self.imgProcessor.color_mod_value, 0)
 		self.assertEqual(self.imgProcessor.noise_mod_value, 0)
 		self.assertEqual(self.imgProcessor.marker_mod_values, None)
-
-	def test_MainWindow_creation(self):
-		print("Sprawdzenie, czy poprawnie tworzy się okno główne programu")
-		app = QtGui.QApplication(sys.argv)
-		MainWindow = QtGui.QMainWindow()
-		ui = Ui_MainWindow()
-		ui.setupUi(MainWindow)
 
 	def test_image_operations(self):
 		print("Sprawdzenie funkcji wczytującej obraz wejściowy")
