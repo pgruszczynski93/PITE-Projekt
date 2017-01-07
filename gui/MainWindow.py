@@ -33,14 +33,10 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.in_clipping_mode = False
 		self.clipping_not_done = True
 		self.border_rect = None
-		# self.border_rect = QRect(8, 8, 429, 642)
 		self.clip_rect = None
-		# self.clip_rect = QRect(8, 8, 429, 642)
 		self.dragging = None
 		self.drag_offset = QPoint()
-		self.handle_offsets = (QPoint(8, 8), QPoint(-1, 8), 
-								QPoint(8, -1), QPoint(-1, -1))
-
+		self.handle_offsets = (QPoint(8, 8), QPoint(-1, 8), QPoint(8, -1), QPoint(-1, -1))
 		self.clipping_pos = [0,0,0,0]
 
 	def setupUi(self, MainWindow):
@@ -76,10 +72,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
 
 		self.org_image = ImageWidget(self.scrollAreaWidgetContents)
-		# self.org_image = QtGui.QWidget(self.scrollAreaWidgetContents)
-		# self.org_image.setGeometry(QtCore.QRect(0, 0, 800, 600))
 		self.org_image.setObjectName(_fromUtf8("org_image"))
-		# self.addWidget(self.original_image, 0, 0, 1, 1)
 		self.gridLayout_3.addWidget(self.org_image,0,0,1,1)
 		self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
@@ -87,26 +80,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
 
 		self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-
-		# self.frame_2 = QtGui.QFrame(self.centralwidget)
-		# self.frame_2.setGeometry(QtCore.QRect(50, 0, 800, 600))
-		# self.frame_2.setFrameShape(QtGui.QFrame.StyledPanel)
-		# self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
-		# self.frame_2.setObjectName(_fromUtf8("frame_2"))
-
-		# self.scrollArea_2 = QtGui.QScrollArea(self.frame_2)
-		# self.scrollArea_2.setGeometry(QtCore.QRect(0, 0, 800, 600))
-		# self.scrollArea_2.setWidgetResizable(True)
-		# self.scrollArea_2.setObjectName(_fromUtf8("scrollArea_2"))
-		
-		# self.scrollAreaWidgetContents_2 = QtGui.QWidget()
-		# self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 800, 600))
-		# self.scrollAreaWidgetContents_2.setObjectName(_fromUtf8("scrollAreaWidgetContents_2"))
-		# self.scrollAreaWidgetContents_2.setAutoFillBackground(True)
-		# self.copy_image = QtGui.QWidget(self.scrollAreaWidgetContents_2)
-		# self.copy_image.setGeometry(QtCore.QRect(0, 0, 450, 600))
-		# self.copy_image.setObjectName(_fromUtf8("copy_image"))
-		# self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
 
 		MainWindow.setCentralWidget(self.centralwidget)
 		self.menubar = QtGui.QMenuBar(MainWindow)
@@ -239,9 +212,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionEdgeDetection = QtGui.QAction(MainWindow)
 		self.actionEdgeDetection.setObjectName(_fromUtf8("actionEdgeDetection"))
 
-		self.actionZaznaczanie = QtGui.QAction(MainWindow)
-		self.actionZaznaczanie.setObjectName(_fromUtf8("actionZaznaczanie"))
-
 		self.actionRotate = QtGui.QAction(MainWindow)
 		self.actionRotate.setObjectName(_fromUtf8("actionRotate"))
 		self.actionRotate.setShortcut('Alt+R')
@@ -365,9 +335,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionSampleColor.setObjectName(_fromUtf8("actionSampleColor"))
 		self.actionSampleColor.setShortcut('Alt+Q')
 		self.actionSampleColor.triggered.connect(lambda: self.process_image(self.imgPreProc.sample_color))
-		
-		self.actionWype_nianie = QtGui.QAction(MainWindow)
-		self.actionWype_nianie.setObjectName(_fromUtf8("actionWype_nianie"))
 
 		self.actionSave = QtGui.QAction(MainWindow)
 		self.actionSave.setObjectName("actionSave")
@@ -387,12 +354,9 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuSzum.addAction(self.actionDeleteNoise)
 		self.menuSzum.addAction(self.actionNoise)
 		self.menuInne.addAction(self.actionTreshold)
-
 		self.menuSharpening.addAction(self.actionSharpen)
 		self.menuFilters.addAction(self.menuSharpening.menuAction())
-		# self.menuFilters.addAction(self.actionSharpen)
 		self.menuFilters.addAction(self.menuBluring.menuAction())
-		# self.menuFilters.addAction(self.actionBluring)
 		self.menuFilters.addAction(self.menuEdgeDetection.menuAction())
 		self.menuFilters.addAction(self.menuSmoothing.menuAction())
 		self.menuEdgeDetection.addAction(self.actionContour)
@@ -411,12 +375,9 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuBluring.addAction(self.actionMinFilter)
 		self.menuBluring.addAction(self.actionMaxFilter)
 		self.menuBluring.addAction(self.actionModeFilter)
-		# self.menuEdgeDetection.addAction(self.actionEdgeDetection)
 		self.menuFilters.addAction(self.menuSzum.menuAction())
 		self.menuFilters.addAction(self.menuInne.menuAction())
 		self.menuFilters.addAction(self.actionKernel)
-		
-		self.menuTransformacja.addAction(self.actionZaznaczanie)
 		self.menuTransformacja.addAction(self.actionRotate)
 		self.menuTransformacja.addAction(self.actionFitScale)
 		self.menuTransformacja.addAction(self.actionResize)
@@ -440,7 +401,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuDopasowania.addAction(self.menuHistogram.menuAction())
 		self.menuDopasowania.addAction(self.actionColorize)
 		self.menuDopasowania.addAction(self.actionSampleColor)
-		self.menuDopasowania.addAction(self.actionWype_nianie)
 		self.menuWstawianie.addAction(self.actionText)
 		self.menuWstawianie.addAction(self.actionMarker)
 		self.menubar.addAction(self.menuPlik.menuAction())
@@ -473,7 +433,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuSmoothing.setTitle(_translate("MainWindow", "Wygładzanie", None))
 		self.menuBluring.setTitle(_translate("MainWindow", "Rozmycie", None))
 		self.menuSharpening.setTitle(_translate("MainWindow", "Wyostrzanie", None))
-		self.actionZaznaczanie.setText(_translate("MainWindow", "Zaznaczanie", None))
 		self.actionRotate.setText(_translate("MainWindow", "Obrót", None))
 		self.actionFitScale.setText(_translate("MainWindow", "Skaluj i dopasuj", None))
 		self.actionResize.setText(_translate("MainWindow", "Zmiana rozmiaru", None))
@@ -498,9 +457,8 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionFindEdges.setText(_translate("MainWidndow","Wykrywanie krawędzi", None))
 		self.actionEmboss.setText(_translate("MainWidndow","Płaskorzeźba", None))
 		self.actionMarker.setText(_translate("MainWidndow","Wstaw marker", None))
-		
 		self.actionSmooth.setText(_translate("MainWidndow","Wygładzanie", None))
-		self.actionSmoothMore.setText(_translate("MainWidndow","Mocniejsze wygładzanie", None))
+		self.actionSmoothMore .setText(_translate("MainWidndow","Mocniejsze wygładzanie", None))
 		self.actionGaussianBlur.setText(_translate("MainWidndow","Rozmycie Gaussa", None))
 		self.actionUnsharpMask.setText(_translate("MainWidndow","Maska wyostrzająca", None))
 		self.actionKernel.setText(_translate("MainWidndow","Własny filtr splotowy", None))
@@ -509,7 +467,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionMinFilter.setText(_translate("MainWidndow","Filtr minimum", None))
 		self.actionMaxFilter.setText(_translate("MainWidndow","Filtr maksimum", None))
 		self.actionModeFilter.setText(_translate("MainWidndow","Filtr modalny", None))
-
 		self.menuEdgeDetection.addAction(self.actionFindEdges)
 		self.actionSolarize.setText(_translate("MainWidndow","Solaryzacja", None))
 		self.actionTreshold.setText(_translate("MainWindow", "Progowanie", None))
@@ -518,7 +475,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionEqualizeHistogram.setText(_translate("MainWindow", "Wyrównanie (Normalizacja)", None))
 		self.actionText.setText(_translate("MainWindow", "Tekst", None))
 		self.actionSampleColor.setText(_translate("MainWindow", "Kolor (Pipeta)", None))
-		self.actionWype_nianie.setText(_translate("MainWindow", "Wypełnianie", None))
 		self.actionSave.setText(_translate("MainWindow", "Zapisz", None))
 		self.actionSaveAs.setText(_translate("MainWindow", "Zapisz jako...", None))
 
