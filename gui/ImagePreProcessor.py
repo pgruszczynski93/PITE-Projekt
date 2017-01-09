@@ -172,7 +172,8 @@ class ImagePreProcessor(object):
 
 	def auto_delete_border(self):
 		self.modal_window = Modal("Usuwanie ramki zdjęcia","Piksele do usunięcia: ")
-		self.modal_window.init_modal(self.modal_window.get_slider(),[0,200],[0,200,1])
+		self.modal_window.init_modal([0,200],[0,200,1])
+		self.modal_window.set_slider(self.modal_window.get_slider(),0,200,self.crop_opsborder_mod_value,1)
 		if self.modal_window.exec_():
 			self.crop_opsborder_mod_value = self.modal_window.button_confirm_exit()
 		self.auto_delete_border_exec()
@@ -270,7 +271,7 @@ class ImagePreProcessor(object):
 		self.image = self.image.filter(selected_filter)
 		self.loadImageFromPIX(self.image)
 
-	def auto_add_text_exec(self):
+	def auto_add_text_exec(self,txt,text_color):
 		self.font = PIL.ImageFont.truetype("arial.ttf", 15)
 		self.drawer = PIL.ImageDraw.Draw(txt)
 		self.drawer.text((self.mouse_pos[0],self.mouse_pos[1]), self.input_text, font=self.font, fill= text_color)
@@ -284,9 +285,9 @@ class ImagePreProcessor(object):
 		if self.modal_window.exec_():
 			txt = Image.new('RGBA', self.image.size, (255,255,255,255))
 
-			self.input_text = self.modal_window.button_text_confirm_exit()
+			self.input_text = self.modal_window.button_nonsignal_confirm_exit("text")
 		text_color = self.modal_window.init_color_picker("Kolor tekstu")
-		self.auto_add_text_exec()
+		self.auto_add_text_exec(txt,text_color)
 		
 
 	def auto_gaussianblur_exec(self):
@@ -301,27 +302,28 @@ class ImagePreProcessor(object):
 			self.gaussian_radius  = self.modal_window.button_confirm_exit()
 		self.auto_gaussianblur_exec()
 
-	def auto_unsharpmask_exec(self):
-		unsharp_img =self.image.filter(ImageFilter.UnsharpMask(self.unsharp_mod_values[0],self.unsharp_mod_values[1],self.unsharp_mod_values[2]))
-		self.image = unsharp_img
-		self.loadImageFromPIX(self.image)
+	def auto_unsharpmask_exec(self, value_changed):
+		if value_changed:
+			unsharp_img =self.image.filter(ImageFilter.UnsharpMask(self.unsharp_mod_values[0],self.unsharp_mod_values[1],self.unsharp_mod_values[2]))
+			self.image = unsharp_img
+			self.loadImageFromPIX(self.image)
 
 	def auto_unsharpmask(self):
-		self.modal_window = Modal()
-		self.modal_window.init_unsharp_mask("Maska wyostrzająca")
-		self.modal_window.set_unsharp_sliders(self.unsharp_mod_values)
+		value_changed = False
+		self.modal_window = Modal("Maska wyostrzająca")
+		self.modal_window.init_unsharp_mask()
+		self.modal_window.set_sliders(self.modal_window.get_sliders(), self.unsharp_mod_values)
 		if self.modal_window.exec_():
-			self.unsharp_mod_values  = self.modal_window.button_unsharpmasking_confirm()
-		self.auto_unsharpmask_exec()
+			self.unsharp_mod_values  = self.modal_window.button_confirm_exit()
+			value_changed = True
+		self.auto_unsharpmask_exec(value_changed)
 
-	def auto_kernel(self):
-		self.modal_window = Modal()
-		self.modal_window.init_combobox_ownmask("Zdefiniuj maskę")
+	def auto_kernel(self,size):
+		self.modal_window = Modal("Zdefiniuj maskę")
+		self.modal_window.init_own_mask_modal(size)
 		if self.modal_window.exec_():
-			self.kernel_vals  = self.modal_window.button_ownmask_confirm()
-		kernel_img =self.image.filter(ImageFilter.Kernel(self.kernel_vals[0], self.kernel_vals[1]))
-		# kernel_img =self.image.filter(ImageFilter.Kernel(self.kernel_vals[0], [0,-1,0,-1,5,-1,0,-1,0]))
-		print(self.kernel_vals[0], self.kernel_vals[1], type(self.kernel_vals[1][1]))
+			self.kernel_vals  = self.modal_window.button_nonsignal_confirm_exit("unsharp")
+			kernel_img = self.image.filter(ImageFilter.Kernel(self.kernel_vals[0], self.kernel_vals[1]))
 		self.image = kernel_img
 		self.loadImageFromPIX(self.image)
 
@@ -528,6 +530,7 @@ class ImagePreProcessor(object):
 		self.modal_window.exec_()
 
 	def put_marker_exec(self):
+			# print(self.marker_mod_values)
 		pos_width = int(self.marker_mod_values[0])
 		pos_height = int(self.marker_mod_values[1])
 		size = int(self.marker_mod_values[2])
@@ -606,10 +609,10 @@ class ImagePreProcessor(object):
 			self.loadImageFromPIX(self.image)
 
 	def put_marker(self):
-		self.modal_window = Modal()
-		self.modal_window.init_markers_modal("Wstawianie markera")
+		self.modal_window = Modal("Wstawianie markera")
+		self.modal_window.init_markers_modal()
 		if self.modal_window.exec_():
-			self.marker_mod_values = self.modal_window.button_marker_confirm_exit()
+			self.marker_mod_values = self.modal_window.button_nonsignal_confirm_exit("marker")
 		self.put_marker_exec()
 		
 
