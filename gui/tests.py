@@ -32,7 +32,6 @@ class tests(unittest.TestCase):
 
 		print("Modal")
 		modal_window = Modal("Zmiana kontrastu","Kontrast: ")
-		modal_window.append_objects_to_list("button",2,2)
 		modal_window.init_modal([0,50],[0,50,1])
 		modal_window.set_slider(modal_window.get_slider(), 0,50,self.imgProcessor.contrast_mod_value,1)
 
@@ -57,7 +56,7 @@ class tests(unittest.TestCase):
 		print("Unsharp Mask")
 		modal_window = Modal("Maska wyostrzająca")
 		modal_window.init_unsharp_mask()
-		
+
 		print("Ownmask")
 		modal_window = Modal("Zdefiniuj maskę")
 		modal_window.init_own_mask_modal(3)
@@ -65,6 +64,10 @@ class tests(unittest.TestCase):
 		print("Markers Modal")
 		modal_window = Modal("Wstawianie markera")
 		modal_window.init_markers_modal()
+
+		print("Message Box")
+		modal_window = Modal()
+		modal_window.msg_box("Testy")
 		
     
 	def test_init(self):
