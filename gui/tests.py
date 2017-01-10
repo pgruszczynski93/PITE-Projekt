@@ -1,6 +1,5 @@
 import unittest
 from MainWindow import *
-from PIL import Image
 
 
 class tests(unittest.TestCase):
@@ -23,6 +22,12 @@ class tests(unittest.TestCase):
 		self.assertEqual(ui.handle_offsets, (QPoint(8, 8), QPoint(-1, 8), QPoint(8, -1), QPoint(-1, -1)))
 		self.assertEqual(ui.clipping_pos, [0,0,0,0])
 
+		print("Sprawdzenie poprawnej konwersji JPG do QImage")
+		self.imgProcessor.loadImage("./image.jpg")
+		modal_window = Modal()
+		self.assertIsInstance(modal_window.pil2pixmap(self.imgProcessor.image), QtGui.QPixmap)
+
+
 		print("Sprawdzenie właściwego tworzenia się okien modalnych")
 
 		print("Modal")
@@ -31,9 +36,19 @@ class tests(unittest.TestCase):
 		modal_window.init_modal([0,50],[0,50,1])
 		modal_window.set_slider(modal_window.get_slider(), 0,50,self.imgProcessor.contrast_mod_value,1)
 
+		print("Histogram Drawer")
+		modal_window = Modal()
+		hist = Histogram(self.imgProcessor.image)
+		hist.create_histogram()
+		modal_window.init_histogram_drawer(hist.hist_img)
+
 		print("Resize Modal")
 		modal_window = Modal("Skalowanie i dopasowanie")
 		modal_window.init_resize_modal(["Wysokość (pix)", "Szerokość (pix)"])
+
+		print("Color Sampler")
+		modal_window = Modal()
+		modal_window.init_color_sampler((255, 255, 255))
 
 		print("Text Modal")
 		modal_window = Modal("Wprowadź tekst do wstawienia ")
@@ -42,8 +57,7 @@ class tests(unittest.TestCase):
 		print("Unsharp Mask")
 		modal_window = Modal("Maska wyostrzająca")
 		modal_window.init_unsharp_mask()
-		# modal_window.set_unsharp_sliders(self.imgProcessor.unsharp_mod_values)
-
+		
 		print("Ownmask")
 		modal_window = Modal("Zdefiniuj maskę")
 		modal_window.init_own_mask_modal(3)
