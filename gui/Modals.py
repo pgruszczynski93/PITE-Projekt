@@ -12,13 +12,12 @@ class Modal(QDialog):
 		self.mask_size = 0
 		self.width_tf = QLineEdit()
 		self.height_tf = QLineEdit()
-
+		self.text_tf = QLineEdit()
 		self.sliders = []
 		self.labels2 = [] 
 		self.buttons = []
 		self.textfields = []
 		self.comboboxes = []
-
 		self.histogram = None
 		self.histogram_label = QLabel()
 		self.current_value_label = QLabel("", parent)
@@ -26,14 +25,12 @@ class Modal(QDialog):
 		self.main_gridlayout = QGridLayout()
 		self.main_horlayout = QHBoxLayout()
 		self.main_buttonhorlayout = QHBoxLayout()
-
 		self.object_names_types = {"button":QPushButton(),"label":QLabel(),"textfield":QLineEdit(),"slider":QSlider(Qt.Horizontal)}
 		self.window_opt = window_opt
 		self.colorpicker_color = None
 		self.colorpicker_state = False
 		self.modal_return_value = None
 		self.non_signal_value = None
-
 		self.setGeometry(QRect(frame_xlu, frame_ylu, frame_xrd, frame_yrd))
 		self.setWindowTitle(title)
 
