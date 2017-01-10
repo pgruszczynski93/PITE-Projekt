@@ -67,7 +67,7 @@ class tests(unittest.TestCase):
 
 		print("Message Box")
 		modal_window = Modal()
-		modal_window.msg_box("Testy")
+		modal_window.msg_box("Testy","simulate")
 		
     
 	def test_init(self):

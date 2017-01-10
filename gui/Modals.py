@@ -128,12 +128,8 @@ class Modal(QDialog):
 		self.set_buttons(self.buttons,["Zatwierdź","Anuluj"])
 		self.setLayout(self.main_layout)
 		self.setGeometry(QRect(50,50,400,100))
+
 # SETTERS, GETTERS AND OTHER
-	def append_objects_to_list(self, object_name, objects,default_list):
-		# object_type = self.object_names_types[str(object_name)]
-		# for obj in objects:
-			# default_list.append(object_type)
-		pass
 
 	def marker_color_picker(self):
 		self.colorpicker_color = QColor(QColorDialog.getColor(Qt.black,self, "Wybierz odcień markera"))
@@ -289,9 +285,10 @@ class Modal(QDialog):
 		self.current_value_label.setText(self.window_opt+str(self.main_slider_value))
 		self.set_modal_return_value(self.main_slider_value)
 
-	def msg_box(self, text):
+	def msg_box(self, text, simulate = None):
 		msgBox = QMessageBox()
 		msgBox.setWindowTitle("Błąd")
 		msgBox.setText(text)
 		msgBox.setStandardButtons(QMessageBox.Ok)
-		msgBox.exec_()
+		if simulate == None:
+			msgBox.exec_()
