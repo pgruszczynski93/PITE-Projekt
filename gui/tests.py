@@ -8,11 +8,12 @@ class tests(unittest.TestCase):
 		self.imgProcessor = ImagePreProcessor()
 
 	def test_windows_creation(self):
-		print("Sprawdzenie, czy poprawnie tworzy się okno główne programu i ustawione są właściwe parametry")
+		print("Sprawdzenie, czy poprawnie tworzy się okno główne programu i ustawione są właściwe parametry oraz wywołanie jego metod")
 		app = QtGui.QApplication(sys.argv)
 		MainWindow = QtGui.QMainWindow()
 		ui = Ui_MainWindow()
 		ui.setupUi(MainWindow)
+		ui.retranslateUi(MainWindow)
 		self.assertEqual(ui.in_clipping_mode, False)
 		self.assertEqual(ui.clipping_not_done, True)
 		self.assertEqual(ui.border_rect, None)
