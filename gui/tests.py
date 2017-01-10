@@ -13,7 +13,8 @@ class tests(unittest.TestCase):
 		MainWindow = QtGui.QMainWindow()
 		ui = Ui_MainWindow()
 		ui.setupUi(MainWindow)
-		ui.retranslateUi(MainWindow)
+
+		print("Sprawdzenie poprawności parametrów")
 		self.assertEqual(ui.in_clipping_mode, False)
 		self.assertEqual(ui.clipping_not_done, True)
 		self.assertEqual(ui.border_rect, None)
@@ -23,13 +24,15 @@ class tests(unittest.TestCase):
 		self.assertEqual(ui.handle_offsets, (QPoint(8, 8), QPoint(-1, 8), QPoint(8, -1), QPoint(-1, -1)))
 		self.assertEqual(ui.clipping_pos, [0,0,0,0])
 
-		print("Sprawdzenie poprawnej konwersji JPG do QImage")
+		print("Sprawdzenie metody otwierającej obraz")
+		ui.open_image("./image.jpg")
+
+		print("Sprawdzenie poprawnej konwersji JPG do QImage - klasa Histogram")
 		self.imgProcessor.loadImage("./image.jpg")
 		modal_window = Modal()
 		self.assertIsInstance(modal_window.pil2pixmap(self.imgProcessor.image), QtGui.QPixmap)
 
-
-		print("Sprawdzenie właściwego tworzenia się okien modalnych")
+		print("Sprawdzenie właściwego tworzenia się okien modalnych - klasa Modals")
 
 		print("Modal")
 		modal_window = Modal("Zmiana kontrastu","Kontrast: ")
