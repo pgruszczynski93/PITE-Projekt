@@ -54,6 +54,9 @@ class ImagePreProcessor(object):
 		self.noise_mod_value = 0
 		self.marker_mod_values = (100, 100, 10, 1, 1, 255, 255, 255)
 
+	def image_close(self):
+		self.image.close()
+
 	def set_width(self, width):
 		self.width = width
 

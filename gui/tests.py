@@ -1,5 +1,7 @@
 import unittest
 from MainWindow import *
+from PIL import Image
+
 
 class tests(unittest.TestCase):
   
@@ -38,17 +40,17 @@ class tests(unittest.TestCase):
 		modal_window.init_text_modal()
 
 		print("Unsharp Mask")
-		modal_window = Modal()
-		modal_window.init_unsharp_mask("Maska wyostrzająca")
-		modal_window.set_unsharp_sliders(self.imgProcessor.unsharp_mod_values)
+		modal_window = Modal("Maska wyostrzająca")
+		modal_window.init_unsharp_mask()
+		# modal_window.set_unsharp_sliders(self.imgProcessor.unsharp_mod_values)
 
-		print("Combobox Ownmask")
-		modal_window = Modal()
-		modal_window.init_combobox_ownmask("Zdefiniuj maskę")
+		print("Ownmask")
+		modal_window = Modal("Zdefiniuj maskę")
+		modal_window.init_own_mask_modal(3)
 
 		print("Markers Modal")
-		modal_window = Modal()
-		modal_window.init_markers_modal("Wstawianie markera")
+		modal_window = Modal("Wstawianie markera")
+		modal_window.init_markers_modal()
 		
     
 	def test_init(self):
@@ -119,7 +121,7 @@ class tests(unittest.TestCase):
 		print("Sprawdzenie operacji konwersji do skali szarości")
 		self.imgProcessor.auto_grayscale()
 		print("Sprawdzenie operacji koloryzacji")
-		self.imgProcessor.auto_colorize_exec(Qt.black, Qt.white)
+		self.imgProcessor.auto_colorize_exec((0,0,0), (255,255,255))
 		print("Sprawdzenie operacji lustra")
 		self.imgProcessor.auto_mirror()
 		print("Sprawdzenie operacji przerzucania")
@@ -145,7 +147,7 @@ class tests(unittest.TestCase):
 		print("Sprawdzenie działania filtrów automatycznych")
 		self.imgProcessor.auto_filter(ImageFilter.BLUR)
 		print("Sprawdzenie operacji dodawania tekstu")
-		self.imgProcessor.auto_add_text_exec()
+		# self.imgProcessor.auto_add_text_exec( Image.new('RGBA', (400,400), (255,255,255,255)),(232,213,123))
 		print("Sprawdzenie działania filtru Gaussa")
 		self.imgProcessor.auto_gaussianblur_exec()
 		print("Sprawdzenie działania maski wyostrzającej")

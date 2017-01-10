@@ -536,6 +536,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.repaint_image()
 
 	def close_application(self):
+		self.ImagePreProcessor.image_close()
 		app.quit()
 
 	def show_save_message(self, message_text):
