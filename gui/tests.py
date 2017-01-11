@@ -15,7 +15,8 @@ class tests(unittest.TestCase):
 		ui.setupUi(MainWindow)
 
 		print("Sprawdzanie ImageWidget")
-		image_widget = ImageWidget.__init__(QtGui.QWidget())
+		parent = QtGui.QWidget()
+		image_widget = ImageWidget.__init__(parent)
 		# image_widget.paintEvent(None)
 
 		print("Sprawdzenie poprawności parametrów")
