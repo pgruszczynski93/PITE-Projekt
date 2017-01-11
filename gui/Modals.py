@@ -239,15 +239,6 @@ class Modal(QDialog):
 		for i, slider in enumerate(sliders):
 			slider.setValue(value[i])
 
-	def get_sliders(self):
-		return self.sliders
-
-	def get_modal_return_value(self):
-		return self.modal_return_value
-
-	def get_slider(self):
-		return self.main_slider
-
 	def setup_buttons(self,buttons):
 		if len(buttons) > 1:
 			buttons[0].clicked.connect(self.button_confirm_exit)
@@ -261,7 +252,7 @@ class Modal(QDialog):
 
 	def button_confirm_exit(self):
 		self.done(1)
-		return self.get_modal_return_value()
+		return self.modal_return_value
 
 	def button_nonsignal_confirm_exit(self, return_type = None):
 		self.done(1)
@@ -274,7 +265,7 @@ class Modal(QDialog):
 		elif return_type == "marker":
 			self.set_modal_return_value((self.textfields[0].text(),self.textfields[1].text(), self.textfields[2].text(), self.comboboxes[0].currentIndex(), \
 			self.comboboxes[1].currentIndex(), QColor.red(self.colorpicker_color), QColor.green(self.colorpicker_color), QColor.blue(self.colorpicker_color)))
-		return self.get_modal_return_value()
+		return self.modal_return_value
 
 	def button_cancel_exit(self):
 		self.done(0)
