@@ -88,7 +88,7 @@ class ImagePreProcessor(object):
 		if modal_state==1:
 			self.modal_window = Modal(title,window_opt)
 			self.modal_window.init_modal(label_vals,slider_opts)
-			self.modal_window.set_slider(self.modal_window.get_slider(), slider_opts[0],slider_opts[1],self.ops_vals[operation],slider_opts[2])
+			self.modal_window.set_slider(self.modal_window.main_slider, slider_opts[0],slider_opts[1],self.ops_vals[operation],slider_opts[2])
 			if self.modal_window.exec_():
 				self.ops_vals[operation] = self.modal_window.button_confirm_exit()
 
@@ -127,7 +127,7 @@ class ImagePreProcessor(object):
 			value_changed = False
 			self.modal_window = Modal(title)
 			self.modal_window.init_unsharp_mask()
-			self.modal_window.set_sliders(self.modal_window.get_sliders(), self.unsharp_mod_values)
+			self.modal_window.set_sliders(self.modal_window.sliders, self.unsharp_mod_values)
 			if self.modal_window.exec_():
 				self.unsharp_mod_values  = self.modal_window.button_confirm_exit()
 				value_changed = True
