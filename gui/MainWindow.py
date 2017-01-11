@@ -129,7 +129,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionNew = QtGui.QAction(MainWindow)
 		self.actionNew.setObjectName(_fromUtf8("actionNew"))
 		self.actionNew.setShortcut('Ctrl+N')
-		self.actionNew.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_new))
+		self.actionNew.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "newfile", 2, "Wymiary nowego pliku", None, None, None))
 
 		self.actionSharpen = QtGui.QAction(MainWindow)
 		self.actionSharpen.setObjectName(_fromUtf8("actionSharpen"))
@@ -173,11 +173,11 @@ class Ui_MainWindow(QtGui.QWidget):
 
 		self.actionGaussianBlur = QtGui.QAction(MainWindow)
 		self.actionGaussianBlur.setObjectName(_fromUtf8("actionGaussianBlur"))
-		self.actionGaussianBlur.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_gaussianblur))
+		self.actionGaussianBlur.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "gauss", 1, "Rozmycie Gaussa", "Promień rozmycia: ", [0,10],[0,10,1]))
 
 		self.actionUnsharpMask = QtGui.QAction(MainWindow)
 		self.actionUnsharpMask.setObjectName(_fromUtf8("actionUnsharpMask"))
-		self.actionUnsharpMask.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_unsharpmask))
+		self.actionUnsharpMask.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "unsharp", 6, "Maska wyostrzająca", None, None, None))
 
 		self.actionMask3 = QtGui.QAction(MainWindow)
 		self.actionMask3.setObjectName(_fromUtf8("actionMask3"))
@@ -189,31 +189,31 @@ class Ui_MainWindow(QtGui.QWidget):
 
 		self.actionRankFilter = QtGui.QAction(MainWindow)
 		self.actionRankFilter.setObjectName(_fromUtf8("actionRankFilter"))
-		self.actionRankFilter.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_rankfilter))
-		
+		self.actionRankFilter.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "rankfilter", 1, "Filtr rankingowy","Rozmiar rozmycia: ", [1,15],[1,15,2]))
+
 		self.actionMedianFilter = QtGui.QAction(MainWindow)
 		self.actionMedianFilter.setObjectName(_fromUtf8("actionMedianFilter"))
-		self.actionMedianFilter.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_medianfilter))
-		
+		self.actionMedianFilter.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "medianfilter", 1, "Filtr medianowy","Rozmiar rozmycia: ", [1,15],[1,15,2]))
+
 		self.actionMinFilter = QtGui.QAction(MainWindow)
 		self.actionMinFilter.setObjectName(_fromUtf8("actionMinFilter"))
-		self.actionMinFilter.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_minfilter))
-		
+		self.actionMinFilter.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "minfilter", 1, "Filtr minimalny","Rozmiar rozmycia: ", [1,15],[1,15,2]))
+
 		self.actionMaxFilter = QtGui.QAction(MainWindow)
 		self.actionMaxFilter.setObjectName(_fromUtf8("actionMaxFilter"))
-		self.actionMaxFilter.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_maxfilter))
+		self.actionMaxFilter.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "maxfilter", 1, "Filtr maksymalny","Rozmiar rozmycia: ", [1,15],[1,15,2]))
 		
 		self.actionModeFilter = QtGui.QAction(MainWindow)
 		self.actionModeFilter.setObjectName(_fromUtf8("actionModeFilter"))
-		self.actionModeFilter.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_modefilter))
+		self.actionModeFilter.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "modefilter", 1, "Filtr modalny","Rozmiar rozmycia: ", [0,10],[0,10,1]))
 
 		self.actionDeleteNoise = QtGui.QAction(MainWindow)
 		self.actionDeleteNoise.setObjectName(_fromUtf8("actionDeleteNoise"))
-		self.actionDeleteNoise.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_medianfilter))
+		self.actionDeleteNoise.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "medianfilter", 1, "Filtr medianowy","Rozmiar rozmycia: ", [1,15],[1,15,2]))
 
 		self.actionNoise = QtGui.QAction(MainWindow)
 		self.actionNoise.setObjectName(_fromUtf8("actionNoise"))
-		self.actionNoise.triggered.connect(lambda: self.process_image(self.imgPreProc.noise_generator))
+		self.actionNoise.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "noisegen", 1, "Pieprz i sol", "Zaszumienie (%): ", [0,100],[0,100,1]))
 		
 		self.actionEdgeDetection = QtGui.QAction(MainWindow)
 		self.actionEdgeDetection.setObjectName(_fromUtf8("actionEdgeDetection"))
@@ -221,17 +221,17 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionRotate = QtGui.QAction(MainWindow)
 		self.actionRotate.setObjectName(_fromUtf8("actionRotate"))
 		self.actionRotate.setShortcut('Alt+R')
-		self.actionRotate.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_rotate))
+		self.actionRotate.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "rotate", 1, "Rotacja", "Kąt obrotu: ", [0,360],[0,360,1]))
 
 		self.actionFitScale= QtGui.QAction(MainWindow)
 		self.actionFitScale.setObjectName(_fromUtf8("actionFitScale"))
 		self.actionFitScale.setShortcut('Ctrl+Alt+F')
-		self.actionFitScale.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_fitscale))
+		self.actionFitScale.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "fitscale", 2, "Skalowanie i dopasowanie", None, None, None))
 
 		self.actionResize= QtGui.QAction(MainWindow)
 		self.actionResize.setObjectName(_fromUtf8("actionFitScale"))
 		self.actionResize.setShortcut('Ctrl+Alt+I')
-		self.actionResize.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_resize))
+		self.actionResize.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "resize", 2, "Zmiana rozmiaru", None, None, None))
 
 		self.actionClipping = QtGui.QAction(MainWindow)
 		self.actionClipping.setObjectName(_fromUtf8("actionClipping"))
@@ -241,106 +241,101 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionBrightness = QtGui.QAction(MainWindow)
 		self.actionBrightness.setObjectName(_fromUtf8("actionBrightness"))
 		self.actionBrightness.setShortcut('Alt+B')
-		self.actionBrightness.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_brightness))
+		self.actionBrightness.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "brightness", 1, "Zmiana jasności", "Jasność (%): ", [0,200],[0,200,1]))
 
-		self.actionColorBalance = QtGui.QAction(MainWindow)
-		self.actionColorBalance.setObjectName(_fromUtf8("actionColorBalance"))
-		self.actionColorBalance.setShortcut('Alt+C')
-		self.actionColorBalance.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_colorbalance))
-
-		self.actionColorWheel = QtGui.QAction(MainWindow)
+		self.actionColorWheel = QtGui.QAction(MainWindow) 
 		self.actionColorWheel.setObjectName(_fromUtf8("actionColorWheel"))
 		self.actionColorWheel.setShortcut('Shift+Alt+C')
-		self.actionColorWheel.triggered.connect(lambda: self.process_image(self.imgPreProc.color_change))
+		self.actionColorWheel.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "colorwheel", 1, "Koło barw", "Zmiana koloru (%): ", [0,360],[0,360,1]))
 
 		self.actionAutoContrast = QtGui.QAction(MainWindow)
 		self.actionAutoContrast.setObjectName(_fromUtf8("actionAutoContrast"))
 		self.actionAutoContrast.setShortcut('Shift+Ctrl+Alt+L')
-		self.actionAutoContrast.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_contrast))
+		self.actionAutoContrast.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "contrast", 1, "Zmiana kontrastu", "Kontrast: ", [0,50],[0,50,1]))
 
 		self.actionSaturation = QtGui.QAction(MainWindow)
 		self.actionSaturation.setObjectName(_fromUtf8("actionSaturation"))
 		self.actionSaturation.setShortcut('Ctrl+Alt+S')
-		self.actionSaturation.triggered.connect(lambda: self.process_image(self.imgPreProc.saturation))
+		self.actionSaturation.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "saturation", 1, "Nasycenie","Stopień nasycenia (%): ", [0,200],[0,200,1]))
 
 		self.actionGamma = QtGui.QAction(MainWindow)
 		self.actionGamma.setObjectName(_fromUtf8("actionGamma"))
 		self.actionGamma.setShortcut('Alt+G')
-		self.actionGamma.triggered.connect(lambda: self.process_image(self.imgPreProc.gamma_correction))
+		self.actionGamma.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "gamma", 1, "Korekcja Gamma", "Wartość wspołczynnika: ", [1,799],[1,799,1]))
 
 		self.actionGrayScale = QtGui.QAction(MainWindow)
 		self.actionGrayScale.setObjectName(_fromUtf8("actionGrayScale"))
 		self.actionGrayScale.setShortcut("Ctrl+Alt+S")
-		self.actionGrayScale.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_grayscale))
+		self.actionGrayScale.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "grayscale", 0, None, None, None,None))
 
 		self.actionColorize = QtGui.QAction(MainWindow)
 		self.actionColorize.setObjectName(_fromUtf8("actionColorize"))
 		self.actionColorize.setShortcut("Ctrl+Alt+K")
-		self.actionColorize.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_colorize))
+		self.actionColorize.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "colorize", 4, None, None, None,None))
 
 		self.actionInverseColors = QtGui.QAction(MainWindow)
 		self.actionInverseColors.setObjectName(_fromUtf8("actionInverseColors"))
 		self.actionInverseColors.setShortcut('Alt+I')
-		self.actionInverseColors.triggered.connect(lambda: self.process_image(self.imgPreProc.negative))
+		self.actionInverseColors.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "negative", 0, None, None, None,None))
 
 		self.actionMirrorEffect = QtGui.QAction(MainWindow)
 		self.actionMirrorEffect.setObjectName(_fromUtf8("actionMirrorEffect"))
 		self.actionMirrorEffect.setShortcut('Alt+L')
-		self.actionMirrorEffect.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_mirror))
+		self.actionMirrorEffect.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "mirror", 0, None, None, None,None))
 
 		self.actionFlip = QtGui.QAction(MainWindow)
 		self.actionFlip.setObjectName(_fromUtf8("actionFlip"))
 		self.actionFlip.setShortcut('Alt+F')
-		self.actionFlip.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_flip))
+		self.actionFlip.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "flip", 0, None, None, None,None))
 
 		self.actionPosterize = QtGui.QAction(MainWindow)
 		self.actionPosterize.setObjectName(_fromUtf8("actionPosterize"))
 		self.actionPosterize.setShortcut('Alt+P')
-		self.actionPosterize.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_posterize))
+		self.actionPosterize.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "posterize", 1, "Posteryzacja", "Bity kanałów: ", [1,8],[1,8,1]))
 
 		self.actionSolarize = QtGui.QAction(MainWindow)
 		self.actionSolarize.setObjectName(_fromUtf8("actionSolarize"))
 		self.actionSolarize.setShortcut('Alt+S')
-		self.actionSolarize.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_solarize))
+		self.actionSolarize.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "solarization", 1, "Solaryzacja", "Próg solaryzacji: ", [0,128],[0,128,1]))
 
 		self.actionDeleteBorder = QtGui.QAction(MainWindow)
 		self.actionDeleteBorder.setObjectName(_fromUtf8("actionDeleteBorder"))
 		self.actionDeleteBorder.setShortcut('Ctrl+Alt+B')
-		self.actionDeleteBorder.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_delete_border))
+		self.actionDeleteBorder.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "cropborder", 1, "Usuwanie ramki zdjęcia", "Piksele do usunięcia: ", [0,200],[0,200,1]))
 
 		self.actionTreshold = QtGui.QAction(MainWindow)
 		self.actionTreshold.setObjectName(_fromUtf8("actionTreshold"))
-		self.actionTreshold.triggered.connect(lambda: self.process_image(self.imgPreProc.pre_treshold))
+		self.actionTreshold.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "treshold", 1, "Progowanie", "Próg: ", [0,255],[0,255,1]))
 
 		self.actionShowHistogram = QtGui.QAction(MainWindow)
 		self.actionShowHistogram.setObjectName(_fromUtf8("actionShowHistogram"))
 		self.actionShowHistogram.setShortcut('Shift+H')
-		self.actionShowHistogram.triggered.connect(lambda: self.process_image(self.imgPreProc.show_histogram))
+		self.actionShowHistogram.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "histogram", 5, "Histogram ", None, None, None))
 
 		self.actionEqualizeHistogram = QtGui.QAction(MainWindow)
 		self.actionEqualizeHistogram.setObjectName(_fromUtf8("actionEqualizeHistogram"))
 		self.actionEqualizeHistogram.setShortcut('Ctrl+Alt+H')
-		self.actionEqualizeHistogram.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_equalize_histogram))
+		self.actionEqualizeHistogram.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "equalize_hist", 0, None, None, None,None))
 
 		self.actionAddFrame = QtGui.QAction(MainWindow)
 		self.actionAddFrame.setObjectName(_fromUtf8("actionAddFrame"))
 		self.actionAddFrame.setShortcut('Alt+F')
-		self.actionAddFrame.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_add_color_border))
+		self.actionAddFrame.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "colorborder", 1, "Kolorowa ramka zdjęcia", "Grubość ramki: ",[0,200],[0,200,1]))
 
 		self.actionText = QtGui.QAction(MainWindow)
 		self.actionText.setObjectName(_fromUtf8("actionText"))
 		self.actionText.setShortcut('Alt+T')
-		self.actionText.triggered.connect(lambda: self.process_image(self.imgPreProc.auto_add_text))
+		self.actionText.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "addtext", 3, "Wprowadź tekst do wstawienia ", None, None, None))
 
 		self.actionMarker = QtGui.QAction(MainWindow)
 		self.actionMarker.setObjectName(_fromUtf8("actionMarker"))
 		self.actionMarker.setShortcut('Alt+M')
-		self.actionMarker.triggered.connect(lambda: self.process_image(self.imgPreProc.put_marker))
+		self.actionMarker.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "marker", 7, "Wstawianie markera", None, None, None))
 
 		self.actionSampleColor = QtGui.QAction(MainWindow)
 		self.actionSampleColor.setObjectName(_fromUtf8("actionSampleColor"))
 		self.actionSampleColor.setShortcut('Alt+Q')
-		self.actionSampleColor.triggered.connect(lambda: self.process_image(self.imgPreProc.sample_color))
+		self.actionSampleColor.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "samplecolor", 5, "Wartość koloru w RGB ", None, None, None))
 
 		self.actionSave = QtGui.QAction(MainWindow)
 		self.actionSave.setObjectName("actionSave")
@@ -401,7 +396,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuDopasowania.addAction(self.actionGamma)
 		self.menuDopasowania.addAction(self.actionInverseColors)
 		self.menuDopasowania.addAction(self.actionGrayScale)
-		self.menuDopasowania.addAction(self.actionColorBalance)
+		# self.menuDopasowania.addAction(self.actionColorBalance)
 		self.menuDopasowania.addAction(self.actionFlip)
 		self.menuDopasowania.addAction(self.actionMirrorEffect)
 		self.menuDopasowania.addAction(self.actionPosterize)
@@ -451,7 +446,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionAutoContrast.setText(_translate("MainWindow","Kontrast", None))
 		self.actionSaturation.setText(_translate("MainWindow", "Nasycenie", None))
 		self.actionFlip.setText(_translate("MainWindow", "Przerzuć", None))
-		self.actionColorBalance.setText(_translate("MainWindow","Balans kolorów", None))
+		# self.actionColorBalance.setText(_translate("MainWindow","Balans kolorów", None))
 		self.actionGamma.setText(_translate("MainWindow", "Gamma", None))
 		self.actionInverseColors.setText(_translate("MainWindow", "Odwróć kolory", None))
 		self.actionGrayScale.setText(_translate("MainWidndow","Skala Szarości", None))
@@ -516,8 +511,11 @@ class Ui_MainWindow(QtGui.QWidget):
 
 	# metoda ogolna do przetwarzania obrazow
 	def process_image(self, operation, *args):
-		if len(args)>0:
+		if len(args) == 1:
 			operation(args[0])
+		elif len(args) > 0 and len(args) < 7:
+			operation(args[0],args[1],args[2],args[3],args[4],args[5])
+			print(args[0],args[1],args[2],args[3],args[4],args[5], len(args))
 		else:
 			operation()
 		self.org_image.repaint()

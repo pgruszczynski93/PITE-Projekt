@@ -14,6 +14,10 @@ class tests(unittest.TestCase):
 		ui = Ui_MainWindow()
 		ui.setupUi(MainWindow)
 
+		print("Sprawdzanie ImageWidget")
+		image_widget = ImageWidget(QtGui.QWidget())
+		# image_widget.paintEvent(None)
+
 		print("Sprawdzenie poprawności parametrów")
 		self.assertEqual(ui.in_clipping_mode, False)
 		self.assertEqual(ui.clipping_not_done, True)
@@ -122,7 +126,7 @@ class tests(unittest.TestCase):
 		self.assertEqual(self.imgProcessor.get_width(), 1000)
 		self.assertEqual(self.imgProcessor.get_height(), 500)
 		print("Sprawdzenie działania progowania")
-		self.imgProcessor.treshold(self.imgProcessor.treshold_value)
+		self.imgProcessor.treshold()
 		print("Sprawdzenie operacji nasycenia")
 		self.imgProcessor.saturation_exec()
 		print("Sprawdzenie operacji korekcji gamma")
