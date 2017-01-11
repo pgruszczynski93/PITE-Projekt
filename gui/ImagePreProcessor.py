@@ -531,6 +531,68 @@ class ImagePreProcessor(object):
 		self.modal_window = Modal("Histogram")
 		self.modal_window.init_histogram_drawer(self.hist.get_hist_img());
 		self.modal_window.exec_()
+		
+	def __in_marker_square(self, img, size, pos_width, pos_height, red, green, blue):
+		for y in range(self.height):
+			for x in range(self.width):
+				if (abs(pos_width - x) < size) and \
+				(abs(pos_height - y) < size):
+					img[y,x,0] = red/255.
+					img[y,x,1] = green/255.
+					img[y,x,2] = blue/255.
+		return img
+					
+	def __out_marker_square(self, img, size, pos_width, pos_height, red, green, blue):
+		for y in range(self.height):
+			for x in range(self.width):
+				if (abs(pos_width - x) > size) or \
+				(abs(pos_height - y) > size):
+					img[y,x,0] = red/255.
+					img[y,x,1] = green/255.
+					img[y,x,2] = blue/255.
+		return img
+					
+	def __in_marker_round(self, img, size, pos_width, pos_height, red, green, blue):
+		for y in range(self.height):
+			for x in range(self.width):
+				if ((((x-pos_width)*(x-pos_width)) + ((y-pos_height)*(y-pos_height))) < (size*size)):
+					in_data[y,x,0] = red/255.
+					in_data[y,x,1] = green/255.
+					in_data[y,x,2] = blue/255.
+		return img
+					
+	def __out_marker_round(self, img, size, pos_width, pos_height, red, green, blue):
+		for y in range(self.height):
+			for x in range(self.width):
+				if ((((x-pos_width)*(x-pos_width)) + ((y-pos_height)*(y-pos_height))) > (size*size)):
+					in_data[y,x,0] = red/255.
+					in_data[y,x,1] = green/255.
+					in_data[y,x,2] = blue/255.
+		return img
+					
+	def __in_marker_cross(self, img, size, pos_width, pos_height, red, green, blue):
+		for y in range(self.height):
+			for x in range(self.width):
+				if ((abs(pos_width - x) < (size/3)) and \
+				(abs(pos_height - y) < size)) or\
+				((abs(pos_width - x) < size) and \
+				(abs(pos_height - y) < (size/3))):
+					in_data[y,x,0] = red/255.
+					in_data[y,x,1] = green/255.
+					in_data[y,x,2] = blue/255.
+		return img
+					
+	def __out_marker_cross(self, img, size, pos_width, pos_height, red, green, blue):
+		for y in range(self.height):
+			for x in range(self.width):
+				if ((abs(pos_width - x) > (size/3)) or \
+				(abs(pos_height - y) > size)) and\
+				((abs(pos_width - x) > size) or \
+				(abs(pos_height - y) > (size/3))):
+					in_data[y,x,0] = red/255.
+					in_data[y,x,1] = green/255.
+					in_data[y,x,2] = blue/255.
+		return img
 
 	def put_marker_exec(self):
 			# print(self.marker_mod_values)
@@ -554,57 +616,19 @@ class ImagePreProcessor(object):
 		else:
 			if shape == 1:
 				if kind == 1:
-					for y in range(self.height):
-						for x in range(self.width):
-							if (abs(pos_width - x) < size) and \
-							(abs(pos_height - y) < size):
-								in_data[y,x,0] = red/255.
-								in_data[y,x,1] = green/255.
-								in_data[y,x,2] = blue/255.
+					in_data = self.__in_marker_square(in_data, size, pos_width, pos_height, red, green, blue)
 				elif kind == 2:
-					for y in range(self.height):
-						for x in range(self.width):
-							if (abs(pos_width - x) > size) or \
-							(abs(pos_height - y) > size):
-								in_data[y,x,0] = red/255.
-								in_data[y,x,1] = green/255.
-								in_data[y,x,2] = blue/255.
+					in_data = self.__out_marker_square(in_data, size, pos_width, pos_height, red, green, blue)
 			elif shape == 2:
 				if kind == 1:
-					for y in range(self.height):
-						for x in range(self.width):
-							if ((((x-pos_width)*(x-pos_width)) + ((y-pos_height)*(y-pos_height))) < (size*size)):
-								in_data[y,x,0] = red/255.
-								in_data[y,x,1] = green/255.
-								in_data[y,x,2] = blue/255.
+					in_data = self.__in_marker_round(in_data, size, pos_width, pos_height, red, green, blue)
 				elif kind == 2:
-					for y in range(self.height):
-						for x in range(self.width):
-							if ((((x-pos_width)*(x-pos_width)) + ((y-pos_height)*(y-pos_height))) > (size*size)):
-								in_data[y,x,0] = red/255.
-								in_data[y,x,1] = green/255.
-								in_data[y,x,2] = blue/255.
+					in_data = self.__out_marker_round(in_data, size, pos_width, pos_height, red, green, blue)
 			elif shape == 3:
 				if kind == 1:
-					for y in range(self.height):
-						for x in range(self.width):
-							if ((abs(pos_width - x) < (size/3)) and \
-							(abs(pos_height - y) < size)) or\
-							((abs(pos_width - x) < size) and \
-							(abs(pos_height - y) < (size/3))):
-								in_data[y,x,0] = red/255.
-								in_data[y,x,1] = green/255.
-								in_data[y,x,2] = blue/255.
+					in_data = self.__in_marker_cross(in_data, size, pos_width, pos_height, red, green, blue)
 				elif kind == 2:
-					for y in range(self.height):
-						for x in range(self.width):
-							if ((abs(pos_width - x) > (size/3)) or \
-							(abs(pos_height - y) > size)) and\
-							((abs(pos_width - x) > size) or \
-							(abs(pos_height - y) > (size/3))):
-								in_data[y,x,0] = red/255.
-								in_data[y,x,1] = green/255.
-								in_data[y,x,2] = blue/255.
+					in_data = self.__out_marker_cross(in_data, size, pos_width, pos_height, red, green, blue)
 
 			in_data = in_data*255.9999
 			in_data = numpy.uint8(in_data)
