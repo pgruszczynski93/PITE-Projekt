@@ -14,8 +14,11 @@ class tests(unittest.TestCase):
 		ui = Ui_MainWindow()
 		ui.setupUi(MainWindow)
 
+		# dopisane jako ##
+
 		print("Sprawdzanie ImageWidget")
 		image_widget = ImageWidget(QtGui.QWidget())
+		QtGui.QWidget().paintEvent=ui.paint_clipping_frame
 
 		print("Sprawdzenie poprawności parametrów")
 		self.assertEqual(ui.in_clipping_mode, False)

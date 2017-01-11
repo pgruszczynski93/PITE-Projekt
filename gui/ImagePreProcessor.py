@@ -107,13 +107,13 @@ class ImagePreProcessor(object):
 			# text_color = self.modal_window.init_color_picker("Kolor tekstu")
 			# self.preproc_methods[operation](txt,text_color)
 
-		if modal_state==4:
+		if modal_state==3:
 			self.modal_window = Modal()
 			black = self.modal_window.init_color_picker()
 			white = self.modal_window.init_color_picker()
 			self.preproc_methods[operation](black, white)
 
-		if modal_state==5:
+		if modal_state==4:
 			self.modal_window = Modal(title)
 			if operation == "samplecolor" and (self.mouse_pos[0] <= self.width and self.mouse_pos[1] <= self.height):
 				pix = self.image.getpixel((self.mouse_pos[0],self.mouse_pos[1]))
@@ -123,7 +123,7 @@ class ImagePreProcessor(object):
 				self.modal_window.init_histogram_drawer(self.hist.get_hist_img());
 			self.modal_window.exec_()
 
-		if modal_state == 6:
+		if modal_state == 5:
 			value_changed = False
 			self.modal_window = Modal(title)
 			self.modal_window.init_unsharp_mask()
@@ -133,7 +133,7 @@ class ImagePreProcessor(object):
 				value_changed = True
 				self.preproc_methods[operation](value_changed)
 
-		if modal_state == 7:
+		if modal_state == 6:
 			self.modal_window = Modal(title)
 			self.modal_window.init_markers_modal()
 			if self.modal_window.exec_():
@@ -470,6 +470,7 @@ class ImagePreProcessor(object):
 
 	def save_as(self, filepath):
 		if self.image:
+			print("Zapis")
 			self.image.save(filepath)
 		else:
 			return "Błąd zapisu zdjęcia"

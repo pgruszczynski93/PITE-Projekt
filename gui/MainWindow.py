@@ -163,7 +163,7 @@ class Ui_MainWindow(QtGui.QWidget):
 
 		self.actionUnsharpMask = QtGui.QAction(MainWindow)
 		self.actionUnsharpMask.setObjectName("actionUnsharpMask")
-		self.actionUnsharpMask.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "unsharp", 6, "Maska wyostrzająca", None, None, None))
+		self.actionUnsharpMask.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "unsharp", 5, "Maska wyostrzająca", None, None, None))
 
 		self.actionMask3 = QtGui.QAction(MainWindow)
 		self.actionMask3.setObjectName("actionMask3")
@@ -257,7 +257,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionColorize = QtGui.QAction(MainWindow)
 		self.actionColorize.setObjectName("actionColorize")
 		self.actionColorize.setShortcut("Ctrl+Alt+K")
-		self.actionColorize.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "colorize", 4, None, None, None,None))
+		self.actionColorize.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "colorize", 3, None, None, None,None))
 
 		self.actionInverseColors = QtGui.QAction(MainWindow)
 		self.actionInverseColors.setObjectName("actionInverseColors")
@@ -296,7 +296,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionShowHistogram = QtGui.QAction(MainWindow)
 		self.actionShowHistogram.setObjectName("actionShowHistogram")
 		self.actionShowHistogram.setShortcut('Shift+H')
-		self.actionShowHistogram.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "histogram", 5, "Histogram ", None, None, None))
+		self.actionShowHistogram.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "histogram", 4, "Histogram ", None, None, None))
 
 		self.actionEqualizeHistogram = QtGui.QAction(MainWindow)
 		self.actionEqualizeHistogram.setObjectName("actionEqualizeHistogram")
@@ -308,11 +308,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionAddFrame.setShortcut('Alt+F')
 		self.actionAddFrame.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "colorborder", 1, "Kolorowa ramka zdjęcia", "Grubość ramki: ",[0,200],[0,200,1]))
 
-		# self.actionText = QtGui.QAction(MainWindow)
-		# self.actionText.setObjectName("actionText")
-		# self.actionText.setShortcut('Alt+T')
-		# self.actionText.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "addtext", 3, "Wprowadź tekst do wstawienia ", None, None, None))
-
 		self.actionMarker = QtGui.QAction(MainWindow)
 		self.actionMarker.setObjectName("actionMarker")
 		self.actionMarker.setShortcut('Alt+M')
@@ -321,7 +316,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionSampleColor = QtGui.QAction(MainWindow)
 		self.actionSampleColor.setObjectName("actionSampleColor")
 		self.actionSampleColor.setShortcut('Alt+Q')
-		self.actionSampleColor.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "samplecolor", 5, "Wartość koloru w RGB ", None, None, None))
+		self.actionSampleColor.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "samplecolor", 4, "Wartość koloru w RGB ", None, None, None))
 
 		self.actionSave = QtGui.QAction(MainWindow)
 		self.actionSave.setObjectName("actionSave")
@@ -382,7 +377,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuDopasowania.addAction(self.actionGamma)
 		self.menuDopasowania.addAction(self.actionInverseColors)
 		self.menuDopasowania.addAction(self.actionGrayScale)
-		# self.menuDopasowania.addAction(self.actionColorBalance)
 		self.menuDopasowania.addAction(self.actionFlip)
 		self.menuDopasowania.addAction(self.actionMirrorEffect)
 		self.menuDopasowania.addAction(self.actionPosterize)
@@ -390,7 +384,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.menuDopasowania.addAction(self.menuHistogram.menuAction())
 		self.menuDopasowania.addAction(self.actionColorize)
 		self.menuDopasowania.addAction(self.actionSampleColor)
-		# self.menuWstawianie.addAction(self.actionText)
 		self.menuWstawianie.addAction(self.actionMarker)
 		self.menubar.addAction(self.menuPlik.menuAction())
 		self.menubar.addAction(self.menuFilters.menuAction())
@@ -432,7 +425,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionAutoContrast.setText("Kontrast")
 		self.actionSaturation.setText("Nasycenie")
 		self.actionFlip.setText("Przerzuć")
-		# self.actionColorBalance.setText("Balans kolorów")
 		self.actionGamma.setText("Gamma")
 		self.actionInverseColors.setText("Odwróć kolory")
 		self.actionGrayScale.setText("Skala Szarości")
@@ -462,13 +454,11 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionAddFrame.setText("Dodaj kolorową ramkę")
 		self.actionShowHistogram.setText("Wyświetl histogram")
 		self.actionEqualizeHistogram.setText("Wyrównanie (Normalizacja)")
-		# self.actionText.setText("Tekst")
 		self.actionMask3.setText("Maska 3x3")
 		self.actionMask5.setText("Maska 5x5")
 		self.actionSampleColor.setText("Kolor (Pipeta)")
 		self.actionSave.setText("Zapisz")
 		self.actionSaveAs.setText("Zapisz jako...")
-
 # 	nowa wersja obsługi klikniec
 		self.scrollAreaWidgetContents.mouseReleaseEvent=self.mouse_get_but_pos_stop
 		self.scrollAreaWidgetContents.mousePressEvent=self.mouse_press_clipping
@@ -476,7 +466,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.scrollAreaWidgetContents.paintEvent=self.paint_clipping_frame
 
 # własne metody
-
 	def show_open_dialog(self):
 		filepath = QtGui.QFileDialog.getOpenFileName(None, 'Otworz', '', 'Wszystkie pliki (*.*);;jpeg (*.jpeg);;jpg (*.jpg);;png (*.png)')
 
@@ -511,11 +500,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		message_text = self.imgPreProc.save_photo_normal()
 		self.show_save_message(message_text)
 
-	def save_img_as(self):
-		# naprawić save as- sciezki ok ale nie zapisuje
-		savepath = self.show_save_as_dialog()
-		self.imgPreProc.save_as(savepath)
-
 	def refresh_all(self):
 		self.repaint_image()
 
@@ -529,16 +513,12 @@ class Ui_MainWindow(QtGui.QWidget):
 	def show_save_as_dialog(self):
 		savepath = QtGui.QFileDialog.getSaveFileName(None, 'Zapisz', '', 'Wszystkie pliki (*.*);;jpeg (*.jpeg);;jpg (*.jpg);;png (*.png)')
 		if savepath:
-			msg = QtGui.QMessageBox.question(None, 'Ścieżka zapisu',savepath,QtGui.QMessageBox.Ok)
-			return savepath
+			self.imgPreProc.save_as(savepath)
 		else:
-			# self.open(filename) - ma zapisac
 			msg = QtGui.QMessageBox.question(None, 'Ścieżka zapisu', "Nie wskazano miejsca zapisu",QtGui.QMessageBox.Ok)
 
 # jesli zdjecie jest pionowe to zamienia wspolrzedne x y 
 	def mouse_get_but_pos_stop(self,event):
-		# if event.buttons() == QtCore.Qt.LeftButton:
-		# print("4")
 		pos = event.pos()
 		if pos.x() <= self.imgPreProc.width and pos.y() <= self.imgPreProc.height:
 			self.imgPreProc.mouse_pos = (pos.x(), pos.y())
@@ -546,10 +526,7 @@ class Ui_MainWindow(QtGui.QWidget):
 
 	def paint_clipping_frame(self,event):
 		if self.in_clipping_mode:
-			# print("1")
 			painter = QPainter(self.scrollAreaWidgetContents)
-			# painter.begin(self.scrollAreaWidgetContents)
-			# painter.fillRect(event.rect(), QBrush(Qt.white))
 			painter.setRenderHint(QPainter.Antialiasing)
 			painter.setPen(QPen(QBrush(Qt.red), 1, Qt.DashLine))
 			painter.drawRect(self.border_rect)
@@ -560,12 +537,8 @@ class Ui_MainWindow(QtGui.QWidget):
 			
 			painter.setClipRect(self.clip_rect)
 			painter.setBrush(QBrush(Qt.blue))
-			# painter.end()
 
 	def resize_clipping_frame(self, event):
-		# if event.type == QEvent.MouseMove:
-			# print("2")
-
 			if self.dragging is None:
 				self.clipping_pos = [0,0,self.imgPreProc.width,self.imgPreProc.height]
 				return
@@ -574,7 +547,6 @@ class Ui_MainWindow(QtGui.QWidget):
 			right = self.border_rect.right()
 			top = self.border_rect.top()
 			bottom = self.border_rect.bottom()
-		  
 			point = event.pos() + self.drag_offset + self.handle_offsets[self.dragging]
 			point.setX(max(left, min(point.x(), right)))
 			point.setY(max(top, min(point.y(), bottom)))
@@ -598,10 +570,6 @@ class Ui_MainWindow(QtGui.QWidget):
 			self.scrollAreaWidgetContents.update()
 
 	def mouse_press_clipping(self, event):
-		# print("bef 3")
-		# if event.type == QEvent.MouseButtonPress:
-			# print("3")
-
 			for i in range(4):
 				rect = self.corner(i)
 				if rect.contains(event.pos()):
@@ -623,8 +591,6 @@ class Ui_MainWindow(QtGui.QWidget):
 			return QRect(self.clip_rect.bottomRight() - self.handle_offsets[3], QSize(8, 8))
 
 	def clipping_mode(self):
-		# self.in_clipping_mode = not self.in_clipping_mode
-		# print(self.in_clipping_mode)
 		width = self.imgPreProc.width
 		height = self.imgPreProc.height 
 		if (width > 0 and height > 0):
@@ -648,10 +614,6 @@ class Ui_MainWindow(QtGui.QWidget):
 					self.in_clipping_mode = False
 
 			self.clipping_not_done = not self.clipping_not_done
-			# if self.clipping_not_done == False:
-			# self.imgPreProc.auto_clipping(self.clipping_pos)
-			# self.org_image.repaint()
-			# self.refresh_all()
 		else:
 			msg = QtGui.QMessageBox.question(None, 'Kadrowanie', 'Błąd kadrowania - najpierw wczytaj zdjęcie.' ,QtGui.QMessageBox.Ok)
 	
@@ -661,7 +623,6 @@ def main():
 	MainWindow = QtGui.QMainWindow()
 	ui = Ui_MainWindow()
 	ui.setupUi(MainWindow)
-	# app.installEventFilter(ui)
 	MainWindow.show()
 	sys.exit(app.exec_())
 
