@@ -556,18 +556,18 @@ class ImagePreProcessor(object):
 		for y in range(self.height):
 			for x in range(self.width):
 				if ((((x-pos_width)*(x-pos_width)) + ((y-pos_height)*(y-pos_height))) < (size*size)):
-					in_data[y,x,0] = red/255.
-					in_data[y,x,1] = green/255.
-					in_data[y,x,2] = blue/255.
+					img[y,x,0] = red/255.
+					img[y,x,1] = green/255.
+					img[y,x,2] = blue/255.
 		return img
 					
 	def __out_marker_round(self, img, size, pos_width, pos_height, red, green, blue):
 		for y in range(self.height):
 			for x in range(self.width):
 				if ((((x-pos_width)*(x-pos_width)) + ((y-pos_height)*(y-pos_height))) > (size*size)):
-					in_data[y,x,0] = red/255.
-					in_data[y,x,1] = green/255.
-					in_data[y,x,2] = blue/255.
+					img[y,x,0] = red/255.
+					img[y,x,1] = green/255.
+					img[y,x,2] = blue/255.
 		return img
 					
 	def __in_marker_cross(self, img, size, pos_width, pos_height, red, green, blue):
@@ -577,9 +577,9 @@ class ImagePreProcessor(object):
 				(abs(pos_height - y) < size)) or\
 				((abs(pos_width - x) < size) and \
 				(abs(pos_height - y) < (size/3))):
-					in_data[y,x,0] = red/255.
-					in_data[y,x,1] = green/255.
-					in_data[y,x,2] = blue/255.
+					img[y,x,0] = red/255.
+					img[y,x,1] = green/255.
+					img[y,x,2] = blue/255.
 		return img
 					
 	def __out_marker_cross(self, img, size, pos_width, pos_height, red, green, blue):
@@ -589,9 +589,9 @@ class ImagePreProcessor(object):
 				(abs(pos_height - y) > size)) and\
 				((abs(pos_width - x) > size) or \
 				(abs(pos_height - y) > (size/3))):
-					in_data[y,x,0] = red/255.
-					in_data[y,x,1] = green/255.
-					in_data[y,x,2] = blue/255.
+					img[y,x,0] = red/255.
+					img[y,x,1] = green/255.
+					img[y,x,2] = blue/255.
 		return img
 
 	def put_marker_exec(self):
