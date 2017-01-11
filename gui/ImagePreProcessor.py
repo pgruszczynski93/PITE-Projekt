@@ -52,6 +52,7 @@ class ImagePreProcessor(object):
 		self.color_mod_value = 0
 		self.noise_mod_value = 0
 		self.marker_mod_values = (100, 100, 10, 1, 1, 255, 255, 255)
+		self.save_message = ""
 
 		self.ops_vals = {"contrast":self.contrast_mod_value,"posterize":self.posterize_mod_value,
 		"solarization":self.solarization_mod_value,"cropborder":self.crop_opsborder_mod_value,
@@ -97,15 +98,6 @@ class ImagePreProcessor(object):
 			self.modal_window.init_resize_modal(["Wysokość (pix)", "Szerokość (pix)"])
 			if self.modal_window.exec_():
 				self.ops_vals[operation] = self.modal_window.button_nonsignal_confirm_exit()
-
-		# if modal_state==3:
-			# self.modal_window = Modal(title)
-			# self.modal_window.init_text_modal()
-			# if self.modal_window.exec_():
-				# txt = Image.new('RGBA', self.image.size, (255,255,255,255))
-				# self.input_text = self.modal_window.button_nonsignal_confirm_exit("text")
-			# text_color = self.modal_window.init_color_picker("Kolor tekstu")
-			# self.preproc_methods[operation](txt,text_color)
 
 		if modal_state==3:
 			self.modal_window = Modal()
@@ -219,14 +211,6 @@ class ImagePreProcessor(object):
 	def auto_filter(self, selected_filter):
 		self.image = self.image.filter(selected_filter)
 		self.loadImageFromPIX(self.image)
-
-	# def auto_add_text_exec(self,txt,text_color):
-	# 	self.font = PIL.ImageFont.truetype("arial.ttf", 15)
-	# 	self.drawer = PIL.ImageDraw.Draw(txt)
-	# 	self.drawer.text((self.mouse_pos[0],self.mouse_pos[1]), self.input_text, font=self.font, fill= text_color)
-	# 	tmp_out = Image.alpha_composite(self.image, txt)
-	# 	self.image = tmp_out
-	# 	self.loadImageFromPIX(self.image)
 
 	def auto_gaussianblur_exec(self):
 		self.image = self.image.filter(ImageFilter.GaussianBlur(self.ops_vals["gauss"]))
@@ -463,14 +447,12 @@ class ImagePreProcessor(object):
 	def save_photo_normal(self):
 		if self.image:
 			self.image.save(str(datetime.datetime.now().strftime("%Y%m%d_%H_%M_%S"))+".jpg")
-			message = "Zapisano pomyślnie w katalogu z programem"
+			self.save_message = "Zapisano pomyślnie w katalogu z programem"
 		else:
-			message = "Bład zapisu zdjęcia."
-		return message
+			self.save_message = "Bład zapisu zdjęcia."
 
 	def save_as(self, filepath):
 		if self.image:
-			print("Zapis")
 			self.image.save(filepath)
 		else:
-			return "Błąd zapisu zdjęcia"
+			self.save_message = "Bład zapisu zdjęcia."

@@ -497,8 +497,8 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.refresh_all()
 
 	def save_img(self):
-		message_text = self.imgPreProc.save_photo_normal()
-		self.show_save_message(message_text)
+		self.imgPreProc.save_photo_normal()
+		self.show_save_message()
 
 	def refresh_all(self):
 		self.repaint_image()
@@ -507,12 +507,13 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.ImagePreProcessor.image_close()
 		app.quit()
 
-	def show_save_message(self, message_text):
-		save_msg = QtGui.QMessageBox.question(None, 'Stan zapisu', message_text ,QtGui.QMessageBox.Ok)
+	def show_save_message(self):
+		save_msg = QtGui.QMessageBox.question(None, 'Stan zapisu', self.imgPreProc.save_message ,QtGui.QMessageBox.Ok)
 
 	def show_save_as_dialog(self):
 		savepath = QtGui.QFileDialog.getSaveFileName(None, 'Zapisz', '', 'Wszystkie pliki (*.*);;jpeg (*.jpeg);;jpg (*.jpg);;png (*.png)')
 		if savepath:
+			msg = QtGui.QMessageBox.question(None, 'Stan zapisu', "Zapisano pomyślnie", QtGui.QMessageBox.Ok)
 			self.imgPreProc.save_as(savepath)
 		else:
 			msg = QtGui.QMessageBox.question(None, 'Ścieżka zapisu', "Nie wskazano miejsca zapisu",QtGui.QMessageBox.Ok)

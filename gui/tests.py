@@ -170,8 +170,6 @@ class tests(unittest.TestCase):
 		self.imgProcessor.auto_brightness_exec()
 		print("Sprawdzenie działania filtrów automatycznych")
 		self.imgProcessor.auto_filter(ImageFilter.BLUR)
-		# print("Sprawdzenie operacji dodawania tekstu")
-		# self.imgProcessor.auto_add_text_exec(Image.new('RGBA', self.imgProcessor.image.size, (255,255,255,255)),(255,255,255))
 		print("Sprawdzenie działania filtru Gaussa")
 		self.imgProcessor.auto_gaussianblur_exec()
 		print("Sprawdzenie działania maski wyostrzającej")
@@ -190,6 +188,11 @@ class tests(unittest.TestCase):
 		self.imgProcessor.auto_clipping((100, 100, 100, 100))
 		print("Sprawdzenie operacji tworzenia nowego pliku")
 		self.imgProcessor.auto_new_exec()
+		print("Sprawdzenie operacji zwykłego zapisu")
+		self.imgProcessor.save_photo_normal()
+		print("Sprawdzenie operacji zapisz jako")
+		self.imgProcessor.save_as("myfile.jpg")
+
 
 
 if __name__ == '__main__':
