@@ -76,34 +76,10 @@ class ImagePreProcessor(object):
 	def image_close(self):
 		self.image.close()
 
-	def set_width(self, width):
-		self.width = width
-
-	def set_height(self, height):
-		self.height = height
-
-	def set_mouse_pos(self, pos):
-		self.mouse_pos = (pos[0], pos[1])
-
-	def get_mouse_pos(self):
-		return self.mouse_pos
-
-	def get_width(self):
-		return self.width
-
-	def get_height(self):
-		return self.height
-
 	def loadImage(self, imgFile, isGray=1):
 		self.image = Image.open(imgFile)
 		self.width, self.height = self.image.size
 		self.pixels = self.image.load()
-
-	def set_sizes(self, new_image):
-		self.width, self.height = new_image.size
-
-	def get_sizes(self):
-		return (self.width, self.height)
 
 	def loadImageFromPIX(self, image):
 		self.image = image
@@ -189,7 +165,7 @@ class ImagePreProcessor(object):
 		else:
 			frame_color = test_mode
 		self.image = PIL.ImageOps.expand(self.image, self.ops_vals["colorborder"], frame_color)
-		self.set_sizes(self.image)
+		self.width, self.height = self.image.size
 		self.loadImageFromPIX(self.image)
 
 	def auto_mirror(self):
@@ -210,7 +186,7 @@ class ImagePreProcessor(object):
 
 	def auto_delete_border_exec(self):
 		self.image = PIL.ImageOps.crop(self.image, self.ops_vals["cropborder"])
-		self.set_sizes(self.image)
+		self.width, self.height = self.image.size
 		self.loadImageFromPIX(self.image)
 		
 	def auto_equalize_histogram(self):
@@ -219,20 +195,20 @@ class ImagePreProcessor(object):
 
 	def auto_fitscale_exec(self):
 		self.image = PIL.ImageOps.fit(self.image, (int(self.ops_vals["fitscale"][0]), int(self.ops_vals["fitscale"][1])))
-		self.set_sizes(self.image)
+		self.width, self.height = self.image.size
 		self.loadImageFromPIX(self.image)
 
 	def auto_rotate_exec(self):
-		self.set_sizes(self.image.rotate(self.ops_vals["rotate"],0,1))
+		self.width, self.height = (self.image.rotate(self.ops_vals["rotate"],0,1)).size
 		self.loadImageFromPIX(self.image.rotate(self.ops_vals["rotate"],0,1))
 
 	def auto_resize_exec(self):
-		self.set_sizes(self.image.resize((int(self.ops_vals["resize"][0]), int(self.ops_vals["resize"][1]))))
+		self.width, self.height = (self.image.resize((int(self.ops_vals["resize"][0]), int(self.ops_vals["resize"][1])))).size
 		self.loadImageFromPIX(self.image.resize((int(self.ops_vals["resize"][0]), int(self.ops_vals["resize"][1]))))
 
 	def auto_new_exec(self):
 		self.image = Image.new("RGBA",(int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1])),(255,255,255,255))
-		self.set_sizes(self.image)
+		self.width, self.height = self.image.size
 		self.loadImageFromPIX(self.image)
 
 	def auto_brightness_exec(self):
@@ -480,7 +456,7 @@ class ImagePreProcessor(object):
 
 	def auto_clipping(self, clip_pos):
 		cropped_img = self.image.crop(tuple(clip_pos))
-		self.set_sizes(cropped_img)
+		self.width, self.size = cropped_img.size
 		self.image = cropped_img
 		self.loadImageFromPIX(self.image)
 
