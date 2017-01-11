@@ -15,9 +15,7 @@ class tests(unittest.TestCase):
 		ui.setupUi(MainWindow)
 
 		print("Sprawdzanie ImageWidget")
-		parent = QtGui.QWidget()
-		image_widget = ImageWidget.__init__(parent)
-		# image_widget.paintEvent(None)
+		image_widget = ImageWidget(QtGui.QWidget())
 
 		print("Sprawdzenie poprawności parametrów")
 		self.assertEqual(ui.in_clipping_mode, False)
@@ -123,10 +121,6 @@ class tests(unittest.TestCase):
 	def test_image_operations(self):
 		print("Sprawdzenie funkcji wczytującej obraz wejściowy")
 		self.imgProcessor.loadImage("./image.jpg")
-		print("Sprawdzenie rozmiarów obrazu wejściowego")
-		self.assertEqual(self.imgProcessor.get_width(), 1000)
-		self.assertEqual(self.imgProcessor.get_height(), 500)
-		self.assertEqual(self.imgProcessor.get_sizes(), (1000, 500))
 		print("Sprawdzenie działania progowania")
 		self.imgProcessor.treshold()
 		print("Sprawdzenie operacji nasycenia")
