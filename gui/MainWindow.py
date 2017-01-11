@@ -554,9 +554,9 @@ class Ui_MainWindow(QtGui.QWidget):
 		# if event.buttons() == QtCore.Qt.LeftButton:
 		# print("4")
 		pos = event.pos()
-		if pos.x() <= self.imgPreProc.get_sizes()[0] and pos.y() <= self.imgPreProc.get_sizes()[1]:
+		if pos.x() <= self.imgPreProc.width and pos.y() <= self.imgPreProc.height:
 			self.imgPreProc.set_mouse_pos((pos.x(), pos.y()))
-			print('x: %d, y: %d' % (self.imgPreProc.get_mouse_pos()[0], self.imgPreProc.get_mouse_pos()[1]))
+			print('x: %d, y: %d' % (self.imgPreProc.mouse_pos[0], self.imgPreProc.mouse_pos[1]))
 
 	def paint_clipping_frame(self,event):
 		if self.in_clipping_mode:
@@ -581,7 +581,7 @@ class Ui_MainWindow(QtGui.QWidget):
 			# print("2")
 
 			if self.dragging is None:
-				self.clipping_pos = [0,0,self.imgPreProc.get_width(),self.imgPreProc.get_height()]
+				self.clipping_pos = [0,0,self.imgPreProc.width,self.imgPreProc.height]
 				return
 			  
 			left = self.border_rect.left()
@@ -639,8 +639,8 @@ class Ui_MainWindow(QtGui.QWidget):
 	def clipping_mode(self):
 		# self.in_clipping_mode = not self.in_clipping_mode
 		# print(self.in_clipping_mode)
-		width = self.imgPreProc.get_sizes()[0] 
-		height = self.imgPreProc.get_sizes()[1] 
+		width = self.imgPreProc.width
+		height = self.imgPreProc.height 
 		if (width > 0 and height > 0):
 			self.in_clipping_mode = not self.in_clipping_mode
 			self.border_rect = QRect(8,8,width+2,height+2)
@@ -657,7 +657,7 @@ class Ui_MainWindow(QtGui.QWidget):
 					self.org_image.repaint()
 					self.refresh_all()
 					self.in_clipping_mode = False
-					self.clipping_pos = [0,0,self.imgPreProc.get_width(),self.imgPreProc.get_height()]
+					self.clipping_pos = [0,0,self.imgPreProc.width,self.imgPreProc.height]
 				else:
 					self.in_clipping_mode = False
 
