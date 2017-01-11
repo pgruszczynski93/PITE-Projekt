@@ -99,7 +99,7 @@ class tests(unittest.TestCase):
 		self.assertEqual(self.imgProcessor.height, 0)
 		self.assertEqual(self.imgProcessor.enhancer, None)
 		self.assertEqual(self.imgProcessor.colbalance_mod_value, 100)
-		self.assertEqual(self.imgProcessor.mouse_pos, ())
+		self.assertEqual(self.imgProcessor.mouse_pos, (100,100))
 		self.assertEqual(self.imgProcessor.input_text, "")
 		self.assertEqual(self.imgProcessor.drawer, None)
 		self.assertEqual(self.imgProcessor.font, None)
@@ -125,6 +125,7 @@ class tests(unittest.TestCase):
 		print("Sprawdzenie rozmiarów obrazu wejściowego")
 		self.assertEqual(self.imgProcessor.get_width(), 1000)
 		self.assertEqual(self.imgProcessor.get_height(), 500)
+		self.assertEqual(self.imgProcessor.get_sizes(), (1000, 500))
 		print("Sprawdzenie działania progowania")
 		self.imgProcessor.treshold()
 		print("Sprawdzenie operacji nasycenia")
@@ -171,8 +172,8 @@ class tests(unittest.TestCase):
 		self.imgProcessor.auto_brightness_exec()
 		print("Sprawdzenie działania filtrów automatycznych")
 		self.imgProcessor.auto_filter(ImageFilter.BLUR)
-		print("Sprawdzenie operacji dodawania tekstu")
-		# self.imgProcessor.auto_add_text_exec( Image.new('RGBA', (400,400), (255,255,255,255)),(232,213,123))
+		# print("Sprawdzenie operacji dodawania tekstu")
+		# self.imgProcessor.auto_add_text_exec(Image.new('RGBA', self.imgProcessor.image.size, (255,255,255,255)),(255,255,255))
 		print("Sprawdzenie działania filtru Gaussa")
 		self.imgProcessor.auto_gaussianblur_exec()
 		print("Sprawdzenie działania maski wyostrzającej")
@@ -187,8 +188,8 @@ class tests(unittest.TestCase):
 		self.imgProcessor.auto_maxfilter_exec()
 		print("Sprawdzenie działania filtru modalnego")
 		self.imgProcessor.auto_modefilter_exec()
-		
-
+		print("Sprawdzenie działania kadrowania")
+		self.imgProcessor.auto_clipping((100, 100, 100, 100))
 		print("Sprawdzenie operacji tworzenia nowego pliku")
 		self.imgProcessor.auto_new_exec()
 

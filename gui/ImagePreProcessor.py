@@ -33,7 +33,7 @@ class ImagePreProcessor(object):
 		self.height = 0
 		self.enhancer = None
 		self.colbalance_mod_value = 100
-		self.mouse_pos = ()
+		self.mouse_pos = (100, 100)
 		self.input_text = ""
 		self.drawer = None
 		self.font = None
@@ -67,7 +67,7 @@ class ImagePreProcessor(object):
 		"mirror":self.auto_mirror,"flip":self.auto_flip,"posterize":self.auto_posterize_exec,"solarization":self.auto_solarize_exec,
 		"cropborder":self.auto_delete_border_exec,"equalize_hist":self.auto_equalize_histogram,"fitscale":self.auto_fitscale_exec,
 		"rotate":self.auto_rotate_exec,"resize":self.auto_resize_exec,"newfile":self.auto_new_exec,
-		"brightness":self.auto_brightness_exec,"addtext":self.auto_add_text_exec,"gauss":self.auto_gaussianblur_exec,
+		"brightness":self.auto_brightness_exec,"gauss":self.auto_gaussianblur_exec,
 		"colorize":self.auto_colorize_exec,"colorborder":self.auto_add_color_border_exec,
 		"rankfilter":self.auto_rankfilter_exec,"medianfilter":self.auto_medianfilter_exec,"minfilter":self.auto_minfilter_exec,"maxfilter":self.auto_maxfilter_exec,
 		"modefilter":self.auto_modefilter_exec,"treshold":self.treshold,"saturation":self.saturation_exec, "gamma":self.gamma_correction_exec,"colorwheel":self.color_change_exec,
@@ -122,14 +122,14 @@ class ImagePreProcessor(object):
 			if self.modal_window.exec_():
 				self.ops_vals[operation] = self.modal_window.button_nonsignal_confirm_exit()
 
-		if modal_state==3:
-			self.modal_window = Modal(title)
-			self.modal_window.init_text_modal()
-			if self.modal_window.exec_():
-				txt = Image.new('RGBA', self.image.size, (255,255,255,255))
-				self.input_text = self.modal_window.button_nonsignal_confirm_exit("text")
-			text_color = self.modal_window.init_color_picker("Kolor tekstu")
-			self.preproc_methods[operation](txt,text_color)
+		# if modal_state==3:
+			# self.modal_window = Modal(title)
+			# self.modal_window.init_text_modal()
+			# if self.modal_window.exec_():
+				# txt = Image.new('RGBA', self.image.size, (255,255,255,255))
+				# self.input_text = self.modal_window.button_nonsignal_confirm_exit("text")
+			# text_color = self.modal_window.init_color_picker("Kolor tekstu")
+			# self.preproc_methods[operation](txt,text_color)
 
 		if modal_state==4:
 			self.modal_window = Modal()
@@ -244,13 +244,13 @@ class ImagePreProcessor(object):
 		self.image = self.image.filter(selected_filter)
 		self.loadImageFromPIX(self.image)
 
-	def auto_add_text_exec(self,txt,text_color):
-		self.font = PIL.ImageFont.truetype("arial.ttf", 15)
-		self.drawer = PIL.ImageDraw.Draw(txt)
-		self.drawer.text((self.mouse_pos[0],self.mouse_pos[1]), self.input_text, font=self.font, fill= text_color)
-		tmp_out = Image.alpha_composite(self.image, txt)
-		self.image = tmp_out
-		self.loadImageFromPIX(self.image)
+	# def auto_add_text_exec(self,txt,text_color):
+	# 	self.font = PIL.ImageFont.truetype("arial.ttf", 15)
+	# 	self.drawer = PIL.ImageDraw.Draw(txt)
+	# 	self.drawer.text((self.mouse_pos[0],self.mouse_pos[1]), self.input_text, font=self.font, fill= text_color)
+	# 	tmp_out = Image.alpha_composite(self.image, txt)
+	# 	self.image = tmp_out
+	# 	self.loadImageFromPIX(self.image)
 
 	def auto_gaussianblur_exec(self):
 		self.image = self.image.filter(ImageFilter.GaussianBlur(self.ops_vals["gauss"]))
