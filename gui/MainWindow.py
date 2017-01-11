@@ -555,7 +555,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		# print("4")
 		pos = event.pos()
 		if pos.x() <= self.imgPreProc.width and pos.y() <= self.imgPreProc.height:
-			self.imgPreProc.set_mouse_pos((pos.x(), pos.y()))
+			self.imgPreProc.mouse_pos = (pos.x(), pos.y())
 			print('x: %d, y: %d' % (self.imgPreProc.mouse_pos[0], self.imgPreProc.mouse_pos[1]))
 
 	def paint_clipping_frame(self,event):
