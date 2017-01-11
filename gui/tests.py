@@ -40,7 +40,7 @@ class tests(unittest.TestCase):
 		print("Modal")
 		modal_window = Modal("Zmiana kontrastu","Kontrast: ")
 		modal_window.init_modal([0,50],[0,50,1])
-		modal_window.set_slider(modal_window.get_slider(), 0,50,self.imgProcessor.contrast_mod_value,1)
+		modal_window.set_slider(modal_window.main_slider, 0,50,self.imgProcessor.contrast_mod_value,1)
 
 		print("Histogram Drawer")
 		modal_window = Modal()
