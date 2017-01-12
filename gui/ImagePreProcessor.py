@@ -85,59 +85,58 @@ class ImagePreProcessor(object):
 	def loadImageFromPIX(self, image):
 		self.image = image
 
-	def image_adjustment(self,operation, modal_state = None, title=None, window_opt=None,label_vals=None, slider_opts=None, test = None):
-		if test == None:
-			if modal_state==1:
-				self.modal_window = Modal(title,window_opt)
-				self.modal_window.init_modal(label_vals,slider_opts)
-				self.modal_window.set_slider(self.modal_window.main_slider, slider_opts[0],slider_opts[1],self.ops_vals[operation],slider_opts[2])
-				if self.modal_window.exec_():
-					self.ops_vals[operation] = self.modal_window.button_confirm_exit()
+	def image_adjustment(self,operation, modal_state = None, title=None, window_opt=None,label_vals=None, slider_opts=None):
+		if modal_state==1:
+			self.modal_window = Modal(title,window_opt)
+			self.modal_window.init_modal(label_vals,slider_opts)
+			self.modal_window.set_slider(self.modal_window.main_slider, slider_opts[0],slider_opts[1],self.ops_vals[operation],slider_opts[2])
+			if self.modal_window.exec_():
+				self.ops_vals[operation] = self.modal_window.button_confirm_exit()
 
-			if modal_state==2:
-				self.modal_window = Modal(title)
-				self.modal_window.init_resize_modal(["Wysokość (pix)", "Szerokość (pix)"])
-				if self.modal_window.exec_():
-					self.ops_vals[operation] = self.modal_window.button_nonsignal_confirm_exit()
+		if modal_state==2:
+			self.modal_window = Modal(title)
+			self.modal_window.init_resize_modal(["Wysokość (pix)", "Szerokość (pix)"])
+			if self.modal_window.exec_():
+				self.ops_vals[operation] = self.modal_window.button_nonsignal_confirm_exit()
 
-			if modal_state==3:
-				self.modal_window = Modal()
-				black = self.modal_window.init_color_picker()
-				white = self.modal_window.init_color_picker()
-				self.preproc_methods[operation](black, white)
+		if modal_state==3:
+			self.modal_window = Modal()
+			black = self.modal_window.init_color_picker()
+			white = self.modal_window.init_color_picker()
+			self.preproc_methods[operation](black, white)
 
-			if modal_state==4:
-				self.modal_window = Modal(title)
-				if operation == "samplecolor" and (self.mouse_pos[0] <= self.width and self.mouse_pos[1] <= self.height):
-					pix = self.image.getpixel((self.mouse_pos[0],self.mouse_pos[1]))
-					self.modal_window.init_color_sampler(pix)
-				elif operation == "histogram":
-					self.get_hist()
-					self.modal_window.init_histogram_drawer(self.hist.get_hist_img());
-				self.modal_window.exec_()
+		if modal_state==4:
+			self.modal_window = Modal(title)
+			if operation == "samplecolor" and (self.mouse_pos[0] <= self.width and self.mouse_pos[1] <= self.height):
+				pix = self.image.getpixel((self.mouse_pos[0],self.mouse_pos[1]))
+				self.modal_window.init_color_sampler(pix)
+			elif operation == "histogram":
+				self.get_hist()
+				self.modal_window.init_histogram_drawer(self.hist.get_hist_img());
+			self.modal_window.exec_()
 
-			if modal_state == 5:
-				value_changed = False
-				self.modal_window = Modal(title)
-				self.modal_window.init_unsharp_mask()
-				self.modal_window.set_sliders(self.modal_window.sliders, self.unsharp_mod_values)
-				if self.modal_window.exec_():
-					self.unsharp_mod_values  = self.modal_window.button_confirm_exit()
-					value_changed = True
-					self.preproc_methods[operation](value_changed)
+		if modal_state == 5:
+			value_changed = False
+			self.modal_window = Modal(title)
+			self.modal_window.init_unsharp_mask()
+			self.modal_window.set_sliders(self.modal_window.sliders, self.unsharp_mod_values)
+			if self.modal_window.exec_():
+				self.unsharp_mod_values  = self.modal_window.button_confirm_exit()
+				value_changed = True
+				self.preproc_methods[operation](value_changed)
 
-			if modal_state == 6:
-				self.modal_window = Modal(title)
-				self.modal_window.init_markers_modal()
-				if self.modal_window.exec_():
-					self.ops_vals["marker"] = self.modal_window.button_nonsignal_confirm_exit("marker")
-				self.preproc_methods["marker"]()
-			
-			if modal_state == 7:
-				pass
+		if modal_state == 6:
+			self.modal_window = Modal(title)
+			self.modal_window.init_markers_modal()
+			if self.modal_window.exec_():
+				self.ops_vals["marker"] = self.modal_window.button_nonsignal_confirm_exit("marker")
+			self.preproc_methods["marker"]()
+		
+		if modal_state == 7:
+			pass
 
-			if modal_state >= 0 and modal_state < 3:
-				self.preproc_methods[operation]()
+		if modal_state >= 0 and modal_state < 3:
+			self.preproc_methods[operation]()
 
 	def negative(self):
 		self.image = PIL.ImageOps.invert(self.image)
