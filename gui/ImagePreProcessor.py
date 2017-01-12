@@ -131,6 +131,9 @@ class ImagePreProcessor(object):
 			if self.modal_window.exec_():
 				self.ops_vals["marker"] = self.modal_window.button_nonsignal_confirm_exit("marker")
 			self.preproc_methods["marker"]()
+		
+		if modal_state == 7:
+			pass
 
 		if modal_state >= 0 and modal_state < 3:
 			self.preproc_methods[operation]()

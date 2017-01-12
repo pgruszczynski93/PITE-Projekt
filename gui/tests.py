@@ -19,6 +19,9 @@ class tests(unittest.TestCase):
 		print("Sprawdzanie ImageWidget")
 		image_widget = ImageWidget(QtGui.QWidget())
 		QtGui.QWidget().paintEvent=ui.paint_clipping_frame
+		print("Sprawdzenie czy obiekt jest instancją klasy ImageWidget")
+		self.assertIsInstance(image_widget,ImageWidget)
+
 
 		print("Sprawdzenie poprawności parametrów")
 		self.assertEqual(ui.in_clipping_mode, False)
@@ -121,6 +124,16 @@ class tests(unittest.TestCase):
 		self.assertEqual(self.imgProcessor.noise_mod_value, 0)
 		self.assertEqual(self.imgProcessor.marker_mod_values, (100, 100, 10, 1, 1, 255, 255, 255))
 
+		# for key in self.imgProcessor.ops_vals.keys():
+			# self.assertEqual(key, self.imgProcessor.ops_vals[key])
+
+	def test_imgpreproc_dicts(self):
+		print("Sprawdzenie poprawności utworzenia słowników")
+		self.assertTrue(self.imgProcessor.ops_vals) 
+		self.assertTrue(self.imgProcessor.preproc_methods)
+		print("Sprawdzenie czy nie wyrzuca KeyError")
+		self.assertRaises(KeyError, lambda: self.imgProcessor.ops_vals['errorkey']) 
+
 	def test_image_operations(self):
 		print("Sprawdzenie funkcji wczytującej obraz wejściowy")
 		self.imgProcessor.loadImage("./image.jpg")
@@ -192,8 +205,12 @@ class tests(unittest.TestCase):
 		self.imgProcessor.save_photo_normal()
 		print("Sprawdzenie operacji zapisz jako")
 		self.imgProcessor.save_as("myfile.jpg")
-
-
+		print("Sprawdzenie zamknięcia zdjęcia")
+		self.imgProcessor.image_close()
+		print("Sprawdzenie ładowania zdjęcia do widgetu")
+		self.imgProcessor.loadImageFromPIX("myfile.jpg")
+		print("Sprawdzenie poprawności tworzenia okna modala na podstawie parametru")
+		self.imgProcessor.image_adjustment("gamma",7)
 
 if __name__ == '__main__':
 	unittest.main()
