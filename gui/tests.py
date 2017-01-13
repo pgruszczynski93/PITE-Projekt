@@ -14,8 +14,6 @@ class tests(unittest.TestCase):
 		ui = Ui_MainWindow()
 		ui.setupUi(MainWindow)
 
-		# dopisane jako ##
-
 		print("Sprawdzanie ImageWidget")
 		image_widget = ImageWidget(QtGui.QWidget())
 		QtGui.QWidget().paintEvent=ui.paint_clipping_frame
@@ -34,10 +32,10 @@ class tests(unittest.TestCase):
 		self.assertEqual(ui.clipping_pos, [0,0,0,0])
 
 		print("Sprawdzenie metody otwierającej obraz")
-		ui.open_image("./image.jpg")
+		ui.open_image("./gui/image.jpg")
 
 		print("Sprawdzenie poprawnej konwersji JPG do QImage - klasa Histogram")
-		self.imgProcessor.loadImage("./image.jpg")
+		self.imgProcessor.loadImage("./gui/image.jpg")
 		modal_window = Modal()
 		self.assertIsInstance(modal_window.pil2pixmap(self.imgProcessor.image), QtGui.QPixmap)
 
@@ -118,7 +116,7 @@ class tests(unittest.TestCase):
 		modal_window = Modal()
 		modal_window.msg_box("Testy","simulate")
 		
-    
+	
 	def test_init(self):
 		print("Sprawdzenie, czy utworzony obiekt jest instancją klasy ImagePreProcessor")
 		self.assertIsInstance(self.imgProcessor, ImagePreProcessor)
@@ -172,7 +170,7 @@ class tests(unittest.TestCase):
 
 	def test_image_operations(self):
 		print("Sprawdzenie funkcji wczytującej obraz wejściowy")
-		self.imgProcessor.loadImage("./image.jpg")
+		self.imgProcessor.loadImage("./gui/image.jpg")
 		print("Sprawdzenie działania progowania")
 		self.imgProcessor.treshold()
 		print("Sprawdzenie operacji nasycenia")
