@@ -20,7 +20,6 @@ class tests(unittest.TestCase):
 		print("Sprawdzenie czy obiekt jest instancją klasy ImageWidget")
 		self.assertIsInstance(image_widget,ImageWidget)
 
-
 		print("Sprawdzenie poprawności parametrów")
 		self.assertEqual(ui.in_clipping_mode, False)
 		self.assertEqual(ui.clipping_not_done, True)
@@ -34,10 +33,42 @@ class tests(unittest.TestCase):
 		print("Sprawdzenie metody otwierającej obraz")
 		ui.open_image("./gui/image.jpg")
 
+
 		print("Sprawdzenie poprawnej konwersji JPG do QImage - klasa Histogram")
 		self.imgProcessor.loadImage("./gui/image.jpg")
 		modal_window = Modal()
 		self.assertIsInstance(modal_window.pil2pixmap(self.imgProcessor.image), QtGui.QPixmap)
+
+		print("Sprawdzanie glownej metody do przetwarzajacej obrazy - Process_Image")
+		ui.process_image(self.imgProcessor.auto_filter, ui.pred_filters[1])
+		ui.process_image(self.imgProcessor.image_adjustment, "negative", 0, None, None,None,None)
+
+		print("Zamykanie aplikacji")
+		ui.close_application()
+
+		print("Sprawdzanie rysowwania ramki kadrowania")
+		ui.paint_clipping_frame(QtGui.QPaintEvent)
+
+		print("Sprawdzenie zmiany rozmiaru ramki kadrowania")
+		ui.self_dragging = None
+		ui.paint_clipping_frame(QtGui.QMouseEvent)
+		ui.self_dragging = 0
+		ui.paint_clipping_frame(QtGui.QMouseEvent)
+		ui.self_dragging = 1
+		ui.paint_clipping_frame(QtGui.QMouseEvent)
+		ui.self_dragging = 2
+		ui.paint_clipping_frame(QtGui.QMouseEvent)
+		ui.self_dragging = 3
+		ui.paint_clipping_frame(QtGui.QMouseEvent)
+
+		print("Rogi kadrowania")
+		ui.corner(0)
+		ui.corner(1)
+		ui.corner(2)
+		ui.corner(3)
+
+		print("Wejscie do trybu kadrowania")
+		ui.clipping_mode()
 
 		print("Sprawdzenie właściwego tworzenia się okien modalnych - klasa Modals")
 		modal = Modal()
@@ -259,6 +290,7 @@ class tests(unittest.TestCase):
 		self.imgProcessor.loadImageFromPIX("myfile.jpg")
 		print("Sprawdzenie poprawności tworzenia okna modala na podstawie parametru")
 		self.imgProcessor.image_adjustment("gamma",7)
+
 
 if __name__ == '__main__':
 	unittest.main()

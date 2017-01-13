@@ -505,8 +505,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.repaint_image()
 
 	def close_application(self):
-		self.ImagePreProcessor.image_close()
-		app.quit()
+		QApplication.quit()
 
 	def show_save_message(self):
 		save_msg = QtGui.QMessageBox.question(None, 'Stan zapisu', self.imgPreProc.save_message ,QtGui.QMessageBox.Ok)
@@ -541,57 +540,58 @@ class Ui_MainWindow(QtGui.QWidget):
 			painter.setBrush(QBrush(Qt.blue))
 
 	def resize_clipping_frame(self, event):
-			if self.dragging is None:
-				self.clipping_pos = [0,0,self.imgPreProc.width,self.imgPreProc.height]
-				return
-			  
-			left = self.border_rect.left()
-			right = self.border_rect.right()
-			top = self.border_rect.top()
-			bottom = self.border_rect.bottom()
-			point = event.pos() + self.drag_offset + self.handle_offsets[self.dragging]
-			point.setX(max(left, min(point.x(), right)))
-			point.setY(max(top, min(point.y(), bottom)))
-
-			print("Mysza %d %d %d"%(self.dragging, event.pos().x(), event.pos().y()))
-			print(self.clipping_pos)
-			# print(self.last_clipping_pos)
-			# print(left,right,top,bottom, point)
-			# print(self.handle_offsets)
-			# print(self.dragging)
+		if self.dragging is None:
+			self.clipping_pos = [0,0,self.imgPreProc.width,self.imgPreProc.height]
+			return
 		  
-			if self.dragging == 0:
-				self.clip_rect.setTopLeft(point)
-				self.clipping_pos[0] = event.pos().x() 
-				self.clipping_pos[1] = event.pos().y()
+		left = self.border_rect.left()
+		right = self.border_rect.right()
+		top = self.border_rect.top()
+		bottom = self.border_rect.bottom()
+		point = event.pos() + self.drag_offset + self.handle_offsets[self.dragging]
+		point.setX(max(left, min(point.x(), right)))
+		point.setY(max(top, min(point.y(), bottom)))
 
-			elif self.dragging == 1:
-				self.clip_rect.setTopRight(point)
-				self.clipping_pos[2] = event.pos().x() 
-				self.clipping_pos[1] = event.pos().y()
+		print("Mysza %d %d %d"%(self.dragging, event.pos().x(), event.pos().y()))
+		print(self.clipping_pos)
+		# print(self.last_clipping_pos)
+		# print(left,right,top,bottom, point)
+		# print(self.handle_offsets)
+		# print(self.dragging)
+	  
+		if self.dragging == 0:
+			self.clip_rect.setTopLeft(point)
+			self.clipping_pos[0] = event.pos().x() 
+			self.clipping_pos[1] = event.pos().y()
 
-			elif self.dragging == 2:
-				self.clip_rect.setBottomLeft(point)
-				self.clipping_pos[0] = event.pos().x() 
-				self.clipping_pos[3] = event.pos().y()
+		elif self.dragging == 1:
+			self.clip_rect.setTopRight(point)
+			self.clipping_pos[2] = event.pos().x() 
+			self.clipping_pos[1] = event.pos().y()
 
-			elif self.dragging == 3:
-				self.clip_rect.setBottomRight(point)
-				self.clipping_pos[2] = event.pos().x() 
-				self.clipping_pos[3] = event.pos().y()
+		elif self.dragging == 2:
+			self.clip_rect.setBottomLeft(point)
+			self.clipping_pos[0] = event.pos().x() 
+			self.clipping_pos[3] = event.pos().y()
 
-			self.scrollAreaWidgetContents.update()
+		elif self.dragging == 3:
+			self.clip_rect.setBottomRight(point)
+			self.clipping_pos[2] = event.pos().x() 
+			self.clipping_pos[3] = event.pos().y()
+
+		self.scrollAreaWidgetContents.update()
 
 	def mouse_press_clipping(self, event):
-			for i in range(4):
-				rect = self.corner(i)
-				if rect.contains(event.pos()):
-					self.dragging = i
-					self.drag_offset = rect.topLeft() - event.pos()
-					
-					break
-				else:
-					self.dragging = None
+		print(event)
+		for i in range(4):
+			rect = self.corner(i)
+			if rect.contains(event.pos()):
+				self.dragging = i
+				self.drag_offset = rect.topLeft() - event.pos()
+				
+				break
+			else:
+				self.dragging = None
 
 	def corner(self, number):
 		if number == 0:
