@@ -23,7 +23,8 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.dragging = None
 		self.drag_offset = QPoint()
 		self.handle_offsets = (QPoint(8, 8), QPoint(-1, 8), QPoint(8, -1), QPoint(-1, -1))
-		self.clipping_pos = [0,0,0,0]
+		self.clipping_pos = None
+		self.last_clipping_pos = [0,0,0,0]
 
 	def setupUi(self, MainWindow):
 
@@ -311,7 +312,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.actionMarker = QtGui.QAction(MainWindow)
 		self.actionMarker.setObjectName("actionMarker")
 		self.actionMarker.setShortcut('Alt+M')
-		self.actionMarker.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "marker", 7, "Wstawianie markera", None, None, None))
+		self.actionMarker.triggered.connect(lambda: self.process_image(self.imgPreProc.image_adjustment, "marker", 6, "Wstawianie markera", None, None, None))
 
 		self.actionSampleColor = QtGui.QAction(MainWindow)
 		self.actionSampleColor.setObjectName("actionSampleColor")
@@ -477,7 +478,7 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.org_image.Qimg = ImageQt.ImageQt(self.imgPreProc.image.convert("RGB") if self.imgPreProc.image.mode == "L" else self.imgPreProc.image)
 		self.org_image.repaint()
 		self.refresh_all()
-
+		self.clipping_pos = [0,0, self.imgPreProc.width, self.imgPreProc.height]
 		self.clipping_mode()
 
 	def repaint_image(self):
@@ -553,6 +554,11 @@ class Ui_MainWindow(QtGui.QWidget):
 			point.setY(max(top, min(point.y(), bottom)))
 
 			print("Mysza %d %d %d"%(self.dragging, event.pos().x(), event.pos().y()))
+			print(self.clipping_pos)
+			# print(self.last_clipping_pos)
+			# print(left,right,top,bottom, point)
+			# print(self.handle_offsets)
+			# print(self.dragging)
 		  
 			if self.dragging == 0:
 				self.clip_rect.setTopLeft(point)
@@ -561,13 +567,19 @@ class Ui_MainWindow(QtGui.QWidget):
 
 			elif self.dragging == 1:
 				self.clip_rect.setTopRight(point)
+				self.clipping_pos[2] = event.pos().x() 
+				self.clipping_pos[1] = event.pos().y()
+
 			elif self.dragging == 2:
 				self.clip_rect.setBottomLeft(point)
+				self.clipping_pos[0] = event.pos().x() 
+				self.clipping_pos[3] = event.pos().y()
+
 			elif self.dragging == 3:
 				self.clip_rect.setBottomRight(point)
 				self.clipping_pos[2] = event.pos().x() 
 				self.clipping_pos[3] = event.pos().y()
-		  
+
 			self.scrollAreaWidgetContents.update()
 
 	def mouse_press_clipping(self, event):
@@ -592,8 +604,8 @@ class Ui_MainWindow(QtGui.QWidget):
 			return QRect(self.clip_rect.bottomRight() - self.handle_offsets[3], QSize(8, 8))
 
 	def clipping_mode(self):
-		width = self.imgPreProc.width
-		height = self.imgPreProc.height 
+		width = self.imgPreProc.get_sizes()[0] 
+		height = self.imgPreProc.get_sizes()[1] 
 		if (width > 0 and height > 0):
 			self.in_clipping_mode = not self.in_clipping_mode
 			self.border_rect = QRect(8,8,width+2,height+2)

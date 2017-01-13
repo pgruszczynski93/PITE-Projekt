@@ -74,6 +74,12 @@ class ImagePreProcessor(object):
 		"modefilter":self.auto_modefilter_exec,"treshold":self.treshold,"saturation":self.saturation_exec, "gamma":self.gamma_correction_exec,"colorwheel":self.color_change_exec,
 		"noisegen":self.noise_generator_exec,"unsharp":self.auto_unsharpmask_exec,"marker":self.put_marker_exec}
 
+	def set_sizes(self, new_image):
+		self.width, self.height = new_image.size
+
+	def get_sizes(self):
+		return (self.width, self.height)
+
 	def image_close(self):
 		self.image.close()
 
@@ -86,18 +92,24 @@ class ImagePreProcessor(object):
 		self.image = image
 
 	def image_adjustment(self,operation, modal_state = None, title=None, window_opt=None,label_vals=None, slider_opts=None):
+		if modal_state == 0:
+			self.preproc_methods[operation]()
+
 		if modal_state==1:
 			self.modal_window = Modal(title,window_opt)
 			self.modal_window.init_modal(label_vals,slider_opts)
 			self.modal_window.set_slider(self.modal_window.main_slider, slider_opts[0],slider_opts[1],self.ops_vals[operation],slider_opts[2])
 			if self.modal_window.exec_():
 				self.ops_vals[operation] = self.modal_window.button_confirm_exit()
+				self.preproc_methods[operation]()
+
 
 		if modal_state==2:
 			self.modal_window = Modal(title)
 			self.modal_window.init_resize_modal(["Wysokość (pix)", "Szerokość (pix)"])
 			if self.modal_window.exec_():
 				self.ops_vals[operation] = self.modal_window.button_nonsignal_confirm_exit()
+				self.preproc_methods[operation]()
 
 		if modal_state==3:
 			self.modal_window = Modal()
@@ -130,13 +142,10 @@ class ImagePreProcessor(object):
 			self.modal_window.init_markers_modal()
 			if self.modal_window.exec_():
 				self.ops_vals["marker"] = self.modal_window.button_nonsignal_confirm_exit("marker")
-			self.preproc_methods["marker"]()
+				self.preproc_methods["marker"]()
 		
 		if modal_state == 7:
 			pass
-
-		if modal_state >= 0 and modal_state < 3:
-			self.preproc_methods[operation]()
 
 	def negative(self):
 		self.image = PIL.ImageOps.invert(self.image)
@@ -160,7 +169,7 @@ class ImagePreProcessor(object):
 		else:
 			frame_color = test_mode
 		self.image = PIL.ImageOps.expand(self.image, self.ops_vals["colorborder"], frame_color)
-		self.width, self.height = self.image.size
+		self.set_sizes(self.image)
 		self.loadImageFromPIX(self.image)
 
 	def auto_mirror(self):
@@ -181,7 +190,7 @@ class ImagePreProcessor(object):
 
 	def auto_delete_border_exec(self):
 		self.image = PIL.ImageOps.crop(self.image, self.ops_vals["cropborder"])
-		self.width, self.height = self.image.size
+		self.set_sizes(self.image)
 		self.loadImageFromPIX(self.image)
 		
 	def auto_equalize_histogram(self):
@@ -190,20 +199,20 @@ class ImagePreProcessor(object):
 
 	def auto_fitscale_exec(self):
 		self.image = PIL.ImageOps.fit(self.image, (int(self.ops_vals["fitscale"][0]), int(self.ops_vals["fitscale"][1])))
-		self.width, self.height = self.image.size
+		self.set_sizes(self.image)
 		self.loadImageFromPIX(self.image)
 
 	def auto_rotate_exec(self):
-		self.width, self.height = (self.image.rotate(self.ops_vals["rotate"],0,1)).size
+		self.set_sizes(self.image.rotate(self.ops_vals["rotate"],0,1))
 		self.loadImageFromPIX(self.image.rotate(self.ops_vals["rotate"],0,1))
 
 	def auto_resize_exec(self):
-		self.width, self.height = (self.image.resize((int(self.ops_vals["resize"][0]), int(self.ops_vals["resize"][1])))).size
+		self.set_sizes(self.image.resize((int(self.ops_vals["resize"][0]), int(self.ops_vals["resize"][1]))))
 		self.loadImageFromPIX(self.image.resize((int(self.ops_vals["resize"][0]), int(self.ops_vals["resize"][1]))))
 
 	def auto_new_exec(self):
 		self.image = Image.new("RGBA",(int(self.resize_mod_dim[0]), int(self.resize_mod_dim[1])),(255,255,255,255))
-		self.width, self.height = self.image.size
+		self.set_sizes(self.image)
 		self.loadImageFromPIX(self.image)
 
 	def auto_brightness_exec(self):
@@ -335,6 +344,13 @@ class ImagePreProcessor(object):
 		self.hist.create_histogram()
 		self.hist.draw_histogram()
 
+	def sample_color(self):
+		if self.mouse_pos[0] <= self.width and self.mouse_pos[1] <= self.height:
+			pix = self.image.getpixel((self.mouse_pos[0],self.mouse_pos[1]))
+			self.modal_window = Modal("Wartość koloru (RGB)")
+			self.modal_window.init_color_sampler(pix)
+			self.modal_window.exec_()
+
 	def show_histogram(self):
 		self.get_hist()
 		self.modal_window = Modal("Histogram")
@@ -443,7 +459,7 @@ class ImagePreProcessor(object):
 
 	def auto_clipping(self, clip_pos):
 		cropped_img = self.image.crop(tuple(clip_pos))
-		self.width, self.size = cropped_img.size
+		self.set_sizes(cropped_img)
 		self.image = cropped_img
 		self.loadImageFromPIX(self.image)
 

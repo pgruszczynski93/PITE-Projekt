@@ -29,7 +29,7 @@ class tests(unittest.TestCase):
 		self.assertEqual(ui.dragging, None)
 		self.assertEqual(ui.drag_offset, QPoint())
 		self.assertEqual(ui.handle_offsets, (QPoint(8, 8), QPoint(-1, 8), QPoint(8, -1), QPoint(-1, -1)))
-		self.assertEqual(ui.clipping_pos, [0,0,0,0])
+		self.assertEqual(ui.clipping_pos, None)
 
 		print("Sprawdzenie metody otwierającej obraz")
 		ui.open_image("./gui/image.jpg")
