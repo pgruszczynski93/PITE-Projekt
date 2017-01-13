@@ -38,7 +38,6 @@ install:
     # Builds Complete
     - popd
 script:
-    - cd gui
-    - coverage run --source=. tests.py
+    - coverage run --source=. gui/tests.py
 after_success:
     - coveralls
