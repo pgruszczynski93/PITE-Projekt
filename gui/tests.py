@@ -34,10 +34,10 @@ class tests(unittest.TestCase):
 		self.assertEqual(ui.clipping_pos, [0,0,0,0])
 
 		print("Sprawdzenie metody otwierającej obraz")
-		ui.open_image("./image.jpg")
+		ui.open_image("./gui/image.jpg")
 
 		print("Sprawdzenie poprawnej konwersji JPG do QImage - klasa Histogram")
-		self.imgProcessor.loadImage("./image.jpg")
+		self.imgProcessor.loadImage("./gui/image.jpg")
 		modal_window = Modal()
 		self.assertIsInstance(modal_window.pil2pixmap(self.imgProcessor.image), QtGui.QPixmap)
 
@@ -136,7 +136,7 @@ class tests(unittest.TestCase):
 
 	def test_image_operations(self):
 		print("Sprawdzenie funkcji wczytującej obraz wejściowy")
-		self.imgProcessor.loadImage("./image.jpg")
+		self.imgProcessor.loadImage("./gui/image.jpg")
 		print("Sprawdzenie działania progowania")
 		self.imgProcessor.treshold()
 		print("Sprawdzenie operacji nasycenia")
