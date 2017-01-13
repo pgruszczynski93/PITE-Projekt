@@ -155,7 +155,7 @@ class tests(unittest.TestCase):
 		self.assertEqual(self.imgProcessor.saturation_mod_value, 0)
 		self.assertEqual(self.imgProcessor.gamma_mod_value, 0)
 		self.assertEqual(self.imgProcessor.color_mod_value, 0)
-		self.assertEqual(self.imgProcessor.noise_mod_value, 0)
+		self.assertEqual(self.imgProcessor.noise_mod_value, 50)
 		self.assertEqual(self.imgProcessor.marker_mod_values, (100, 100, 10, 1, 1, 255, 255, 255))
 
 		# for key in self.imgProcessor.ops_vals.keys():
