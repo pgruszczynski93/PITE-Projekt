@@ -50,7 +50,7 @@ class ImagePreProcessor(object):
 		self.saturation_mod_value = 0
 		self.gamma_mod_value = 0
 		self.color_mod_value = 0
-		self.noise_mod_value = 0
+		self.noise_mod_value = 50
 		self.marker_mod_values = (100, 100, 10, 1, 1, 255, 255, 255)
 		self.save_message = ""
 
