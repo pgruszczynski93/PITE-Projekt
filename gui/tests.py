@@ -20,7 +20,7 @@ class tests(unittest.TestCase):
 		print("Sprawdzenie czy obiekt jest instancją klasy ImageWidget")
 		self.assertIsInstance(image_widget,ImageWidget)
 
-		print("Sprawdzenie poprawności parametrów")
+		print("Sprawdzenie poprawności parametrów okna głównego")
 		self.assertEqual(ui.in_clipping_mode, False)
 		self.assertEqual(ui.clipping_not_done, True)
 		self.assertEqual(ui.border_rect, None)
@@ -65,9 +65,23 @@ class tests(unittest.TestCase):
 
 		print("Wejscie do trybu kadrowania")
 		ui.clipping_mode()
-
-		print("Sprawdzenie właściwego tworzenia się okien modalnych - klasa Modals")
+		
 		modal = Modal()
+		print("Sprawdzenie poprawności parametrów okna modalnego")
+		self.assertEqual(modal.main_slider_value, 0)
+		self.assertEqual(modal.mask_size, 0)
+		self.assertEqual(modal.sliders, [])
+		self.assertEqual(modal.labels2, [])
+		self.assertEqual(modal.buttons, [])
+		self.assertEqual(modal.textfields, [])
+		self.assertEqual(modal.comboboxes, [])
+		self.assertEqual(modal.histogram, None)
+		self.assertEqual(modal.colorpicker_color, None)
+		self.assertEqual(modal.colorpicker_state, False)
+		self.assertEqual(modal.modal_return_value, None)
+		self.assertEqual(modal.non_signal_value, None)
+
+		print("Sprawdzenie właściwego tworzenia się okien modalnych")
 		modal.sliders.append(QSlider(Qt.Horizontal))
 		modal.sliders.append(QSlider(Qt.Horizontal))
 		modal.sliders.append(QSlider(Qt.Horizontal))
