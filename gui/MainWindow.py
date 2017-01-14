@@ -468,7 +468,8 @@ class Ui_MainWindow(QtGui.QWidget):
 
 # własne metody
 	def show_open_dialog(self):
-		filepath = QtGui.QFileDialog.getOpenFileName(None, 'Otworz', '', 'Wszystkie pliki (*.*);;jpeg (*.jpeg);;jpg (*.jpg);;png (*.png)')
+		filepath = QtGui.QFileDialog.getOpenFileName(None, 'Otworz', '', 'Wszystkie pliki (*.*);;jpeg (*.jpeg);;jpg (*.jpg);;png (*.png);;\
+			bmp (*.bmp);;eps (*.eps);;ppm (*.ppm);;')
 
 		if filepath:
 			self.open_image(filepath)
@@ -479,6 +480,8 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.org_image.repaint()
 		self.refresh_all()
 		self.clipping_pos = [0,0, self.imgPreProc.width, self.imgPreProc.height]
+		self.in_clipping_mode = False
+		self.clipping_not_done = True
 		self.clipping_mode()
 
 	def repaint_image(self):
@@ -490,8 +493,11 @@ class Ui_MainWindow(QtGui.QWidget):
 		if len(args) == 1:
 			operation(args[0])
 		elif len(args) > 0 and len(args) < 7:
-			operation(args[0],args[1],args[2],args[3],args[4],args[5])
-			print(args[0],args[1],args[2],args[3],args[4],args[5], len(args))
+			operation(args[0],args[1],args[2],args[3],args[4],args[5] )
+			if(args[0] in ["rotate", "colorborder", "cropborder" ,"fitscale","resize","newfile"] and self.in_clipping_mode == True):
+				self.in_clipping_mode = False
+				# self.clipping_not_done = True
+				print(args[0])
 		else:
 			operation()
 		self.org_image.repaint()
@@ -511,12 +517,13 @@ class Ui_MainWindow(QtGui.QWidget):
 		save_msg = QtGui.QMessageBox.question(None, 'Stan zapisu', self.imgPreProc.save_message ,QtGui.QMessageBox.Ok)
 
 	def show_save_as_dialog(self):
-		savepath = QtGui.QFileDialog.getSaveFileName(None, 'Zapisz', '', 'Wszystkie pliki (*.*);;jpeg (*.jpeg);;jpg (*.jpg);;png (*.png)')
-		if savepath:
+		savepath = QtGui.QFileDialog.getSaveFileName(None, 'Zapisz', '', 'Wszystkie pliki (*.*);;jpeg (*.jpeg);;jpg (*.jpg);;png (*.png);;\
+			bmp (*.bmp);;eps (*.eps);;ppm (*.ppm);;')
+		if savepath and any(extension in savepath for extension in [".jpeg",".jpg",".png",".bmp",".eps",".ppm"]):
 			msg = QtGui.QMessageBox.question(None, 'Stan zapisu', "Zapisano pomyślnie", QtGui.QMessageBox.Ok)
 			self.imgPreProc.save_as(savepath)
 		else:
-			msg = QtGui.QMessageBox.question(None, 'Ścieżka zapisu', "Nie wskazano miejsca zapisu",QtGui.QMessageBox.Ok)
+			msg = QtGui.QMessageBox.question(None, 'Ścieżka zapisu', "Nie wskazano miejsca zapisu bądź formatu pliku",QtGui.QMessageBox.Ok)
 
 # jesli zdjecie jest pionowe to zamienia wspolrzedne x y 
 	def mouse_get_but_pos_stop(self,event):
@@ -554,10 +561,6 @@ class Ui_MainWindow(QtGui.QWidget):
 
 		print("Mysza %d %d %d"%(self.dragging, event.pos().x(), event.pos().y()))
 		print(self.clipping_pos)
-		# print(self.last_clipping_pos)
-		# print(left,right,top,bottom, point)
-		# print(self.handle_offsets)
-		# print(self.dragging)
 	  
 		if self.dragging == 0:
 			self.clip_rect.setTopLeft(point)

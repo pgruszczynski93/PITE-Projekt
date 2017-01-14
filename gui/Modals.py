@@ -227,10 +227,10 @@ class Modal(QDialog):
 			pass
 
 	def set_slider(self,slider,s_min,s_max,s_current,s_tick):
-		slider.setMinimum(s_min)
-		slider.setMaximum(s_max)
+		slider.setRange(s_min, s_max)
 		slider.setValue(s_current)
-		slider.setTickInterval(s_tick)	
+		slider.setSingleStep(s_tick)
+		# slider.setTickInterval(2*s_tick)
 
 	def set_modal_return_value(self,value):
 		self.modal_return_value = value

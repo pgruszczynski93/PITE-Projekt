@@ -101,6 +101,8 @@ class ImagePreProcessor(object):
 			self.modal_window.set_slider(self.modal_window.main_slider, slider_opts[0],slider_opts[1],self.ops_vals[operation],slider_opts[2])
 			if self.modal_window.exec_():
 				self.ops_vals[operation] = self.modal_window.button_confirm_exit()
+				if (operation in ["rankfilter", "minfilter", "maxfilter","medianfilter"] and self.ops_vals[operation]%2 == 0):
+					self.ops_vals[operation] += 1
 				self.preproc_methods[operation]()
 
 
