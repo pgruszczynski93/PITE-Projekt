@@ -29,6 +29,7 @@ class tests(unittest.TestCase):
 		self.assertEqual(ui.drag_offset, QPoint())
 		self.assertEqual(ui.handle_offsets, (QPoint(8, 8), QPoint(-1, 8), QPoint(8, -1), QPoint(-1, -1)))
 		self.assertEqual(ui.clipping_pos, None)
+		self.assertEqual(ui.painter, None)
 
 		print("Sprawdzenie metody otwierającej obraz")
 		ui.open_image("./gui/image.jpg")
@@ -47,19 +48,23 @@ class tests(unittest.TestCase):
 		ui.close_application()
 
 		print("Sprawdzanie rysowwania ramki kadrowania")
-		ui.paint_clipping_frame(QtGui.QPaintEvent)
+		# ui.in_clipping_mode = True
+		# ui.painter = QPainter(ui.scrollAreaWidgetContents)
+		# ui.painter.setRenderHint(QPainter.Antialiasing)
+		# ui.paint_clipping_frame(QtGui.QPaintEvent)
+		# ui.painter.end()
 
 		print("Sprawdzenie zmiany rozmiaru ramki kadrowania")
 		ui.self_dragging = None
-		ui.paint_clipping_frame(QtGui.QMouseEvent)
+		ui.resize_clipping_frame(QtGui.QMouseEvent)
 		ui.self_dragging = 0
-		ui.paint_clipping_frame(QtGui.QMouseEvent)
+		ui.resize_clipping_frame(QtGui.QMouseEvent)
 		ui.self_dragging = 1
-		ui.paint_clipping_frame(QtGui.QMouseEvent)
+		ui.resize_clipping_frame(QtGui.QMouseEvent)
 		ui.self_dragging = 2
-		ui.paint_clipping_frame(QtGui.QMouseEvent)
+		ui.resize_clipping_frame(QtGui.QMouseEvent)
 		ui.self_dragging = 3
-		ui.paint_clipping_frame(QtGui.QMouseEvent)
+		ui.resize_clipping_frame(QtGui.QMouseEvent)
 
 		print("Rogi kadrowania")
 		ui.corner(0)
