@@ -104,6 +104,7 @@ class tests(unittest.TestCase):
 		modal.main_slider_value = 50
 		modal.current_value_label.setText("test")
 		modal.set_modal_return_value(50)
+		modal.get_mainslider_value("test")
 
 		print("Modal")
 		modal_window = Modal("Zmiana kontrastu","Kontrast: ")
@@ -280,10 +281,6 @@ class tests(unittest.TestCase):
 		self.imgProcessor.auto_clipping((100, 100, 100, 100))
 		print("Sprawdzenie operacji tworzenia nowego pliku")
 		self.imgProcessor.auto_new_exec()
-		print("Sprawdzenie operacji zwykłego zapisu")
-		self.imgProcessor.save_photo_normal()
-		print("Sprawdzenie operacji zapisz jako")
-		self.imgProcessor.save_as("myfile.jpg")
 		print("Sprawdzenie zamknięcia zdjęcia")
 		self.imgProcessor.image_close()
 		print("Sprawdzenie ładowania zdjęcia do widgetu")
@@ -291,6 +288,17 @@ class tests(unittest.TestCase):
 		print("Sprawdzenie poprawności tworzenia okna modala na podstawie parametru")
 		self.imgProcessor.image_adjustment("gamma",7)
 
+		print("Sprawdzenie operacji zwykłego zapisu")
+		self.imgProcessor.loadImage("./gui/image.jpg")
+		self.imgProcessor.save_photo_normal()
+		self.imgProcessor.image = None
+		self.imgProcessor.save_photo_normal()
+
+		print("Sprawdzenie operacji zapisz jako")
+		self.imgProcessor.loadImage("./gui/image.jpg")
+		self.imgProcessor.save_as("myfile.jpg")
+		self.imgProcessor.image = None
+		self.imgProcessor.save_as("myfile.jpg")
 
 if __name__ == '__main__':
 	unittest.main()

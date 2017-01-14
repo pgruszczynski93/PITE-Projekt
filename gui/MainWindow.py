@@ -585,7 +585,6 @@ class Ui_MainWindow(QtGui.QWidget):
 		self.scrollAreaWidgetContents.update()
 
 	def mouse_press_clipping(self, event):
-		print(event)
 		for i in range(4):
 			rect = self.corner(i)
 			if rect.contains(event.pos()):
