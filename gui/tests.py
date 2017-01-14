@@ -31,10 +31,10 @@ class tests(unittest.TestCase):
 		self.assertEqual(ui.clipping_pos, None)
 
 		print("Sprawdzenie metody otwierającej obraz")
-		ui.open_image("./image.jpg")
+		ui.open_image("./gui/image.jpg")
 
 		print("Sprawdzenie poprawnej konwersji JPG do QImage - klasa Histogram")
-		self.imgProcessor.loadImage("./image.jpg")
+		self.imgProcessor.loadImage("./gui/image.jpg")
 		modal_window = Modal()
 		self.assertIsInstance(modal_window.pil2pixmap(self.imgProcessor.image), QtGui.QPixmap)
 
@@ -198,7 +198,7 @@ class tests(unittest.TestCase):
 
 	def test_image_operations(self):
 		print("Sprawdzenie funkcji wczytującej obraz wejściowy")
-		self.imgProcessor.loadImage("./image.jpg")
+		self.imgProcessor.loadImage("./gui/image.jpg")
 		print("Sprawdzenie działania progowania")
 		self.imgProcessor.treshold()
 		print("Sprawdzenie operacji nasycenia")
@@ -285,13 +285,13 @@ class tests(unittest.TestCase):
 		self.imgProcessor.image_adjustment("gamma",7)
 
 		print("Sprawdzenie operacji zwykłego zapisu")
-		self.imgProcessor.loadImage("./image.jpg")
+		self.imgProcessor.loadImage("./gui/image.jpg")
 		self.imgProcessor.save_photo_normal()
 		self.imgProcessor.image = None
 		self.imgProcessor.save_photo_normal()
 
 		print("Sprawdzenie operacji zapisz jako")
-		self.imgProcessor.loadImage("./image.jpg")
+		self.imgProcessor.loadImage("./gui/image.jpg")
 		self.imgProcessor.save_as("myfile.jpg")
 		self.imgProcessor.image = None
 		self.imgProcessor.save_as("myfile.jpg")
